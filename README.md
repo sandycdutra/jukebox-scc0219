@@ -76,21 +76,20 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
   - Stock updates: `quantity_in_stock -= ordered_quantity`
 ### Data to be Stored on Server
 #### 1. User Data
-```yaml
+```
 # Administrators
 - id: string (UUID)
 - email: string (unique)
 - password_hash: string
 - name: string
 - phone: string
-- last_login: timestamp
 
 # Customers
 - id: string (UUID)
 - email: string (unique)
 - password_hash: string
 - name: string
-- shipping_address: {
+- CEP: {
     street: string
     city: string
     state: string
@@ -110,7 +109,6 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 - stock_quantity: integer
 - sold_quantity: integer (default: 0)
 - images: [url] (array)
-- audio_preview: url (optional)
 - metadata: {
     artist: string
     release_year: integer
@@ -118,7 +116,28 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
     condition: enum ['new', 'used']
   }
 ```
-
+#### 3. Unique Feature
+```
+user_favorites: {
+  user_id: string
+  product_ids: [string] (array)
+  updated_at: timestamp
+}
+```
+#### 4. Order Management
+```
+- id: string (UUID)
+- user_id: string (reference)
+- items: [{
+    product_id: string
+    quantity: integer
+    unit_price: float
+  }]
+- payment_method: enum ['credit_card', 'pix']
+- payment_status: enum ['pending', 'completed', 'failed']
+- total_amount: float
+- created_at: timestamp
+```
 #### Navigation Diagram
 ![User Flow Mockup](diagram.png)
 
