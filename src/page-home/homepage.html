@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jukebox</title>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+  <!-- Top Notification -->
+  <div class="top-notification">
+    USE THE COUPON OFF10 TO GET 10% OFF ON YOUR FIRST ORDER!
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">JUKEBOX</div>
+    <nav class="nav">
+      <a href="#">Home</a>
+      <a href="#">CD</a>
+      <a href="#">Vinyl</a>
+      <a href="#">Accessories</a>
+      <a href="#">Genres</a>
+      <a href="#">About</a>
+    </nav>
+    <div class="header-icons">
+      <input type="text" placeholder="Search artist, album..." class="search">
+      <span class="icon">🔍</span>
+      <span class="icon">🛒</span>
+      <span class="icon">👤</span>
+    </div>
+  </header>
+
+  <!-- What's New Section -->
+  <section class="whats-new">
+    <h2>WHAT'S NEW</h2>
+  </section>
+
+  <section class="carousel-section">
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="images/banner1.png" alt="Banner 1"></div>
+        <div class="swiper-slide"><img src="images/banner2.png" alt="Banner 2"></div>
+        <div class="swiper-slide"><img src="images/banner3.png" alt="Banner 3"></div>
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products">
+    <h2>CHECK OUR PRODUCTS</h2>
+    <div class="products-grid">
+      <!-- 16 Products -->
+      <!-- Example product -->
+      <button class="product-button">
+        <img src="images/product1.png" alt="Product">
+        <div class="product-info">
+          <p class="product-type">TYPE</p>
+          <h3 class="product-title">TITLE</h3>
+          <p class="product-artist">ARTIST</p>
+          <p class="product-price">$PRICE.00</p>
+        </div>
+        <button class="product-button">
+          <img src="images/product2.png" alt="Product">
+          <div class="product-info">
+            <p class="product-type">TYPE</p>
+            <h3 class="product-title">TITLE</h3>
+            <p class="product-artist">ARTIST</p>
+            <p class="product-price">$PRICE.00</p>
+          </div>
+          <button class="product-button">
+            <img src="images/product3.png" alt="Product">
+            <div class="product-info">
+              <p class="product-type">TYPE</p>
+              <h3 class="product-title">TITLE</h3>
+              <p class="product-artist">ARTIST</p>
+              <p class="product-price">$PRICE.00</p>
+            </div>
+      <!-- Repeat product-card 16x -->
+    </div>
+    <button class="check-all-button">CHECK ALL PRODUCTS</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>JUKEBOX</h4>
+        <a href="#">Home</a>
+        <a href="#">Contact us</a>
+        <a href="#">Terms and conditions</a>
+        <a href="#">Privacy politics</a>
+      </div>
+      <div class="footer-section">
+        <h4>CATEGORIES</h4>
+        <a href="#">Accessories</a>
+        <a href="#">CDs</a>
+        <a href="#">Vinyl</a>
+        <a href="#">Classical</a>
+        <a href="#">Country</a>
+        <a href="#">Electronic</a>
+        <a href="#">Hip Hop</a>
+        <a href="#">Indie</a>
+        <a href="#">Pop</a>
+        <a href="#">Rap</a>
+        <a href="#">R&B</a>
+        <a href="#">Rock</a>
+      </div>
+      <div class="footer-section">
+        <h4>FOLLOW US</h4>
+        <div class="social-icons">
+          <span>📸</span>
+          <span>🎵</span>
+          <span>🐦</span>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h4>PAYMENT</h4>
+        <div class="payment-icons">
+          <span>💳</span>
+          <span>💳</span>
+          <span>💳</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 JUKEBOX ALL RIGHTS RESERVED
+    </div>
+  </footer>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+    loop: true,
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }
+  });
+</script>
+
+</body>
+</html>
