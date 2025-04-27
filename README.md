@@ -144,7 +144,7 @@ user_favorites: {
 ---
 
 ## Comments About the Code
-
+The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display our best-sellers. the products are organized in a grid. For the vinyl page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
 ---
 
 ## Test Plan
