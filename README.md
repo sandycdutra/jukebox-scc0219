@@ -5,8 +5,6 @@ Eduardo P De Luna Freire, 14567304
 Laura Fernandes Camargos, 13692334  
 Sandy da Costa Dutra, 12544570  
 
-**Date**: \today  
-
 ---
 
 ## Requirements
