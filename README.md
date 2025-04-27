@@ -1,7 +1,7 @@
 # SCC0219 – Milestone 1 - An Online Store
 
 **Authors**:  
-Eduardo P De Luna Freire, 14567304  
+Eduardo Pereira De Luna Freire, 14567304  
 Laura Fernandes Camargos, 13692334  
 Sandy da Costa Dutra, 12544570  
 
@@ -74,6 +74,50 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 - **Checkout**:
   - Credit card/PIX payment processing
   - Stock updates: `quantity_in_stock -= ordered_quantity`
+### Data to be Stored on Server
+#### 1. User Data
+```yaml
+# Administrators
+- id: string (UUID)
+- email: string (unique)
+- password_hash: string
+- name: string
+- phone: string
+- last_login: timestamp
+
+# Customers
+- id: string (UUID)
+- email: string (unique)
+- password_hash: string
+- name: string
+- shipping_address: {
+    street: string
+    city: string
+    state: string
+    zip_code: string
+  }
+- phone: string
+- favorite_products: [product_id] (array)
+```
+#### 2. Product Catalog
+```
+- id: string (UUID)
+- sku: string (unique)
+- name: string
+- type: enum ['vinyl', 'cd', 'accessory']
+- price: float
+- description: text
+- stock_quantity: integer
+- sold_quantity: integer (default: 0)
+- images: [url] (array)
+- audio_preview: url (optional)
+- metadata: {
+    artist: string
+    release_year: integer
+    genre: string
+    condition: enum ['new', 'used']
+  }
+```
 
 #### Navigation Diagram
 ![User Flow Mockup](diagram.png)
@@ -102,11 +146,12 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 ## Build Procedures
 *Expected setup:*
 Node.js + PostgreSQL
+```bash
 
 npm install
 npm run db:setup
 npm start
-
+````
 ---
 
 ## Problems
