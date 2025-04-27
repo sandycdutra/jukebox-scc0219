@@ -138,9 +138,9 @@ user_favorites: {
 - total_amount: float
 - created_at: timestamp
 ```
-#### Navigation Diagram
-![User Flow Mockup](diagram.png)
-
+### Navigation Diagram
+![User Flow Mockup](diagram.png)  
+**Interactive prototype:** [Open in Figma](https://www.figma.com/proto/mmj99fQmk14IlVF0oD9eUB/Milestone-1?node-id=39-297&t=mGflpH7v4lGAqHeQ-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=39%3A297)
 ---
 
 ## Comments About the Code
