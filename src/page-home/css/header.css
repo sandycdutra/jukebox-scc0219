@@ -49,6 +49,6 @@
     border-radius: 4px;
 }
 
-.icon {
-    font-size: 20px;
+.icon img { 
+    height: 20px; 
 }
