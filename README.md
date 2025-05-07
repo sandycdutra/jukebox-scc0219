@@ -139,15 +139,15 @@ user_favorites: {
 - created_at: timestamp
 ```
 ### Navigation Diagram
-![User Flow Mockup](imgs/diagram.png)
+![User Flow Mockup](assets/diagram.png)
 
 **Interactive prototype:** [Open in Figma](https://www.figma.com/proto/mmj99fQmk14IlVF0oD9eUB/Milestone-1?node-id=39-297&t=mGflpH7v4lGAqHeQ-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=39%3A297)  
 
 Note: the admin pages are not reachable by the prototype, here's the pages:
 
-![Admin view home page](imgs/admin-page-home.png)
+![Admin view home page](assets/admin-page-home.png)
 
-![Admin view product page](imgs/admin-page-product.png)
+![Admin view product page](assets/admin-page-product.png)
   
 ---
 
