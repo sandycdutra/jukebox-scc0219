@@ -1,8 +1,6 @@
 import { useState } from 'react'
-// import jukeboxLogo from './assets/jukebox_logo.png'
-import './css/App.css'
+// import './css/App.css'
 import { Routes, Route } from 'react-router-dom'
-// import Home from "./pages/Home"
 import Home from "./pages/Home"
 
 function App() {
@@ -16,7 +14,6 @@ function App() {
                     <Route path='/' element={<Home />} />
                 </Routes>
             </main>
-            
         </div>
         </>
     )

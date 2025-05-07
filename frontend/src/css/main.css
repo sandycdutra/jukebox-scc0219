@@ -1,0 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* What's New */
+.whats-new {
+    text-align: center;
+    padding: 20px 160px 5px 160px;
+}
+
+.carousel-section {
+    padding: 5px 160px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 10px auto;
+}
+
+.swiper img {
+    width: 100%;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #2009ea;
+    transform: scale(0.6);
+}
+
+.swiper-pagination-bullet {
+    background-color: #FFFFFF;
+    opacity: 1;
+    width: 10px;
+    height: 10px;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #2009ea;
+}
+
+/* Products */
+.products {
+    text-align: center;
+    padding: 20px 80px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px 80px;
+}
+
+.product-button {
+    background: #fff;
+    border: none;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.product-button:hover {
+    background: #E9E9E9;
+}
+
+.product-button img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.product-info {
+    margin-top: 10px;
+}
+
+.product-type {
+    font-size: 12px;
+}
+
+.product-title {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.product-artist {
+    font-size: 14px;
+}
+
+.product-price {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* Check all products button */
+.check-all-button {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 15px 30px;
+    background: #2009ea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+}
