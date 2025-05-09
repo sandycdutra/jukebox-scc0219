@@ -11,15 +11,15 @@
     justify-content: space-between;
 }
 
-.footer-section {
+.footer-section-text, .footer-section-logo {
     margin-bottom: 20px;
 }
 
-.footer-section h4 {
+.footer-section-text h4, .footer-section-logo h4 {
     margin-bottom: 10px;
 }
 
-.footer-section a {
+.footer-section-text a {
     display: block;
     color: white;
     text-decoration: none;
@@ -38,9 +38,13 @@
     margin-bottom: 10px;
 }
 
-.social-icons span, .payment-icons span {
+.social-icons a, .payment-icons a {
     margin-right: 10px;
-    font-size: 24px;
+}
+
+.social-icons img, .payment-icons img {
+    max-width: 35px;
+    margin: 8px 0px 0px 0px;
 }
 
 .footer-bottom {
