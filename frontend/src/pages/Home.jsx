@@ -1,31 +1,20 @@
 import jukeboxLogo from '../assets/jukebox-logo.png';
 import Footer from '../components/Footer';
 import Header from '../components/Header'
+import ProductGrid from '../components/ProductGrid'
+
 
 function Home() {
-  return (
-    <div>
-        <Header></Header>
-        <div>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-        </div>
-        <Footer></Footer>
-    </div>
-  )
+    
+    return (
+        <>
+            <Header/>
+            
+            <ProductGrid/>
+
+            <Footer/>
+        </>
+    )
 }
 
 export default Home
