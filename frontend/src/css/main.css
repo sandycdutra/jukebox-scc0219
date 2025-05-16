@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Poppings weiughts */
+
+.poppins-light {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Text (<p>) */
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* h1 */
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +29,32 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
+}
+
+
+/* About page */
+
+.h1 {
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    margin: 80px 0px 40px 0px;
+}
+
+.about-description {
+    margin: 30px 160px;
+    text-align: center;
+}
+
+.icmc-logo {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0px 90px 0px;
+}
+
+.icmc-logo img {
+    max-width: 200px;
 }
 
 /* tirar ? */
@@ -46,8 +95,6 @@ body {
 .swiper-pagination-bullet-active {
     background-color: #2009ea;
 }
-
-
 
 
 /* Check all products button */

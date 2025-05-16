@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom';
+
 import jukeboxLogo from "../assets/jukebox-logo.png";
 import heartIcon from "../assets/icons/heart.png";
 import cartIcon from "../assets/icons/shopping-cart.png";
 import userIcon from "../assets/icons/circle-user.png";
 import "../css/header.css";
 import "../css/main.css";
+import { use } from 'react';
 
 function Header() {
     return (
@@ -13,20 +16,20 @@ function Header() {
         </div>
         <header className="header">
             <div className="logo">
-                <a href="#"><img src={jukeboxLogo} alt="Jukebox Logo" /></a>
+                <Link to="/"><img src={jukeboxLogo} alt="Jukebox Logo" /></Link>
             </div>
             <nav className="nav">
-                <a href="#">Home</a>
-                <a href="#">CD</a>
-                <a href="#">Vinyl</a>
-                <a href="#">Accessories</a>
-                <a href="#">Genres</a>
-                <a href="#">About</a>
+                <Link to="/">Home</Link>
+                <Link to="/CD">CD</Link>
+                <Link to="/Vinyl">Vinyl</Link>
+                <Link to="/Accessories">Accessories</Link>
+                <Link to="/Genres">Genres</Link>
+                <Link to="/About">About</Link>
             </nav>
             <div className="header-icons">
-                <a className="icon" href="#"><img src={heartIcon} alt="Favourites" /></a>
-                <a className="icon" href="#"><img src={cartIcon} alt="Cart" /></a>
-                <a className="icon" href="#"><img src={userIcon} alt="User Page" /></a>
+                <Link to="/Favorites" className="icon"><img src={heartIcon} alt="Favorites" /></Link>
+                <Link to="/Cart" className="icon"><img src={cartIcon} alt="Jukebox Logo" /></Link>
+                <Link to="/Login" className="icon"><img src={userIcon} alt="Jukebox Logo" /></Link>
             </div>
         </header>
         </>

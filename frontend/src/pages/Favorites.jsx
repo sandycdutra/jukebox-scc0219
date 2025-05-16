@@ -2,13 +2,13 @@ import Footer from '../components/Footer';
 import Header from '../components/Header'
 import ProductGrid from '../components/ProductGrid'
 
-function Home() {
-    
+function Favorites () {
     return (
         <>
             <Header/>
+
+            <h1>Favorites Page</h1>
             
-            <h1 className="h1">check our products</h1>
             <ProductGrid/>
 
             <Footer/>
@@ -16,4 +16,4 @@ function Home() {
     )
 }
 
-export default Home
+export default Favorites

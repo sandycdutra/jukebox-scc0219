@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import "../css/footer.css";
 import "../css/main.css";
 import instagramLogo from "../assets/icons/logo-instagram.png";
@@ -14,7 +16,7 @@ function Footer () {
         <div className="footer-content">
             <div className="footer-section-text">
                 <h4>JUKEBOX</h4>
-                <a href="#">Home</a>
+                <Link to="/">Home</Link>
                 <a href="#">Contact us</a>
                 <a href="#">Terms and conditions</a>
                 <a href="#">Privacy politics</a>
@@ -22,9 +24,9 @@ function Footer () {
             <div className="footer-section-text">
                 <div className="footer-categories">
                     <h4>CATEGORIES</h4>
-                    <a href="#">Accessories</a>
-                    <a href="#">CDs</a>
-                    <a href="#">Vinyl</a>
+                    <Link to="/Accessories">Accessories</Link>
+                    <Link to="/CD">CDs</Link>
+                    <Link to="/Vinyl">Vinyl</Link>
                     <a href="#">Classical</a>
                     <a href="#">Country</a>
                     <a href="#">Electronic</a>
