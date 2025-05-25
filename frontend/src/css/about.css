@@ -1,0 +1,15 @@
+
+.about-description {
+    margin: 30px 160px;
+    text-align: center;
+}
+
+.icmc-logo {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0px 90px 0px;
+}
+
+.icmc-logo img {
+    max-width: 200px;
+}
