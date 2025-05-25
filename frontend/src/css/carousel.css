@@ -1,0 +1,31 @@
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #2009ea;
+  transform: scale(0.6);
+}
+
+.swiper-pagination-bullet-active {
+  background: #2009ea;
+}
+
+.swiper img {
+  width: 100%;
+}
+
+.carousel-button {
+  background: #fff;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-section {
+  padding: 5px 160px;
+  width: 100%;
+  margin: 10px auto;
+}

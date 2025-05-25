@@ -1,6 +1,7 @@
 import Footer from '../components/Footer';
 import Header from '../components/Header'
 import "../css/main.css"
+import "../css/about.css"
 import icmcLogo from "../assets/icmc-logo.png"
 
 function About () {

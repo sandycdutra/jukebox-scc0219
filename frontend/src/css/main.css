@@ -39,61 +39,12 @@ body {
     display: flex;
     justify-content: center;
     text-transform: uppercase;
-    margin: 80px 0px 40px 0px;
-}
-
-.about-description {
-    margin: 30px 160px;
-    text-align: center;
-}
-
-.icmc-logo {
-    display: flex;
-    justify-content: center;
-    margin: 40px 0px 90px 0px;
-}
-
-.icmc-logo img {
-    max-width: 200px;
+    margin: 20px 0px 5px 0px;
 }
 
 /* tirar ? */
 .MuiGrid-item {
   display: flex !important;
-}
-
-/* What's New */
-.whats-new {
-    text-align: center;
-    padding: 20px 160px 5px 160px;
-}
-
-.carousel-section {
-    padding: 5px 160px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 10px auto;
-}
-
-.swiper img {
-    width: 100%;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    color: #2009ea;
-    transform: scale(0.6);
-}
-
-.swiper-pagination-bullet {
-    background-color: #FFFFFF;
-    opacity: 1;
-    width: 10px;
-    height: 10px;
-}
-
-.swiper-pagination-bullet-active {
-    background-color: #2009ea;
 }
 
 
