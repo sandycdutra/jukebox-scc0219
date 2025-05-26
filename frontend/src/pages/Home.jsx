@@ -1,5 +1,5 @@
 import Footer from '../components/Footer';
-import Carousel from '../components/carousel'
+import Carousel from '../components/Carousel'
 import Header from '../components/Header'
 import ProductGrid from '../components/ProductGrid'
 

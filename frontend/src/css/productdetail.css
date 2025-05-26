@@ -1,0 +1,254 @@
+/* Base container para a página inteira */
+.product-detail-page-container {
+    padding: 20px; /* Padding padrão para mobile */
+    max-width: 1200px; /* Largura máxima do conteúdo */
+    margin: 0 auto; /* Centraliza o container na tela */
+}
+
+/* Ajustes de padding para telas maiores */
+@media (min-width: 768px) {
+    .product-detail-page-container {
+        padding: 30px 60px; /* Mais padding nas laterais para tablets */
+    }
+}
+@media (min-width: 1024px) {
+    .product-detail-page-container {
+        padding: 40px 100px; /* Mais padding nas laterais para desktops */
+    }
+}
+
+/* Área principal do produto (galeria + informações) */
+.product-main-content {
+    display: flex;
+    flex-direction: column; /* Em mobile, empilha verticalmente */
+    gap: 40px; /* Espaçamento entre a galeria e as informações */
+    margin-bottom: 40px;
+    align-items: flex-start; /* Alinha o conteúdo ao topo */
+}
+
+/* Altera para layout de coluna em telas maiores */
+@media (min-width: 768px) {
+    .product-main-content {
+        flex-direction: row; /* Em desktop, alinha horizontalmente */
+        justify-content: center; /* Centraliza o bloco principal */
+        align-items: flex-start; /* Alinha o conteúdo ao topo */
+    }
+}
+
+/* --- GALERIA DE IMAGENS --- */
+.product-image-gallery {
+    display: flex;
+    flex-direction: column; /* Miniaturas embaixo da principal em mobile */
+    width: 100%; /* Ocupa largura total em mobile */
+    max-width: 500px; /* Largura máxima da galeria */
+    margin: 0 auto; /* Centraliza a galeria em mobile */
+    gap: 20px; /* Espaçamento entre miniaturas e imagem principal */
+}
+
+/* Altera para layout de linha (miniaturas à esquerda) em telas maiores */
+@media (min-width: 768px) {
+    .product-image-gallery {
+        flex-direction: row; /* Miniaturas à esquerda da principal */
+        width: 50%; /* Ocupa metade da largura no desktop */
+        max-width: 550px; /* Aumenta a largura máxima */
+        margin: 0; /* Remove centralização */
+        align-items: flex-start; /* Alinha ao topo */
+        gap: 15px; /* Espaçamento entre miniaturas e imagem principal */
+    }
+}
+
+.product-thumbnails {
+    display: flex;
+    flex-direction: row; /* Miniaturas em linha para mobile */
+    justify-content: center; /* Centraliza miniaturas */
+    gap: 10px;
+    width: 100%;
+    overflow-x: auto; /* Permite scroll horizontal se muitas miniaturas */
+    padding-bottom: 5px; /* Espaço para o scrollbar */
+}
+
+/* Altera para layout de coluna para miniaturas em telas maiores */
+@media (min-width: 768px) {
+    .product-thumbnails {
+        flex-direction: column; /* Miniaturas em coluna */
+        margin-bottom: 0;
+        margin-right: 20px; /* Espaçamento à direita da coluna de miniaturas */
+        justify-content: flex-start; /* Alinha ao topo */
+        width: 80px; /* Largura fixa para a coluna de miniaturas */
+        overflow-x: hidden; /* Desabilita scroll horizontal */
+    }
+}
+
+.thumbnail-image {
+    width: 70px; /* Tamanho fixo para a miniatura */
+    height: 70px; /* Tamanho fixo para a miniatura */
+    object-fit: cover; /* Recorta a imagem para preencher, mantendo proporção */
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.2s ease-in-out;
+    flex-shrink: 0; /* Impede que a miniatura encolha */
+    display: block; /* Remove possíveis espaços extras */
+}
+
+.thumbnail-image:hover,
+.thumbnail-image.active {
+    border-color: #000;
+}
+
+.product-main-image-container {
+    width: 100%; /* Ocupa a largura total disponível */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* CRÍTICO: Garante que a imagem não vaze */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 768px) {
+    .product-main-image-container {
+        /* Calcula a largura restante após as miniaturas e o gap */
+        width: calc(100% - 80px - 15px); /* 80px da coluna de miniaturas + 15px do gap */
+    }
+}
+
+.product-main-image {
+    width: 100%; /* Ocupa a largura total do container */
+    height: auto; /* Mantém a proporção da imagem */
+    display: block;
+    max-height: 500px; /* Limita a altura máxima da imagem principal */
+    object-fit: contain; /* CRÍTICO: Redimensiona para caber no container sem cortar */
+}
+
+
+/* --- SEÇÃO DE INFORMAÇÕES DO PRODUTO (TEXTO, QTD, BOTÕES) --- */
+.product-info-section {
+    width: 100%; /* Ocupa largura total em mobile */
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaçamento entre os elementos de texto */
+}
+
+@media (min-width: 768px) {
+    .product-info-section {
+        width: 50%; /* Ocupa metade da largura no desktop */
+        padding-left: 30px; /* Adiciona um padding para separar da imagem/galeria */
+    }
+}
+
+/* Estilos de texto */
+.product-type-detail {
+    font-weight: bold;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.product-title-detail {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 2.2rem; /* Tamanho do título */
+    line-height: 1.2;
+}
+
+.product-artist-detail {
+    color: #777;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.product-price-detail {
+    font-weight: bold;
+    color: #000;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+.product-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap; /* Permite que os itens quebrem a linha */
+    gap: 10px;
+}
+
+/* --- SEÇÃO "PRODUCT INFORMATION" --- */
+.product-information-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.product-description {
+    line-height: 1.6;
+    color: #444;
+    font-size: 1rem;
+}
+
+
+/* --- SEÇÃO DE PRODUTOS RECOMENDADOS --- */
+.recommended-products-section {
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
+.recommended-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Colunas auto-ajustáveis */
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Ajustes de colunas para telas maiores */
+@media (min-width: 600px) {
+    .recommended-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (min-width: 900px) {
+    .recommended-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Para ter exatamente 6 colunas em telas grandes como no protótipo */
+@media (min-width: 1200px) {
+    .recommended-products-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+/* Estilos para o ProductCard dentro da grade de recomendados */
+.recommended-products-grid .product-card-link {
+    width: 100%;
+    display: block;
+    text-decoration: none;
+    color: inherit; /* Garante que o texto dentro do card mantenha a cor */
+}
+
+.recommended-products-grid .product-button {
+    width: 100%;
+    height: auto; /* Permite que a altura se ajuste ao conteúdo */
+    padding-bottom: 10px; /* Para dar espaço ao texto */
+}
+
+.recommended-products-grid .product-button img {
+    height: 150px; /* Um pouco menor para caber em 6 colunas */
+    width: 100%;
+    object-fit: cover;
+}
+
+.recommended-products-grid .product-info {
+    padding: 0 5px; /* Ajuste o padding interno para caber em cards menores */
+}
+
+.recommended-products-grid .product-title {
+    font-size: 1rem; /* Reduz o tamanho da fonte do título */
+}
+.recommended-products-grid .product-artist,
+.recommended-products-grid .product-price {
+    font-size: 0.85rem; /* Reduz o tamanho da fonte do artista e preço */
+}
