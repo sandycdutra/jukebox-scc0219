@@ -133,7 +133,7 @@
 @media (min-width: 768px) {
     .product-info-section {
         width: 50%; /* Ocupa metade da largura no desktop */
-        padding-left: 30px; /* Adiciona um padding para separar da imagem/galeria */
+        /* padding-left: 30px; Adiciona um padding para separar da imagem/galeria */
     }
 }
 
@@ -169,7 +169,7 @@
 .product-actions {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 75px;
     flex-wrap: wrap; /* Permite que os itens quebrem a linha */
     gap: 10px;
 }
@@ -185,6 +185,7 @@
     line-height: 1.6;
     color: #444;
     font-size: 1rem;
+    text-align: justify;
 }
 
 

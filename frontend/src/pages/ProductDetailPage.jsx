@@ -185,9 +185,9 @@ function ProductDetailPage() {
                             <Link href={`/${product.type}`} underline="hover" sx={{ color: '#000', fontWeight: 'bold' }}>See all</Link>
                         </Box>
                         <Box className="recommended-products-grid">
-                            {recommendedProducts.map(recProduct => (
-                                <ProductCard key={recProduct.id} product={recProduct} />
-                            ))}
+                        {recommendedProducts.slice(0, 4).map(recProduct => (
+                            <ProductCard key={recProduct.id} product={recProduct} />
+                        ))}
                         </Box>
                     </Box>
                 )}
