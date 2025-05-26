@@ -40,7 +40,7 @@
     display: flex;
     flex-direction: column; /* Miniaturas embaixo da principal em mobile */
     width: 100%; /* Ocupa largura total em mobile */
-    max-width: 500px; /* Largura máxima da galeria */
+    max-width: 450px; /* Largura máxima da galeria */
     margin: 0 auto; /* Centraliza a galeria em mobile */
     gap: 20px; /* Espaçamento entre miniaturas e imagem principal */
 }
@@ -133,7 +133,7 @@
 @media (min-width: 768px) {
     .product-info-section {
         width: 50%; /* Ocupa metade da largura no desktop */
-        /* padding-left: 30px; Adiciona um padding para separar da imagem/galeria */
+        padding-left: 30px; /* Adiciona um padding para separar da imagem/galeria */
     }
 }
 
@@ -169,7 +169,7 @@
 .product-actions {
     display: flex;
     align-items: center;
-    margin-top: 75px;
+    margin-top: 75px; /* Ajuste o espaçamento superior se o protótipo indicar */
     flex-wrap: wrap; /* Permite que os itens quebrem a linha */
     gap: 10px;
 }
@@ -189,67 +189,143 @@
 }
 
 
-/* --- SEÇÃO DE PRODUTOS RECOMENDADOS --- */
+/* --- SEÇÃO DE PRODUTOS RECOMENDADOS (AGORA COM SWIPER) --- */
 .recommended-products-section {
     margin-top: 60px;
     margin-bottom: 40px;
+    /* REMOVIDO: Este container não precisa de padding lateral próprio se os filhos internos já o têm */
+    padding: 0;
 }
 
-.recommended-products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Colunas auto-ajustáveis */
-    gap: 20px;
+/* O container do título e do link "See all" dentro da seção de recomendações */
+/* Este Box tem `display: flex; justifyContent: 'space-between'; alignItems: 'center'; mb: 2` no JSX */
+/* Aqui aplicamos o padding para alinhar este Box com o container principal da página */
+.recommended-products-section > .MuiBox-root:first-of-type { /* <-- Usar first-of-type é mais robusto que first-child */
+    /* Aplica o mesmo padding que .product-detail-page-container */
+    padding: 0 20px; /* Alinha com o padding do container principal em mobile */
+}
+
+@media (min-width: 768px) {
+    .recommended-products-section > .MuiBox-root:first-of-type {
+        padding: 0 60px; /* Alinha com o padding do container principal em tablets */
+    }
+}
+@media (min-width: 1024px) {
+    .recommended-products-section > .MuiBox-root:first-of-type {
+        padding: 0 100px; /* Alinha com o padding do container principal em desktops */
+    }
+}
+
+
+/* Estilos para o Swiper Container */
+.recommended-products-swiper {
+    width: 100%; /* Ocupa a largura total do seu container pai */
+    padding-bottom: 40px; /* Espaço para a paginação (pontos) */
+    padding-top: 10px; /* Espaço para as setas de navegação, se preciso */
+    /* Este padding interno é para DAR ESPAÇO PARA AS SETAS DENTRO DO SWIPER,
+       e os slides começarão *após* esse padding. */
+    padding-left: 40px; /* Espaço para a seta esquerda. Ajuste conforme o tamanho da seta */
+    padding-right: 40px; /* Espaço para a seta direita. Ajuste conforme o tamanho da seta */
+    box-sizing: border-box; /* Garante que padding não adicione largura total */
+}
+
+/* Ajustes para os slides do Swiper (onde seus ProductCards estarão) */
+.recommended-products-swiper .swiper-slide {
+    display: flex;
     justify-content: center;
+    align-items: flex-start; /* Alinha o card ao topo do slide */
+    height: auto; /* Permite que o slide se ajuste à altura do conteúdo */
 }
 
-/* Ajustes de colunas para telas maiores */
-@media (min-width: 600px) {
-    .recommended-products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-}
-
-@media (min-width: 900px) {
-    .recommended-products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-}
-
-/* Para ter exatamente 6 colunas em telas grandes como no protótipo */
-@media (min-width: 1200px) {
-    .recommended-products-grid {
-        grid-template-columns: repeat(6, 1fr);
-    }
-}
-
-/* Estilos para o ProductCard dentro da grade de recomendados */
-.recommended-products-grid .product-card-link {
-    width: 100%;
+/* Garante que o ProductCard dentro do SwiperSlide se ajuste */
+.recommended-products-swiper .swiper-slide .product-card-link {
+    width: 100%; /* Ocupa a largura total do slide */
     display: block;
-    text-decoration: none;
-    color: inherit; /* Garante que o texto dentro do card mantenha a cor */
+    text-decoration: none; /* Garante que não tenha sublinhado */
+    color: inherit; /* Garante que a cor do texto seja herdada */
 }
 
-.recommended-products-grid .product-button {
-    width: 100%;
-    height: auto; /* Permite que a altura se ajuste ao conteúdo */
+.recommended-products-swiper .swiper-slide .product-button {
+    width: 100%; /* Garante que o botão se ajuste */
+    max-width: 180px; /* <--- REDUZA AINDA MAIS A LARGURA MÁXIMA AQUI.
+                                     Isso é CRÍTICO para o texto caber. Ajuste com base no teste. */
+    height: auto; /* Altura flexível */
     padding-bottom: 10px; /* Para dar espaço ao texto */
 }
 
-.recommended-products-grid .product-button img {
-    height: 150px; /* Um pouco menor para caber em 6 colunas */
-    width: 100%;
+/* Ajuste o tamanho da imagem dos cards de recomendação */
+.recommended-products-swiper .swiper-slide .product-button img {
+    height: 150px; /* Mantenha a altura da imagem para consistência */
+    width: 100%; /* Ocupa a largura total do card */
     object-fit: cover;
 }
 
-.recommended-products-grid .product-info {
-    padding: 0 5px; /* Ajuste o padding interno para caber em cards menores */
+/* Ajuste o padding interno do info para dar mais espaço ao texto */
+.recommended-products-swiper .swiper-slide .product-info {
+    padding: 0 5px; /* Reduza um pouco o padding interno se ainda estiver apertado */
+    text-align: center; /* Centraliza o texto */
+    width: 100%; /* Garante que o product-info ocupe toda a largura disponível */
 }
 
-.recommended-products-grid .product-title {
-    font-size: 1rem; /* Reduz o tamanho da fonte do título */
+/* Ajuste os tamanhos de fonte dos textos internos */
+.recommended-products-swiper .swiper-slide .product-type {
+    font-size: 0.7rem; /* Reduz mais o tipo */
 }
-.recommended-products-grid .product-artist,
-.recommended-products-grid .product-price {
-    font-size: 0.85rem; /* Reduz o tamanho da fonte do artista e preço */
+.recommended-products-swiper .swiper-slide .product-title {
+    font-size: 0.8rem; /* <--- Reduza MAIS o tamanho da fonte do título */
+    white-space: normal; /* Permite que o texto quebre a linha */
+    overflow: visible; /* Permite que o texto seja visível */
+    text-overflow: unset; /* Remove ellipsis */
+    min-height: 2.5em; /* <--- Garanta altura mínima para 2 linhas. Ajuste se títulos forem maiores. */
+    line-height: 1.25; /* Ajuste a altura da linha */
+    margin-bottom: 0px; /* Reduz margem inferior para dar mais espaço ao artista */
+}
+.recommended-products-swiper .swiper-slide .product-artist {
+    font-size: 0.75rem; /* <--- Reduza MAIS o tamanho da fonte do artista */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    margin-top: 0px; /* Reduz margem superior */
+    margin-bottom: 3px; /* Espaçamento menor */
+}
+.recommended-products-swiper .swiper-slide .product-price {
+    font-size: 0.8rem; /* <--- Reduza MAIS o tamanho da fonte do preço */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    margin-top: 0px; /* Reduz margem superior */
+}
+
+/* Estilos para as setas de navegação do Swiper */
+.swiper-button-prev,
+.swiper-button-next {
+    color: #000 !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+    width: 30px !important;
+    height: 30px !important;
+    background-color: rgba(255, 255, 255, 0.9); /* Fundo um pouco mais opaco para visibilidade */
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    /* Ajuste left/right para posicionar as setas DENTRO do padding do Swiper */
+    left: 5px !important; /* Mantenha 5px para que fiquem um pouco afastadas da borda do slide */
+    right: 5px !important; /* Mantenha 5px */
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    font-size: 1.2rem !important;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Estilos para a paginação (pontos) */
+.swiper-pagination-bullet {
+    background-color: #bbb !important;
+    opacity: 0.8 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #2009EA !important;
 }

@@ -3,22 +3,24 @@ const products = [
     {
         id: 1,
         type: 'vinyl',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'synth-pop', // Exemplo de subgênero
         title: 'Midnights (The Til Dawn Edition)',
         artist: 'Taylor Swift',
         price: 129.90,
-        image: 'https://i.scdn.co/image/ab67616d0000b273fa747621a53c8e2cc436dee0', // Imagem para a ProductCard
-        // NOVOS CAMPOS PARA A PÁGINA DE DETALHES:
+        image: 'https://i.scdn.co/image/ab67616d0000b273fa747621a53c8e2cc436dee0',
         description: 'Midnights (The Til Dawn Edition) é a versão expandida do aclamado décimo álbum de estúdio da cantora e compositora americana Taylor Swift. Lançado em 2022, o álbum explora as noites e os pensamentos que surgem à meia-noite, com letras introspectivas e uma sonoridade pop mais madura. Esta edição especial inclui faixas bônus e é um item essencial para os fãs de Taylor Swift.',
         images: [
-            'https://i.scdn.co/image/ab67616d0000b273fa747621a53c8e2cc436dee0', // Imagem principal (pode ser a mesma da listagem ou uma maior)
-            'https://media.pitchfork.com/photos/635a96753a808ce453664d9f/1:1/w_320/Taylor-Swift-Midnights.jpg', // Exemplo de miniatura 1
-            'https://m.media-amazon.com/images/I/71u9sJm9qEL._AC_UF894,1000_QL80_.jpg', // Exemplo de miniatura 2
-            // Adicione mais URLs de imagens se tiver
+            'https://i.scdn.co/image/ab67616d0000b273fa747621a53c8e2cc436dee0',
+            'https://media.pitchfork.com/photos/635a96753a808ce453664d9f/1:1/w_320/Taylor-Swift-Midnights.jpg',
+            'https://m.media-amazon.com/images/I/71u9sJm9qEL._AC_UF894,1000_QL80_.jpg',
         ],
     },
     {
         id: 2,
         type: 'vinyl',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'dance-pop',
         title: 'Renaissance',
         artist: 'Beyoncé',
         price: 119.90,
@@ -32,6 +34,8 @@ const products = [
     {
         id: 3,
         type: 'cd',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'pop-rock',
         title: 'GUTS',
         artist: 'Olivia Rodrigo',
         price: 49.90,
@@ -42,11 +46,11 @@ const products = [
             'https://i.ebayimg.com/images/g/V3oAAOSwX2Rk~wF~/s-l1600.jpg',
         ]
     },
-    // Continue com os outros produtos ou adicione description e images para eles se quiser
-    // ... (o restante dos seus produtos)
     {
         id: 4,
         type: 'vinyl',
+        genre: 'r&b', // Adicionado campo genre
+        subgenre: 'alt-r&b',
         title: 'SOS',
         artist: 'SZA',
         price: 109.90,
@@ -60,6 +64,8 @@ const products = [
     {
         id: 5,
         type: 'vinyl',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'synth-pop',
         title: 'The Highlights',
         artist: 'The Weeknd',
         price: 99.90,
@@ -73,6 +79,8 @@ const products = [
     {
         id: 6,
         type: 'cd',
+        genre: 'hip hop', // Adicionado campo genre
+        subgenre: 'trap',
         title: 'UTOPIA',
         artist: 'Travis Scott',
         price: 59.90,
@@ -86,6 +94,8 @@ const products = [
     {
         id: 7,
         type: 'vinyl',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'pop',
         title: 'Endless Summer Vacation',
         artist: 'Miley Cyrus',
         price: 115.90,
@@ -99,6 +109,8 @@ const products = [
     {
         id: 8,
         type: 'vinyl',
+        genre: 'reggaeton', // Adicionado campo genre
+        subgenre: 'latin pop',
         title: 'Un Verano Sin Ti',
         artist: 'Bad Bunny',
         price: 125.90,
@@ -112,6 +124,8 @@ const products = [
     {
         id: 9,
         type: 'cd',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'pop-funk',
         title: 'Harry\'s House',
         artist: 'Harry Styles',
         price: 79.90,
@@ -125,6 +139,7 @@ const products = [
     {
         id: 10,
         type: 'vinyl',
+        genre: 'classical', // Adicionado campo genre
         title: 'Beethoven: The 9 Symphonies',
         artist: 'Berliner Philharmoniker & Herbert von Karajan',
         price: 299.90,
@@ -138,6 +153,8 @@ const products = [
     {
         id: 11,
         type: 'cd',
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'hip hop', // Mudei para ser mais pop/hip hop
         title: 'Planet Her',
         artist: 'Doja Cat',
         price: 69.90,
@@ -151,13 +168,15 @@ const products = [
     {
         id: 12,
         type: 'vinyl',
-        title: 'MAYHEM', // O nome do álbum é "Chromatica", não "Mayhem"
+        genre: 'pop', // Adicionado campo genre
+        subgenre: 'dance-pop',
+        title: 'Chromatica', // Corrigido o nome do álbum para Chromatica
         artist: 'Lady Gaga',
         price: 139.90,
-        image: 'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',
+        image: 'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg', // A imagem é de Chromatica
         description: 'Chromatica é o sexto álbum de estúdio da cantora americana Lady Gaga. Lançado em 2020, o álbum é um retorno às raízes dance-pop de Gaga, com uma sonoridade eletrônica inspirada nos anos 90 e temas de cura e superação de traumas. Inclui os singles "Stupid Love" e "Rain on Me", e é uma ode à resiliência e à alegria da música eletrônica.',
         images: [
-            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg', // Usando a imagem que você forneceu
+            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',
             'https://m.media-amazon.com/images/I/81nZ5d2hG+L._UF894,1000_QL80_.jpg',
         ]
     }

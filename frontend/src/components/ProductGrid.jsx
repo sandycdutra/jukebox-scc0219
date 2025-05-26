@@ -1,10 +1,13 @@
+// frontend/src/components/ProductGrid.jsx
 import Grid from '@mui/material/Grid';
+// Certifique-se de que o ProductCard está preparado para um botão de remover opcional
 import ProductCard from './ProductCard.jsx';
-import products from '../mockdata/products.jsx'
-import '../css/main.css'
+// Remover esta linha, pois os produtos virão via prop
+// import products from '../mockdata/products.jsx'
+import '../css/main.css';
 
-function ProductGrid() {
-
+// O ProductGrid agora aceita 'products' como uma prop
+function ProductGrid({ products, showRemoveButton = false, onRemoveItem }) { // Adicione props para remoção
     // breakpoint values
     const gridBreakpoints = {
         mobile: 12,
@@ -14,11 +17,12 @@ function ProductGrid() {
     };
 
     return (
-        <div className="main-grid">
-            <Grid container spacing={2} sx={{ 
+        // Use uma classe mais genérica para o container do grid, ou ajuste no CSS
+        <div className="products-grid-container">
+            <Grid container spacing={2} sx={{
                 padding: 0,
                 maxWidth: 'none',
-                justifyContent: 'space-between', //the albuns adjust to the width
+                justifyContent: 'space-between',
                 margin: '0 auto',
                 alignItems: 'stretch'
             }}>
@@ -27,7 +31,11 @@ function ProductGrid() {
                         display: 'flex',
                         flexDirection: 'column',
                     }}>
-                        <ProductCard product={product} />
+                        <ProductCard
+                            product={product}
+                            // Passa a prop onRemove para o ProductCard se for para mostrar o botão
+                            onRemove={showRemoveButton ? onRemoveItem : undefined}
+                        />
                     </Grid>
                 ))}
             </Grid>

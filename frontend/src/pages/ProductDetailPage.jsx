@@ -1,16 +1,29 @@
 // frontend/src/pages/ProductDetailPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, Link, CircularProgress } from '@mui/material';
-import { FavoriteBorderOutlined as FavoriteIcon, Favorite as FilledFavoriteIcon } from '@mui/icons-material'; // <--- Importe o ícone de coração preenchido também
+// Importe useNavigate e Link do React Router (renomeado para RouterLink)
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'; // <--- CORRIGIDO AQUI
+// Componentes Material-UI
+import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, CircularProgress } from '@mui/material';
+// Importe Link do Material-UI (renomeado para MuiLink para evitar conflito)
+import MuiLink from '@mui/material/Link'; // <--- ADICIONADO AQUI
+import { FavoriteBorderOutlined as FavoriteIcon, Favorite as FilledFavoriteIcon } from '@mui/icons-material';
 
-// Importe seu hook de favoritos
-import { useFavorites } from '../hooks/useFavorites'; // <--- Importe o hook
+// Importe componentes do Swiper e seus módulos (Navegação, Paginação, etc.)
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
 
-// Importe seus componentes Header e Footer
+// Importe os estilos do Swiper (é essencial!)
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+
+import { useFavorites } from '../hooks/useFavorites';
+import { useCart } from '../hooks/useCart';
+
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ProductCard from '../components/ProductCard'; // Para a seção de recomendações
+import ProductCard from '../components/ProductCard';
 
 import products from '../mockdata/products';
 import '../css/main.css';
@@ -19,14 +32,15 @@ import '../css/productdetail.css';
 function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
-    const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites(); // <--- Use o hook de favoritos
+    const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+    const { addToCart } = useCart();
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(1);
     const [mainImage, setMainImage] = useState('');
 
-    const productIsFavorite = product ? isFavorite(product.id) : false; // <--- Verifique se o produto atual é favorito
+    const productIsFavorite = product ? isFavorite(product.id) : false;
 
     useEffect(() => {
         const idAsNumber = parseInt(productId, 10);
@@ -55,11 +69,14 @@ function ProductDetailPage() {
     };
 
     const handleAddToCart = () => {
-        console.log(`Adicionado ${selectedQuantity} de ${product.title} ao carrinho.`);
-        // Lógica real de adição ao carrinho aqui
+        if (product) {
+            addToCart(product, selectedQuantity);
+            console.log(`Adicionado ${selectedQuantity} de ${product.title} ao carrinho.`);
+            navigate('/Cart');
+        }
     };
 
-    const handleFavoriteToggle = () => { // <--- Função para alternar favorito
+    const handleFavoriteToggle = () => {
         if (product) {
             if (productIsFavorite) {
                 removeFavorite(product.id);
@@ -68,7 +85,7 @@ function ProductDetailPage() {
                 addFavorite(product);
                 console.log(`Produto ${product.title} adicionado aos favoritos.`);
             }
-            navigate('/Favorites'); // Navega para a página de favoritos após a ação
+            navigate('/Favorites');
         }
     };
 
@@ -91,12 +108,13 @@ function ProductDetailPage() {
 
             <Box className="product-detail-page-container">
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
-                    <Link underline="hover" color="inherit" href="/">
+                    {/* <--- CORRIGIDO: Usando MuiLink com component={RouterLink} */}
+                    <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
-                    </Link>
-                    <Link underline="hover" color="inherit" href={`/${product.type}`}>
+                    </MuiLink>
+                    <MuiLink underline="hover" color="inherit" component={RouterLink} to={`/${product.type}`}>
                         {product.type.charAt(0).toUpperCase() + product.type.slice(1)}
-                    </Link>
+                    </MuiLink>
                     <Typography color="text.primary">{product.title}</Typography>
                 </Breadcrumbs>
 
@@ -131,8 +149,8 @@ function ProductDetailPage() {
                                 sx={{ minWidth: 80, mr: 2, borderRadius: '8px' }}
                                 inputProps={{ 'aria-label': 'Select quantity' }}
                             >
-                                {[1, 2, 3, 4, 5].map((qty) => (
-                                    <MenuItem key={qty} value={qty}>{`Qtd ${qty}`}</MenuItem>
+                                {[...Array(5)].map((_, i) => (
+                                    <MenuItem key={i + 1} value={i + 1}>{`${i + 1}`}</MenuItem>
                                 ))}
                             </Select>
                             <Button
@@ -153,7 +171,7 @@ function ProductDetailPage() {
                             </Button>
                             <Button
                                 variant="outlined"
-                                onClick={handleFavoriteToggle} // <--- Altera para a nova função de alternância
+                                onClick={handleFavoriteToggle}
                                 sx={{
                                     ml: 1,
                                     borderRadius: '8px',
@@ -164,7 +182,6 @@ function ProductDetailPage() {
                                     padding: '8px',
                                 }}
                             >
-                                {/* Renderiza o ícone de coração preenchido ou vazio com base no estado */}
                                 {productIsFavorite ? <FilledFavoriteIcon sx={{ color: '#2009EA' }} /> : <FavoriteIcon />}
                             </Button>
                         </Box>
@@ -180,15 +197,44 @@ function ProductDetailPage() {
 
                 {recommendedProducts.length > 0 && (
                     <Box className="recommended-products-section" sx={{ mt: 6, mb: 4 }}>
+                        {/* Box para o título e o link "See all" */}
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Typography variant="h6" component="h2">Don't miss other products</Typography>
-                            <Link href={`/${product.type}`} underline="hover" sx={{ color: '#000', fontWeight: 'bold' }}>See all</Link>
+                            {/* <--- CORRIGIDO: Usando MuiLink com component={RouterLink} */}
+                            <MuiLink component={RouterLink} to={`/${product.type}`} underline="hover" sx={{ color: '#000', fontWeight: 'bold' }}>See all</MuiLink>
                         </Box>
-                        <Box className="recommended-products-grid">
-                        {recommendedProducts.slice(0, 4).map(recProduct => (
-                            <ProductCard key={recProduct.id} product={recProduct} />
-                        ))}
-                        </Box>
+                        <Swiper
+                            modules={[Navigation, Pagination]}
+                            spaceBetween={20}
+                            slidesPerView={1}
+                            navigation
+                            pagination={{ clickable: true }}
+                            breakpoints={{
+                                640: {
+                                    slidesPerView: 2,
+                                    spaceBetween: 20,
+                                },
+                                768: {
+                                    slidesPerView: 3,
+                                    spaceBetween: 30,
+                                },
+                                1024: {
+                                    slidesPerView: 4,
+                                    spaceBetween: 40,
+                                },
+                                1200: {
+                                    slidesPerView: 6,
+                                    spaceBetween: 20,
+                                },
+                            }}
+                            className="recommended-products-swiper"
+                        >
+                            {recommendedProducts.map((recProduct) => (
+                                <SwiperSlide key={recProduct.id}>
+                                    <ProductCard product={recProduct} />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
                     </Box>
                 )}
             </Box>

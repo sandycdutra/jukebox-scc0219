@@ -1,0 +1,81 @@
+/* frontend/src/css/categorypage.css */
+
+.category-page-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 60vh;
+}
+
+@media (min-width: 768px) {
+    .category-page-container {
+        padding: 30px 60px;
+    }
+}
+@media (min-width: 1024px) {
+    .category-page-container {
+        padding: 40px 100px;
+    }
+}
+
+.category-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+@media (min-width: 768px) {
+    .category-layout {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
+/* --- Sidebar de Categorias --- */
+.category-sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+    padding-right: 20px;
+}
+
+@media (min-width: 768px) {
+    .category-sidebar {
+        width: 200px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 20px; /* Ajuste conforme a altura do seu header */
+    }
+}
+
+.category-sidebar .sidebar-link {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    padding: 5px 0;
+    transition: color 0.2s ease-in-out;
+}
+
+.category-sidebar .sidebar-link:hover {
+    color: #2009EA;
+}
+
+.category-sidebar .sidebar-link.active {
+    font-weight: bold;
+    color: #2009EA;
+}
+
+/* --- Área da Grade de Produtos --- */
+.category-content {
+    flex-grow: 1;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .category-content {
+        width: calc(100% - 200px - 30px); /* 100% - largura da sidebar - gap */
+    }
+}
+
+.category-content .products-grid-container {
+    padding: 0; /* Garante que o ProductGrid não tenha padding extra aqui */
+}
