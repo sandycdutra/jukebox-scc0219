@@ -21,7 +21,7 @@
 .category-layout {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 90px;
 }
 
 @media (min-width: 768px) {
@@ -78,4 +78,4 @@
 
 .category-content .products-grid-container {
     padding: 0; /* Garante que o ProductGrid não tenha padding extra aqui */
-}
+}   

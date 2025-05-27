@@ -200,7 +200,6 @@ function ProductDetailPage() {
                         {/* Box para o título e o link "See all" */}
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Typography variant="h6" component="h2">Don't miss other products</Typography>
-                            {/* <--- CORRIGIDO: Usando MuiLink com component={RouterLink} */}
                             <MuiLink component={RouterLink} to={`/${product.type}`} underline="hover" sx={{ color: '#000', fontWeight: 'bold' }}>See all</MuiLink>
                         </Box>
                         <Swiper

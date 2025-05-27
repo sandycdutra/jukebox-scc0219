@@ -49,14 +49,14 @@ function Cart() {
                 {cartItems.length === 0 ? (
                     <Box sx={{ textAlign: 'center', mt: 8 }}>
                         <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-                            Seu carrinho está vazio.
+                            Your shopping cart is empty.
                         </Typography>
                         <Button
                             variant="contained"
                             sx={{ backgroundColor: '#2009EA', '&:hover': { backgroundColor: '#1a07bb' } }}
                             onClick={() => navigate('/')}
                         >
-                            Explorar Produtos
+                            GO TO PRODUCTS
                         </Button>
                     </Box>
                 ) : (

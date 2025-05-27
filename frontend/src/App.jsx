@@ -10,6 +10,7 @@ import About from './pages/About'
 import Favorites from './pages/Favorites'
 import Cart from './pages/Cart'
 import Login from './pages/Login'
+import Register from './pages/Register';
 import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
@@ -29,7 +30,9 @@ function App() {
                     <Route path='/Favorites' element={<Favorites />} />
                     <Route path='/Cart' element={<Cart />} />
                     <Route path='/Login' element={<Login />} />
+                    <Route path='/Register' element={<Register />} />
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
+
                 </Routes>
             </main>
         </div>

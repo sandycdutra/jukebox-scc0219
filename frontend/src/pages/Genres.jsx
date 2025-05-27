@@ -97,13 +97,13 @@ function Genres () {
                     <Box className="category-content">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
-                                <InputLabel>Ordenar por:</InputLabel>
+                                <InputLabel>Order by:</InputLabel>
                                 <Select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
                                     label="Ordenar por:"
                                 >
-                                    <MenuItem value="none">Nenhum</MenuItem>
+                                    <MenuItem value="none">Nothing</MenuItem>
                                     <MenuItem value="title-asc">A - Z</MenuItem>
                                     <MenuItem value="title-desc">Z - A</MenuItem>
                                 </Select>
