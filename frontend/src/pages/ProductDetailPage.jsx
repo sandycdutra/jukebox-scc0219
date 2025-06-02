@@ -1,25 +1,18 @@
 // frontend/src/pages/ProductDetailPage.jsx
 import React, { useState, useEffect } from 'react';
-// Importe useNavigate e Link do React Router (renomeado para RouterLink)
-import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'; // <--- CORRIGIDO AQUI
-// Componentes Material-UI
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, CircularProgress } from '@mui/material';
-// Importe Link do Material-UI (renomeado para MuiLink para evitar conflito)
-import MuiLink from '@mui/material/Link'; // <--- ADICIONADO AQUI
+import MuiLink from '@mui/material/Link';
 import { FavoriteBorderOutlined as FavoriteIcon, Favorite as FilledFavoriteIcon } from '@mui/icons-material';
 
-// Importe componentes do Swiper e seus módulos (Navegação, Paginação, etc.)
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-
-// Importe os estilos do Swiper (é essencial!)
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-
 import { useFavorites } from '../hooks/useFavorites';
-import { useCart } from '../hooks/useCart';
+import { useCart } from '../hooks/useCart'; // <--- Importe o hook de carrinho
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -33,13 +26,14 @@ function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
     const { addFavorite, removeFavorite, isFavorite } = useFavorites();
-    const { addToCart } = useCart();
+    const { addToCart, getStock } = useCart(); // <--- OBTENHA addToCart E getStock
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(1);
     const [mainImage, setMainImage] = useState('');
-
+    const [availableStock, setAvailableStock] = useState(0); // <--- Novo estado para o estoque visível
+    const [loading, setLoading] = useState(false);
     const productIsFavorite = product ? isFavorite(product.id) : false;
 
     useEffect(() => {
@@ -53,6 +47,8 @@ function ProductDetailPage() {
             } else {
                 setMainImage(foundProduct.image || 'https://placehold.co/600x400/cccccc/333333?text=No+Image');
             }
+            // Atualiza o estoque disponível na página
+            setAvailableStock(getStock(foundProduct.id)); // <--- Pega o estoque do useCart
 
             const filteredRecommendations = products.filter(
                 p => p.type === foundProduct.type && p.id !== foundProduct.id
@@ -62,16 +58,25 @@ function ProductDetailPage() {
         } else {
             console.error('Produto não encontrado:', productId);
         }
-    }, [productId]);
+    }, [productId, getStock]); // Adicionar getStock como dependência para re-renderizar estoque se mudar
 
     const handleQuantityChange = (event) => {
-        setSelectedQuantity(event.target.value);
+        const newQty = event.target.value;
+        if (newQty > availableStock) {
+            alert(`Você não pode adicionar mais de ${availableStock} unidades.`);
+            setSelectedQuantity(availableStock); // Volta para o estoque máximo disponível
+        } else {
+            setSelectedQuantity(newQty);
+        }
     };
 
-    const handleAddToCart = () => {
-        if (product) {
+    const handleAddToCart = async () => {
+         if (product) {
+            setLoading(true); 
+            await new Promise(resolve => setTimeout(resolve, 500)); 
             addToCart(product, selectedQuantity);
             console.log(`Adicionado ${selectedQuantity} de ${product.title} ao carrinho.`);
+            setLoading(false); 
             navigate('/Cart');
         }
     };
@@ -102,13 +107,23 @@ function ProductDetailPage() {
         );
     }
 
+    // Criar um array de opções de quantidade até o estoque disponível
+    const quantityOptions = [];
+    for (let i = 1; i <= availableStock && i <= 5; i++) { // Max de 5 opções no dropdown ou até o estoque
+        quantityOptions.push(i);
+    }
+    // Se não houver estoque, pelo menos uma opção '0' pode ser mostrada ou desabilitar o seletor.
+    if (availableStock === 0 && quantityOptions.length === 0) {
+        quantityOptions.push(0); // Para que o dropdown não fique vazio
+    }
+
+
     return (
         <>
             <Header />
 
             <Box className="product-detail-page-container">
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
-                    {/* <--- CORRIGIDO: Usando MuiLink com component={RouterLink} */}
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
                     </MuiLink>
@@ -142,15 +157,27 @@ function ProductDetailPage() {
                         <Typography variant="h6" className="product-artist-detail">{product.artist}</Typography>
                         <Typography variant="h5" className="product-price-detail">${product.price.toFixed(2)}</Typography>
 
+                        {/* Exibir o Estoque Disponível */}
+                        <Typography variant="body2" sx={{ mt: 1, color: availableStock > 0 ? 'text.secondary' : 'error.main', fontWeight: 'bold' }}>
+                            Available Stock: {availableStock}
+                        </Typography>
+                        {availableStock === 0 && (
+                            <Typography variant="body2" sx={{ color: 'error.main', mt: 0.5 }}>
+                                Sold Out
+                            </Typography>
+                        )}
+
+
                         <Box className="product-actions">
                             <Select
                                 value={selectedQuantity}
                                 onChange={handleQuantityChange}
                                 sx={{ minWidth: 80, mr: 2, borderRadius: '8px' }}
                                 inputProps={{ 'aria-label': 'Select quantity' }}
+                                disabled={availableStock === 0} // Desabilita seletor se estoque for 0
                             >
-                                {[...Array(5)].map((_, i) => (
-                                    <MenuItem key={i + 1} value={i + 1}>{`${i + 1}`}</MenuItem>
+                                {quantityOptions.map((qty) => ( // Renderiza opções até o estoque
+                                    <MenuItem key={qty} value={qty}>{`${qty}`}</MenuItem>
                                 ))}
                             </Select>
                             <Button
@@ -166,6 +193,7 @@ function ProductDetailPage() {
                                     fontSize: '1rem',
                                     fontWeight: 'bold'
                                 }}
+                                disabled={loading || availableStock === 0} // Desabilita botão se esgotado ou carregando
                             >
                                 ADD TO CART
                             </Button>
@@ -197,7 +225,6 @@ function ProductDetailPage() {
 
                 {recommendedProducts.length > 0 && (
                     <Box className="recommended-products-section" sx={{ mt: 6, mb: 4 }}>
-                        {/* Box para o título e o link "See all" */}
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Typography variant="h6" component="h2">Don't miss other products</Typography>
                             <MuiLink component={RouterLink} to={`/${product.type}`} underline="hover" sx={{ color: '#000', fontWeight: 'bold' }}>See all</MuiLink>

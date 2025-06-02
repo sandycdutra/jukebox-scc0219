@@ -1,0 +1,133 @@
+/* frontend/src/css/checkout.css */
+
+/* Container principal da página de checkout */
+.checkout-page-container {
+    padding: 20px; /* Padding padrão para mobile */
+    max-width: 1200px; /* Largura máxima do conteúdo */
+    margin: 0 auto; /* Centraliza o container na tela */
+    min-height: 60vh; /* Garante que o footer não suba muito se o carrinho estiver vazio */
+}
+
+/* Ajustes de padding para telas maiores, alinhando com o restante do site */
+@media (min-width: 768px) {
+    .checkout-page-container {
+        padding: 30px 60px; /* Mais padding nas laterais para tablets */
+    }
+}
+@media (min-width: 1024px) {
+    .checkout-page-container {
+        padding: 40px 100px; /* Mais padding nas laterais para desktops */
+    }
+}
+
+/* Título principal da página "Checkout" */
+.checkout-page-container > h1 {
+    text-align: left; /* Alinha o título "Checkout" à esquerda */
+    margin-bottom: 40px; /* Mais espaço abaixo do título */
+    font-weight: bold;
+}
+
+/* Grid principal do Checkout (formulário + resumo) */
+.checkout-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* Espaçamento entre as seções (formulário e resumo) */
+    justify-content: center; /* Centraliza o grid se o conteúdo for menor que 100% */
+}
+
+/* Estilos para os Boxes de cada seção (Select an address, Payment, etc.) */
+.checkout-section-box {
+    background-color: #fff; /* Fundo branco para as seções */
+    padding: 20px; /* Padding interno das caixas */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px; /* Espaço entre as seções */
+}
+
+/* Seção de Formulários (Delivery e Payment Information) */
+.checkout-form-section {
+    flex-grow: 1;
+    padding: 0;
+}
+
+/* Seção de Resumo do Pedido */
+.checkout-summary-section {
+    padding: 0;
+}
+
+/* Box que envolve o resumo do pedido (o fundo cinza claro) */
+.order-summary-box {
+    background-color: #f9f9f9; /* Fundo suave para o resumo */
+    padding: 30px; /* Aumenta o padding interno para corresponder ao protótipo */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Separadores no resumo do pedido e entre seções */
+.summary-separator,
+.section-separator {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+.section-separator {
+    margin-top: 30px; /* Mais espaço acima do separador entre seções */
+    margin-bottom: 30px; /* Mais espaço abaixo do separador entre seções */
+}
+
+/* Estilos para os Radio Buttons e TextFields */
+/* Os TextFields já têm margin="normal" e sx={mb: X} no JSX. */
+/* Podemos ajustar o espaço entre o label do radio button e o texto */
+.MuiFormControlLabel-root .MuiRadio-root {
+    padding-right: 0px; /* Reduz o padding à direita do círculo do rádio */
+}
+
+/* Estilos para a linha de endereço/cartão com rádio button e ícones */
+.address-item-row,
+.card-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Alinha o rádio/texto à esquerda e os ícones à direita */
+    border: 1px solid #ddd; /* Borda leve para o item */
+    border-radius: 4px;
+    padding: 8px 15px; /* Padding dentro do item */
+    margin-bottom: 10px; /* Espaço entre os itens */
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.address-item-row:hover,
+.card-item-row:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}
+
+.address-item-row .MuiFormControlLabel-root,
+.card-item-row .MuiFormControlLabel-root {
+    flex-grow: 1; /* Permite que o label ocupe o espaço restante */
+    margin-right: 0; /* Remove a margem padrão do FormControlLabel */
+}
+
+.address-item-row .address-text,
+.card-item-row .card-text {
+    font-size: 0.95rem; /* Ajusta o tamanho do texto do endereço/cartão */
+    color: #333;
+    line-height: 1.4;
+}
+
+.address-actions,
+.card-item-row .MuiIconButton-root { /* Estilos para os ícones de editar/deletar */
+    display: flex;
+    gap: 5px; /* Espaço entre os ícones */
+    margin-left: 10px; /* Espaço entre o texto do endereço e os ícones */
+}
+
+/* Ajuste para o botão Finish Purchase) */
+.checkout-summary-section .MuiButton-root {
+    margin-top: 3px; /* Mais espaço acima do botão de finalizar */
+    padding: 15px 30px !important; /* Aumenta o padding para um botão mais alto */
+    font-size: 1.2rem !important; /* Aumenta o tamanho da fonte */
+    
+}

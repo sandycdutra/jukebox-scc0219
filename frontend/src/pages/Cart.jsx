@@ -25,9 +25,13 @@ function Cart() {
         updateQuantity(productId, event.target.value);
     };
 
+
     const handleBuyCart = () => {
-        console.log('Finalizar compra do carrinho:', cartItems);
-        alert('Funcionalidade de compra não implementada! Carrinho no console.');
+        if (cartItems.length > 0) {
+            navigate('/Checkout'); // <--- Redireciona para a página de checkout
+        } else {
+            alert('Your cart is empty! Add products before purchasing.');
+        }
     };
 
     return (

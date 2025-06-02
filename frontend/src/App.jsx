@@ -11,6 +11,7 @@ import Favorites from './pages/Favorites'
 import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Register from './pages/Register';
+import Checkout from './pages/Checkout';
 import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                     <Route path='/Cart' element={<Cart />} />
                     <Route path='/Login' element={<Login />} />
                     <Route path='/Register' element={<Register />} />
+                    <Route path='/Checkout' element={<Checkout />} />
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
 
                 </Routes>
