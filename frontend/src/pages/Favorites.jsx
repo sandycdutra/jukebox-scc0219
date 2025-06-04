@@ -1,8 +1,7 @@
-// frontend/src/pages/Favorites.jsx
 import React, { useState } from 'react';
-import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel } from '@mui/material'; // Importe Breadcrumbs do MUI
-import MuiLink from '@mui/material/Link'; // <--- Importe Link do MUI com outro nome para evitar conflito
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // <--- Importe Link do React Router como RouterLink
+import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import MuiLink from '@mui/material/Link';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import { useFavorites } from '../hooks/useFavorites';
 import ProductGrid from '../components/ProductGrid';
@@ -47,24 +46,22 @@ function Favorites() {
             <Header />
 
             <Box className="favorites-page-container">
-                {/* Breadcrumbs - CORREÇÃO AQUI */}
+                
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
-                    {/* O componente Link do MUI pode usar o RouterLink como seu componente subjacente */}
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
                     </MuiLink>
-                    {/* O último item do Breadcrumbs geralmente é Typography e não um link */}
                     <Typography color="text.primary">Favourites</Typography>
                 </Breadcrumbs>
 
                 <Box className="favorites-main-content">
-                    {/* Sidebar de Categorias */}
+                    
                     <Box className="favorites-sidebar">
                         <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Favourites</Typography>
                         {categories.map(category => (
-                            <MuiLink // Use MuiLink aqui também para consistência
+                            <MuiLink
                                 key={category}
-                                href="#" // Ou use component={RouterLink} to={`/categories/${category.toLowerCase()}`}
+                                href="#"
                                 onClick={(e) => { e.preventDefault(); setSelectedCategory(category.toLowerCase()); }}
                                 className={`sidebar-link ${selectedCategory === category.toLowerCase() ? 'active' : ''}`}
                                 sx={{ display: 'block', mb: 1 }}
@@ -74,7 +71,6 @@ function Favorites() {
                         ))}
                     </Box>
 
-                    {/* Conteúdo Principal (Ordenação + Produtos) */}
                     <Box className="favorites-grid-area">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>

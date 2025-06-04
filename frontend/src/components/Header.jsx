@@ -6,7 +6,6 @@ import cartIcon from "../assets/icons/shopping-cart.png";
 import userIcon from "../assets/icons/circle-user.png";
 import "../css/header.css";
 import "../css/main.css";
-import { use } from 'react';
 
 function Header() {
     return (

@@ -47,8 +47,8 @@ function ProductDetailPage() {
             } else {
                 setMainImage(foundProduct.image || 'https://placehold.co/600x400/cccccc/333333?text=No+Image');
             }
-            // Atualiza o estoque disponível na página
-            setAvailableStock(getStock(foundProduct.id)); // <--- Pega o estoque do useCart
+            // Atualiza o estoque
+            setAvailableStock(getStock(foundProduct.id));
 
             const filteredRecommendations = products.filter(
                 p => p.type === foundProduct.type && p.id !== foundProduct.id
@@ -58,7 +58,7 @@ function ProductDetailPage() {
         } else {
             console.error('Produto não encontrado:', productId);
         }
-    }, [productId, getStock]); // Adicionar getStock como dependência para re-renderizar estoque se mudar
+    }, [productId, getStock]);
 
     const handleQuantityChange = (event) => {
         const newQty = event.target.value;
@@ -107,16 +107,15 @@ function ProductDetailPage() {
         );
     }
 
-    // Criar um array de opções de quantidade até o estoque disponível
+    // Array de opções de quantidade até o estoque disponível
     const quantityOptions = [];
     for (let i = 1; i <= availableStock && i <= 5; i++) { // Max de 5 opções no dropdown ou até o estoque
         quantityOptions.push(i);
     }
-    // Se não houver estoque, pelo menos uma opção '0' pode ser mostrada ou desabilitar o seletor.
+    // Se não houver estoque
     if (availableStock === 0 && quantityOptions.length === 0) {
-        quantityOptions.push(0); // Para que o dropdown não fique vazio
+        quantityOptions.push(0); // Para o dropdown não ficar vazio
     }
-
 
     return (
         <>
@@ -157,7 +156,6 @@ function ProductDetailPage() {
                         <Typography variant="h6" className="product-artist-detail">{product.artist}</Typography>
                         <Typography variant="h5" className="product-price-detail">${product.price.toFixed(2)}</Typography>
 
-                        {/* Exibir o Estoque Disponível */}
                         <Typography variant="body2" sx={{ mt: 1, color: availableStock > 0 ? 'text.secondary' : 'error.main', fontWeight: 'bold' }}>
                             Available Stock: {availableStock}
                         </Typography>
@@ -167,7 +165,6 @@ function ProductDetailPage() {
                             </Typography>
                         )}
 
-
                         <Box className="product-actions">
                             <Select
                                 value={selectedQuantity}
@@ -176,7 +173,7 @@ function ProductDetailPage() {
                                 inputProps={{ 'aria-label': 'Select quantity' }}
                                 disabled={availableStock === 0} // Desabilita seletor se estoque for 0
                             >
-                                {quantityOptions.map((qty) => ( // Renderiza opções até o estoque
+                                {quantityOptions.map((qty) => (
                                     <MenuItem key={qty} value={qty}>{`${qty}`}</MenuItem>
                                 ))}
                             </Select>

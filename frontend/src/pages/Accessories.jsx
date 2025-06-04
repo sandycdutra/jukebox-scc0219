@@ -1,53 +1,33 @@
-// frontend/src/pages/Accessories.jsx
 import React, { useState } from 'react';
-// Componentes Material-UI
 import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-// Link do Material-UI (renomeado para evitar conflito com Link do React Router)
 import MuiLink from '@mui/material/Link';
-// Link do React Router (renomeado para evitar conflito com Link do Material-UI)
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-// Componentes da sua aplicação
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductGrid from '../components/ProductGrid';
 
-// Dados
-import allProducts from '../mockdata/products'; // Importa a lista COMPLETA de produtos
+import allProducts from '../mockdata/products';
 
-// Estilos
 import '../css/main.css';
-import '../css/categorypage.css'; // Reutiliza o CSS para o layout da página de categoria
+import '../css/categorypage.css';
 
 function Accessories () {
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState('none');
-    // O filtro padrão da sidebar é 'all' para ver todos os acessórios
+    
     const [selectedGenreFilter, setSelectedGenreFilter] = useState('all');
 
-    // LISTA DE GÊNEROS/TIPOS PARA A SIDEBAR (Ajuste conforme seus acessórios)
-    // Aqui, para acessórios, você pode ter sub-tipos como "Headphones", "Cables", "Cleaning Kits", etc.
-    // Certifique-se de que esses valores estejam no campo 'genre' ou 'subgenre' dos seus acessórios no mockdata.
     const accessoryCategoriesForSidebar = [
-        'All', // Para ver todos os acessórios
-        // Exemplos de subcategorias para acessórios:
-        // 'Headphones', 'Cables', 'Cases', 'Cleaning Kits', 'Merchandise'
-        // Adicione as categorias reais de acessórios que você tem
-        // Para o seu mockdata atual, talvez não haja "gêneros" para acessórios,
-        // então esta lista pode ser mais simples ou você pode preencher o campo 'genre'
-        // para acessórios com tipos como 'audio', 'protection', 'cleaning', etc.
-        'Audio', 'Protection', 'Cleaning' // Exemplo de 'gêneros' para acessórios
+        'All', 'CD Player', 'Vinyl Player', 'CD Support', 'Vinyl Support'
     ];
 
+    const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'accessory');
 
-    // PASSO 1: Filtrar os produtos BASE da página. Para Accessories.jsx, são APENAS os acessórios.
-    const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'accessory'); // <--- AQUI ESTÁ O FILTRO BASE
-
-    // PASSO 2: Aplicar o filtro da sidebar sobre os acessórios.
     const filteredByGenre = baseProductsForPage.filter(product => {
         if (selectedGenreFilter === 'all') {
-            return true; // Se 'All' na sidebar, mostre todos os acessórios
+            return true; // Se 'All' na sidebar, mostra todos os acessórios
         }
 
         const lowerCaseSelectedFilter = selectedGenreFilter.toLowerCase();
@@ -59,7 +39,7 @@ function Accessories () {
                (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedFilter);
     });
 
-    // Lógica de ordenação (aplica-se aos produtos já filtrados)
+    // Ordenação
     const sortedProducts = [...filteredByGenre].sort((a, b) => {
         if (sortBy === 'title-asc') {
             return a.title.localeCompare(b.title);
@@ -70,24 +50,23 @@ function Accessories () {
         return 0;
     });
 
-
     return (
         <>
             <Header />
 
             <Box className="category-page-container">
-                {/* Breadcrumbs */}
+
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
                     </MuiLink>
-                    <Typography color="text.primary">Accessories</Typography> {/* Nome da categoria atual */}
+                    <Typography color="text.primary">Accessories</Typography>
                 </Breadcrumbs>
 
                 <Box className="category-layout">
-                    {/* Sidebar de Filtros para Acessórios */}
+                    
                     <Box className="category-sidebar">
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Categories</Typography> {/* Título da sidebar */}
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Categories</Typography>
                         {accessoryCategoriesForSidebar.map(category => (
                             <MuiLink
                                 key={category}
@@ -101,7 +80,6 @@ function Accessories () {
                         ))}
                     </Box>
 
-                    {/* Conteúdo Principal (Ordenação + Produtos) */}
                     <Box className="category-content">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>

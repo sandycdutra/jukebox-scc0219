@@ -1,10 +1,9 @@
-// frontend/mockdata/products.jsx
 const products = [
     {
         id: 1,
         type: 'vinyl',
-        genre: 'pop', // Adicionado campo genre
-        subgenre: 'synth-pop', // Exemplo de subgênero
+        genre: 'pop',
+        subgenre: 'synth-pop',
         title: 'Midnights (The Til Dawn Edition)',
         artist: 'Taylor Swift',
         price: 129.90,
@@ -19,7 +18,7 @@ const products = [
     {
         id: 2,
         type: 'vinyl',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'dance-pop',
         title: 'Renaissance',
         artist: 'Beyoncé',
@@ -35,7 +34,7 @@ const products = [
     {
         id: 3,
         type: 'cd',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'pop-rock',
         title: 'GUTS',
         artist: 'Olivia Rodrigo',
@@ -51,7 +50,7 @@ const products = [
     {
         id: 4,
         type: 'vinyl',
-        genre: 'r&b', // Adicionado campo genre
+        genre: 'r&b',
         subgenre: 'alt-r&b',
         title: 'SOS',
         artist: 'SZA',
@@ -67,7 +66,7 @@ const products = [
     {
         id: 5,
         type: 'vinyl',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'synth-pop',
         title: 'The Highlights',
         artist: 'The Weeknd',
@@ -99,7 +98,7 @@ const products = [
     {
         id: 7,
         type: 'vinyl',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'pop',
         title: 'Endless Summer Vacation',
         artist: 'Miley Cyrus',
@@ -115,7 +114,7 @@ const products = [
     {
         id: 8,
         type: 'vinyl',
-        genre: 'reggaeton', // Adicionado campo genre
+        genre: 'reggaeton',
         subgenre: 'latin pop',
         title: 'Un Verano Sin Ti',
         artist: 'Bad Bunny',
@@ -131,7 +130,7 @@ const products = [
     {
         id: 9,
         type: 'cd',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'pop-funk',
         title: 'Harry\'s House',
         artist: 'Harry Styles',
@@ -147,7 +146,7 @@ const products = [
     {
         id: 10,
         type: 'vinyl',
-        genre: 'classical', // Adicionado campo genre
+        genre: 'classical',
         title: 'Beethoven: The 9 Symphonies',
         artist: 'Berliner Philharmoniker & Herbert von Karajan',
         price: 299.90,
@@ -162,8 +161,8 @@ const products = [
     {
         id: 11,
         type: 'cd',
-        genre: 'pop', // Adicionado campo genre
-        subgenre: 'hip hop', // Mudei para ser mais pop/hip hop
+        genre: 'pop',
+        subgenre: 'hip hop',
         title: 'Planet Her',
         artist: 'Doja Cat',
         price: 69.90,
@@ -179,18 +178,17 @@ const products = [
     {
         id: 12,
         type: 'vinyl',
-        genre: 'pop', // Adicionado campo genre
+        genre: 'pop',
         subgenre: 'dance-pop',
-        title: 'Chromatica', // Corrigido o nome do álbum para Chromatica
+        title: 'Mayhem',
         artist: 'Lady Gaga',
         price: 139.90,
-        image: 'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg', // A imagem é de Chromatica
+        image: 'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',
         description: 'Chromatica é o sexto álbum de estúdio da cantora americana Lady Gaga. Lançado em 2020, o álbum é um retorno às raízes dance-pop de Gaga, com uma sonoridade eletrônica inspirada nos anos 90 e temas de cura e superação de traumas. Inclui os singles "Stupid Love" e "Rain on Me", e é uma ode à resiliência e à alegria da música eletrônica.',
         images: [
             'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',
-            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg', // A imagem é de Chromatica
-            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg', // A imagem é de Chromatica
-            
+            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',
+            'https://upload.wikimedia.org/wikipedia/pt/0/0a/Lady_Gaga_-_Mayhem.jpg',            
         ]
     }
 ];

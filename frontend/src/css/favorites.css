@@ -1,43 +1,40 @@
-/* frontend/src/css/favorites.css */
-
 .favorites-page-container {
     padding: 20px;
-    max-width: 1200px; /* Alinha com o container principal do site */
+    max-width: 1200px;
     margin: 0 auto;
-    min-height: 60vh; /* Para garantir que o footer não suba */
+    min-height: 60vh;
 }
 
 .favorites-main-content {
     display: flex;
-    flex-direction: column; /* Padrão: empilha em mobile */
-    gap: 30px; /* Espaçamento entre sidebar e conteúdo */
+    flex-direction: column;
+    gap: 30px;
 }
 
-@media (min-width: 768px) { /* Layout de duas colunas em desktop */
+@media (min-width: 768px) {
     .favorites-main-content {
         flex-direction: row;
-        align-items: flex-start; /* Alinha ao topo */
+        align-items: flex-start;
     }
 }
 
-/* --- Sidebar de Categorias --- */
 .favorites-sidebar {
-    width: 100%; /* Ocupa largura total em mobile */
-    margin-bottom: 20px; /* Espaço abaixo em mobile */
-    padding-right: 20px; /* Espaçamento à direita em desktop */
+    width: 100%;
+    margin-bottom: 20px;
+    padding-right: 20px;
 }
 
 @media (min-width: 768px) {
     .favorites-sidebar {
-        width: 200px; /* Largura fixa para a sidebar em desktop */
-        flex-shrink: 0; /* Impede que a sidebar encolha */
-        position: sticky; /* Fixa a sidebar ao rolar */
-        top: 20px; /* Posição do topo (ajuste conforme seu header) */
+        width: 200px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 20px;
     }
 }
 
 .favorites-sidebar .sidebar-link {
-    display: block; /* Cada link em sua própria linha */
+    display: block;
     text-decoration: none;
     color: #333;
     padding: 5px 0;
@@ -45,24 +42,21 @@
 }
 
 .favorites-sidebar .sidebar-link:hover {
-    color: #2009EA; /* Cor de hover */
+    color: #2009EA;
 }
 
 .favorites-sidebar .sidebar-link.active {
     font-weight: bold;
-    color: #2009EA; /* Cor para categoria ativa */
+    color: #2009EA;
 }
 
-
-/* --- Área da Grade de Produtos --- */
 .favorites-grid-area {
-    flex-grow: 1; /* Ocupa o espaço restante */
-    width: 100%; /* Ocupa a largura total em mobile */
+    flex-grow: 1;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
     .favorites-grid-area {
-        width: calc(100% - 200px - 30px); /* Largura total - largura sidebar - gap */
+        width: calc(100% - 200px - 30px);
     }
 }
-

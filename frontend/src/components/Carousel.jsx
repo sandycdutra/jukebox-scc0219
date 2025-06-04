@@ -15,7 +15,7 @@ function Carousel() {
             modules={[Navigation, Pagination]}
             loop={true}
             pagination={{ clickable: true }}
-            navigation={true}
+            // navigation={true} // setas com erro
             className="Swiper"
         >
             {banners.map((banner, index) => (

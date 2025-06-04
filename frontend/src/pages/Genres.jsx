@@ -1,21 +1,14 @@
-// frontend/src/pages/CD.jsx
 import React, { useState } from 'react';
-// Componentes Material-UI
 import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-// Link do Material-UI (renomeado para evitar conflito com Link do React Router)
 import MuiLink from '@mui/material/Link';
-// Link do React Router (renomeado para evitar conflito com Link do Material-UI)
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-// Componentes da sua aplicação
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductGrid from '../components/ProductGrid';
 
-// Dados
-import allProducts from '../mockdata/products'; // Importa a lista COMPLETA de produtos
+import allProducts from '../mockdata/products';
 
-// Estilos
 import '../css/main.css';
 import '../css/categorypage.css';
 
@@ -23,35 +16,26 @@ function Genres () {
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState('none');
-    // O filtro padrão da sidebar é 'all' para ver todos os gêneros de CDs
+    // Filtro padrão: 'all'
     const [selectedGenreFilter, setSelectedGenreFilter] = useState('all');
 
-    // LISTA DE GÊNEROS PARA A SIDEBAR
-    // Você pode gerar isso dinamicamente a partir dos seus produtos se preferir
     const genreCategoriesForSidebar = [
-        'All', 'Pop', 'R&B', 'Hip Hop', 'Classical', 'Reggaeton', 'Rock', 'Electronic', 'Indie', 'Country', 'Dance-pop', 'Synth-pop', 'Trap', 'Pop-rock', 'Latin Pop'
-        // Adicione todos os gêneros e subgêneros únicos que você tem no seu mockdata,
-        // ou crie uma lista mais genérica de gêneros principais aqui.
-        // É importante que os nomes aqui correspondam aos valores em product.genre ou product.subgenre
+        'All genres', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
     ];
 
-
-    // PASSO 1: Filtrar os produtos BASE da página. Para CD.jsx, são APENAS os CDs.
     const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'cd');
 
-    // PASSO 2: Aplicar o filtro de GÊNERO da sidebar sobre os CDs.
+    // Filtro
     const filteredByGenre = baseProductsForPage.filter(product => {
         if (selectedGenreFilter === 'all') {
-            return true; // Se 'All' na sidebar, mostre todos os CDs
+            return true; // Se 'All' na sidebar, mostra todos os CDs
         }
 
-        // Verifica se o gênero OU subgênero do produto corresponde ao filtro da sidebar
         const lowerCaseSelectedGenre = selectedGenreFilter.toLowerCase();
         return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre) ||
                (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedGenre);
     });
 
-    // Lógica de ordenação (aplica-se aos produtos já filtrados por tipo e gênero)
     const sortedProducts = [...filteredByGenre].sort((a, b) => {
         if (sortBy === 'title-asc') {
             return a.title.localeCompare(b.title);
@@ -62,13 +46,12 @@ function Genres () {
         return 0;
     });
 
-
     return (
         <>
             <Header />
 
             <Box className="category-page-container">
-                {/* Breadcrumbs */}
+                
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
@@ -77,9 +60,9 @@ function Genres () {
                 </Breadcrumbs>
 
                 <Box className="category-layout">
-                    {/* Sidebar de Gêneros */}
+                    
                     <Box className="category-sidebar">
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Genres</Typography> {/* Título "Genres" na sidebar */}
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Genres</Typography>
                         {genreCategoriesForSidebar.map(genre => (
                             <MuiLink
                                 key={genre}
@@ -93,7 +76,6 @@ function Genres () {
                         ))}
                     </Box>
 
-                    {/* Conteúdo Principal (Ordenação + Produtos) */}
                     <Box className="category-content">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>

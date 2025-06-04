@@ -1,26 +1,23 @@
-// frontend/src/pages/Checkout.jsx
 import React, { useState, useEffect } from 'react';
 import {
     Box, Typography, TextField, Button, CircularProgress, Grid,
-    RadioGroup, FormControlLabel, Radio, IconButton, // Adicionados para rádio buttons e ícones
-    Breadcrumbs // Importado corretamente
+    RadioGroup, FormControlLabel, Radio, IconButton,
+    Breadcrumbs
 } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-// Ícones
-import EditIcon from '@mui/icons-material/Edit'; // Ícone de editar
-import DeleteIcon from '@mui/icons-material/Delete'; // Ícone de deletar
-import AddIcon from '@mui/icons-material/Add'; // Ícone de adicionar
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
-// Importe os hooks de carrinho
 import { useCart } from '../hooks/useCart';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/checkout.css'; // <--- Crie este arquivo CSS para a tela de checkout
+import '../css/checkout.css';
 
 function Checkout() {
     const { cartItems, getCartSubtotal, setCartItems, updateProductStock, getStock } = useCart();
@@ -29,20 +26,19 @@ function Checkout() {
     const [loading, setLoading] = useState(false);
     const [formErrors, setFormErrors] = useState({});
 
-    // --- Estados para Endereços e Pagamento Simulados ---
     const [selectedAddress, setSelectedAddress] = useState('addr1'); // Endereço selecionado
-    const [addresses, setAddresses] = useState([ // Lista de endereços simulados
+    const [addresses, setAddresses] = useState([ // Lista de endereços
         { id: 'addr1', fullAddress: 'Rua Principal, 123, Bairro Central, Cidade, SP, 12345-678' },
         { id: 'addr2', fullAddress: 'Avenida Secundária, 456, Bairro Longe, Cidade, SP, 98765-432' },
     ]);
     const [paymentMethod, setPaymentMethod] = useState('credit_card'); // Método de pagamento selecionado
     const [selectedCard, setSelectedCard] = useState('card1'); // Cartão selecionado
-    const [cards, setCards] = useState([ // Lista de cartões simulados
+    const [cards, setCards] = useState([ // Lista de cartões
         { id: 'card1', display: 'Mastercard XXXX-XXXX-XXXX-1234' },
         { id: 'card2', display: 'Visa XXXX-XXXX-XXXX-5678' },
     ]);
 
-    // Estados para os campos do formulário de entrega (ainda necessários para 'Add new address' ou se não houver endereços salvos)
+    // Formulário (Add new address)
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address1, setAddress1] = useState('');
@@ -53,7 +49,7 @@ function Checkout() {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
 
-    // Estados para os campos do formulário de pagamento (ainda necessários para 'Add new card')
+    // Add new card
     const [cardName, setCardName] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
@@ -72,16 +68,12 @@ function Checkout() {
 
     const validateForm = () => {
         let errors = {};
-        // Validação agora se aplica ao "endereço selecionado" ou ao "novo endereço"
-        // Para simplificar, vou manter a validação dos campos de texto (como se fosse para adicionar um novo)
-        // Mas em um sistema real, você validaria o endereço/cartão selecionado ou os campos do novo.
         if (!selectedAddress && addresses.length > 0) { // Se não tem endereço selecionado e há endereços, erro
              errors.addressSelection = 'Please select a delivery address.';
         }
         if (!selectedAddress && addresses.length === 0 && !address1) { // Se não tem endereço e nenhum novo preenchido
              errors.address1 = 'Address is required';
         }
-        // ... (resto das validações de entrega se estiverem preenchendo um novo) ...
 
         if (!selectedCard && paymentMethod === 'credit_card' && cards.length > 0) {
              errors.cardSelection = 'Please select a card.';
@@ -89,8 +81,6 @@ function Checkout() {
         if (paymentMethod === 'credit_card' && !selectedCard && cards.length === 0 && !cardNumber) {
              errors.cardNumber = 'Card Number is required';
         }
-        // ... (resto das validações de cartão se estiverem preenchendo um novo) ...
-
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -105,20 +95,18 @@ function Checkout() {
 
         setLoading(true);
 
-        // Simulação de processamento do pedido
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         if (subtotal > 0) {
-            // DIMINUIR O ESTOQUE SIMULADO PARA CADA ITEM DO CARRINHO
+            // DIMINUIR O ESTOQUE
             cartItems.forEach(item => {
-                const currentStockInSystem = getStock(item.id); // <--- OBTÉM O ESTOQUE ATUAL DO SISTEMA DE ESTOQUE SIMULADO
+                const currentStockInSystem = getStock(item.id);
                 const newStock = currentStockInSystem - item.quantity;
 
-                // Garante que o estoque não fique negativo (embora a validação já devesse impedir isso)
+                // Estoque não negativo
                 if (newStock >= 0) {
-                    updateProductStock(item.id, newStock); // <--- AGORA DIMINUI CORRETAMENTE O ESTOQUE ATUAL
+                    updateProductStock(item.id, newStock);
                 } else {
-                    // Isso não deveria acontecer se a validação addToCart e updateQuantity funcionarem bem
                     console.error(`Error: Attempt to set negative stock for product ${item.id}. Quantity: ${item.quantity}, Current Stock: ${currentStockInSystem}`);
                 }
             });
@@ -128,11 +116,10 @@ function Checkout() {
                 subtotal: subtotal,
                 shipping: shippingCost,
                 total: total,
-                // ... (deliveryInfo e paymentInfo) ...
             });
             alert('Request placed successfully! You will receive a confirmation email shortly.');
-            setCartItems([]); // Limpa o carrinho após o pedido
-            navigate('/'); // Redireciona para a página inicial
+            setCartItems([]); // Limpa o carrinho depois do pedido
+            navigate('/'); // Redirecionamento
         } else {
             alert('Your cart is empty. Please add products before checking out.');
             navigate('/');
@@ -160,9 +147,8 @@ function Checkout() {
                 </Typography>
 
                 <Grid container spacing={4} className="checkout-grid">
-                    {/* Seção Esquerda: Endereço e Pagamento */}
                     <Grid item xs={12} md={8} className="checkout-form-section">
-                        {/* --- Seção Select an Address --- */}
+                        
                         <Box className="checkout-section-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
                                 Select an address
@@ -199,7 +185,6 @@ function Checkout() {
                             <hr className="section-separator" />
                         </Box>
 
-                        {/* --- Seção Payment --- */}
                         <Box className="checkout-section-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
                                 Payment
@@ -252,7 +237,6 @@ function Checkout() {
                         </Box>
                     </Grid>
 
-                    {/* Seção de Resumo do Pedido (Direita) */}
                     <Grid item xs={12} md={4} className="checkout-summary-section">
                         <Box className="order-summary-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>

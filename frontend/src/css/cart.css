@@ -1,25 +1,21 @@
-/* frontend/src/css/cart.css */
-
 .cart-page-container {
     padding: 20px;
-    max-width: 1000px; /* Largura máxima para a tabela do carrinho */
+    max-width: 1000px;
     margin: 0 auto;
-    min-height: 60vh; /* Para garantir que o footer não suba muito se o carrinho estiver vazio */
+    min-height: 60vh;
 }
 
-/* Estilos para os cabeçalhos da tabela */
 .cart-header-row {
-    display: none; /* Esconde cabeçalhos em mobile */
-    /* font-weight: bold; <--- REMOVIDO: Agora via sx no JSX */
+    display: none;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-@media (min-width: 768px) { /* Exibe em telas maiores como uma grade */
+@media (min-width: 768px) {
     .cart-header-row {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr; /* Colunas para Produto, Qtd, Preço Unit, Total */
+        grid-template-columns: 2fr 1fr 1fr 1fr;
         gap: 20px;
         align-items: center;
         text-align: left;
@@ -37,21 +33,20 @@
     margin-bottom: 20px;
 }
 
-/* Estilos para cada item do carrinho */
 .cart-item-row {
-    display: flex; /* Flexbox para mobile */
-    flex-wrap: wrap; /* Permite que os itens quebrem a linha */
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     border-bottom: 1px solid #eee;
     padding-bottom: 20px;
     margin-bottom: 20px;
-    gap: 15px; /* Espaçamento entre os blocos */
+    gap: 15px;
 }
 
-@media (min-width: 768px) { /* Layout de grid para desktop */
+@media (min-width: 768px) {
     .cart-item-row {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr; /* Mesmas colunas do cabeçalho */
+        grid-template-columns: 2fr 1fr 1fr 1fr;
         gap: 20px;
         align-items: center;
         text-align: left;
@@ -62,18 +57,18 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    width: 100%; /* Ocupa a largura total em mobile */
+    width: 100%;
 }
 
 @media (min-width: 768px) {
     .cart-item-product-info {
-        width: auto; /* Deixa a largura ser definida pelo grid */
-        grid-column: 1 / 2; /* Ocupa a primeira coluna */
+        width: auto;
+        grid-column: 1 / 2;
     }
 }
 
 .cart-item-image {
-    width: 100px; /* Tamanho fixo da imagem do produto no carrinho */
+    width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 4px;
@@ -93,7 +88,7 @@
 
 .cart-item-title {
     font-size: 1.1rem;
-    font-weight: bold; /* Mantido aqui se a Typography não tiver um variant que já faça isso */
+    font-weight: bold;
     line-height: 1.2;
 }
 
@@ -104,21 +99,18 @@
 
 .cart-remove-link {
     font-size: 0.85rem;
-    color: #dc3545; /* Vermelho para remover */
+    color: #dc3545;
     text-decoration: underline;
     cursor: pointer;
     margin-top: 5px;
-    /* font-weight: bold; <--- REMOVIDO: Agora via sx no JSX */
 }
 
-/* Estilos para a quantidade, preço unitário e total */
 .cart-item-quantity,
 .cart-item-unitary-price,
 .cart-item-total-price {
-    width: 100%; /* Ocupa largura total em mobile */
-    text-align: center; /* Centraliza em mobile */
-    margin-top: 10px; /* Espaçamento acima em mobile */
-    /* font-weight: bold; <--- REMOVIDO: Agora via sx no JSX */
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
 }
 
 @media (min-width: 768px) {
@@ -131,15 +123,15 @@
 .cart-summary {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Alinha o subtotal e o botão à direita */
+    align-items: flex-end;
     margin-top: 30px;
-    gap: 15px; /* Espaçamento entre subtotal e botão */
+    gap: 15px;
 }
 
 @media (min-width: 768px) {
     .cart-summary {
-        align-items: flex-end; /* Mantém alinhamento à direita */
-        width: 100%; /* Ocupa a largura total para alinhar com a grid */
+        align-items: flex-end;
+        width: 100%;
     }
 }
 
@@ -151,23 +143,19 @@
     margin-bottom: 20px;
 }
 
-/* Estilos para o botão "BUY SHOPPING CART" */
 .buy-cart-button {
-    /* Diminui o padding para um botão menor */
     padding: 10px 20px !important;
-    font-size: 1rem !important; /* Diminui o tamanho da fonte */
-    /* Remove a largura 100% para que ele se ajuste ao conteúdo, com uma largura máxima */
+    font-size: 1rem !important;
     width: auto !important;
-    max-width: 250px; /* Largura máxima ajustada para um botão menor em desktop */
-    transition: background-color 0.2s ease-in-out; /* Adiciona transição para hover */
+    max-width: 250px;
+    transition: background-color 0.2s ease-in-out;
 }
 
-/* Estilos para o botão "BUY SHOPPING CART" em telas menores */
 @media (max-width: 767px) {
     .buy-cart-button {
-        width: 100% !important; /* Ocupa a largura total em mobile */
-        max-width: none !important; /* Remove max-width em mobile */
-        margin: 0 auto !important; /* Centraliza o botão em mobile */
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 auto !important;
     }
 }
 

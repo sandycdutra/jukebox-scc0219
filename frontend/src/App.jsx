@@ -1,5 +1,4 @@
 import { useState } from 'react'
-// import './css/App.css'
 import { Routes, Route } from 'react-router-dom'
 import Home from "./pages/Home"
 import CD from "./pages/CD"
@@ -34,7 +33,6 @@ function App() {
                     <Route path='/Register' element={<Register />} />
                     <Route path='/Checkout' element={<Checkout />} />
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
-
                 </Routes>
             </main>
         </div>

@@ -1,14 +1,13 @@
-// frontend/src/pages/Register.jsx
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
-import MuiLink from '@mui/material/Link'; // Importe Link do MUI
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Importe Link do React Router
+import MuiLink from '@mui/material/Link';
+import { Link as RouterLink, useNavigate } from 'react-router-dom'; 
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/login.css'; // Reutiliza o CSS da tela de login
+import '../css/login.css';
 
 function Register () {
     const [name, setName] = useState('');
@@ -69,8 +68,8 @@ function Register () {
         <>
             <Header />
 
-            <Box className="login-page-container"> {/* Reutiliza a classe para centralização e fundo */}
-                <Box className="login-box"> {/* Reutiliza a classe para a caixa do formulário */}
+            <Box className="login-page-container">
+                <Box className="login-box">
                     <Typography variant="h5" component="h1" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
                         Register
                     </Typography>

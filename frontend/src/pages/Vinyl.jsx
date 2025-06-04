@@ -1,48 +1,33 @@
-// frontend/src/pages/Vinyl.jsx
 import React, { useState } from 'react';
-// Componentes Material-UI
 import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-// Link do Material-UI (renomeado para evitar conflito com Link do React Router)
 import MuiLink from '@mui/material/Link';
-// Link do React Router (renomeado para evitar conflito com Link do Material-UI)
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-// Componentes da sua aplicação
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductGrid from '../components/ProductGrid';
-// O Sidebar que você tinha (se ele for um componente genérico de menu)
-// import Sidebar from '../components/Sidebar'; // Não usaremos mais o Sidebar genérico aqui, a lista é construída localmente
 
-// Dados
-import allProducts from '../mockdata/products'; // Importa a lista COMPLETA de produtos
+import allProducts from '../mockdata/products';
 
-// Estilos
 import '../css/main.css';
-import '../css/categorypage.css'; // Reutiliza o CSS para o layout da página de categoria
+import '../css/categorypage.css';
 
 function Vinyl () {
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState('none');
-    // O filtro padrão da sidebar é 'all' para ver todos os gêneros de Vinyl
+    // Filtro padrão: 'all'
     const [selectedGenreFilter, setSelectedGenreFilter] = useState('all');
 
-    // LISTA DE GÊNEROS PARA A SIDEBAR (IGUAL AO CD.JSX)
-    // Inclua todos os gêneros e subgêneros únicos que você tem no seu mockdata.
     const genreCategoriesForSidebar = [
-        'All', 'Pop', 'R&B', 'Hip Hop', 'Classical', 'Reggaeton', 'Rock', 'Electronic', 'Indie', 'Country', 'Dance-pop', 'Synth-pop', 'Trap', 'Pop-rock', 'Latin Pop'
-        // Adicione outros gêneros que você tiver
+        'All genres', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
     ];
 
+    const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'vinyl');
 
-    // PASSO 1: Filtrar os produtos BASE da página. Para Vinyl.jsx, são APENAS os Vinis.
-    const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'vinyl'); // <--- AQUI ESTÁ A ÚNICA MUDANÇA SIGNIFICATIVA
-
-    // PASSO 2: Aplicar o filtro de GÊNERO da sidebar sobre os Vinis.
     const filteredByGenre = baseProductsForPage.filter(product => {
         if (selectedGenreFilter === 'all') {
-            return true; // Se 'All' na sidebar, mostre todos os Vinis
+            return true; // Se 'All' na sidebar, mostra todos os Vinis
         }
 
         const lowerCaseSelectedGenre = selectedGenreFilter.toLowerCase();
@@ -50,7 +35,7 @@ function Vinyl () {
                (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedGenre);
     });
 
-    // Lógica de ordenação (aplica-se aos produtos já filtrados por tipo e gênero)
+    // Ordenação
     const sortedProducts = [...filteredByGenre].sort((a, b) => {
         if (sortBy === 'title-asc') {
             return a.title.localeCompare(b.title);
@@ -67,18 +52,18 @@ function Vinyl () {
             <Header />
 
             <Box className="category-page-container">
-                {/* Breadcrumbs */}
+                
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
                     </MuiLink>
-                    <Typography color="text.primary">Vinyl</Typography> {/* Nome da categoria atual */}
+                    <Typography color="text.primary">Vinyl</Typography>
                 </Breadcrumbs>
 
                 <Box className="category-layout">
-                    {/* Sidebar de Gêneros */}
+                    
                     <Box className="category-sidebar">
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Genres</Typography> {/* Título "Genres" na sidebar */}
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Genres</Typography>
                         {genreCategoriesForSidebar.map(genre => (
                             <MuiLink
                                 key={genre}
@@ -92,7 +77,6 @@ function Vinyl () {
                         ))}
                     </Box>
 
-                    {/* Conteúdo Principal (Ordenação + Produtos) */}
                     <Box className="category-content">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>

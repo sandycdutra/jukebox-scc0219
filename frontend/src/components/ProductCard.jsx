@@ -1,16 +1,14 @@
-// frontend/src/components/ProductCard.jsx
-import { Box, Typography, Button } from '@mui/material'; // Adicionado Button
+import { Box, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Close as CloseIcon } from '@mui/icons-material'; // Importa o ícone de fechar
+import { Close as CloseIcon } from '@mui/icons-material';
 import '../css/main.css';
 import '../css/product.css';
 
-// Aceita uma nova prop 'onRemove' que será uma função
 function ProductCard({ product, onRemove }) {
     const productDetailUrl = `/product/${product.id}`;
 
     return (
-        <div style={{ position: 'relative' }}> {/* Wrapper para posicionar o botão de remover */}
+        <div style={{ position: 'relative' }}>
             <Link to={productDetailUrl} className="product-card-link">
                 <div className="product-button">
                     <img src={product.image} alt={product.title}></img>
@@ -22,31 +20,30 @@ function ProductCard({ product, onRemove }) {
                     </div>
                 </div>
             </Link>
-            {/* Renderiza o botão de remover APENAS se a prop onRemove for fornecida */}
             {onRemove && (
                 <Button
-                    variant="contained" // Pode ser 'text' ou 'outlined' também
-                    color="error" // Cor vermelha padrão do Material-UI
-                    onClick={(e) => { // Previne o clique do link do card
+                    variant="contained"
+                    color="error"
+                    onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        onRemove(product.id); // Chama a função onRemove com o ID do produto
+                        onRemove(product.id);
                     }}
                     sx={{
                         position: 'absolute',
                         top: 5,
                         right: 5,
-                        minWidth: 'unset', // Para um botão pequeno
+                        minWidth: 'unset',
                         padding: '4px',
-                        borderRadius: '50%', // Faz o botão redondo
+                        borderRadius: '50%',
                         height: '30px',
                         width: '30px',
-                        zIndex: 10, // Garante que fique por cima do card
+                        zIndex: 10,
                         opacity: 0.8,
                         '&:hover': { opacity: 1 }
                     }}
                 >
-                    <CloseIcon sx={{ fontSize: '1.2rem' }} /> {/* Ícone "X" */}
+                    <CloseIcon sx={{ fontSize: '1.2rem' }} />
                 </Button>
             )}
         </div>

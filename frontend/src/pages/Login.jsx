@@ -1,26 +1,25 @@
-// frontend/src/pages/Login.jsx
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
-import MuiLink from '@mui/material/Link'; // Importe Link do MUI
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Importe Link do React Router
+import MuiLink from '@mui/material/Link';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/login.css'; // <--- Crie este arquivo CSS para a tela de login
+import '../css/login.css';
 
 function Login () {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false); // Estado para indicar carregamento
-    const [error, setError] = useState(''); // Estado para mensagens de erro
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault(); // Previne o recarregamento da página ao enviar o formulário
+        e.preventDefault(); // Previne o recarregamento da página quando o formulário é enviado
         setLoading(true);
-        setError(''); // Limpa erros anteriores
+        setError('');
 
         // --- Lógica de Autenticação (Apenas Mock/Exemplo) ---
         // Em um projeto real, você faria uma chamada para o seu backend aqui:
@@ -47,12 +46,11 @@ function Login () {
         //     setLoading(false);
         // }
 
-        // Exemplo de simulação de login local
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simula um atraso de rede
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulação de atraso de rede
         if (email === 'test@example.com' && password === 'password123') {
             console.log('Login local bem-sucedido!');
             alert('Login bem-sucedido!');
-            navigate('/'); // Redireciona para a página inicial
+            navigate('/'); // Redirecionamento
         } else {
             setError('Email ou senha inválidos.');
         }

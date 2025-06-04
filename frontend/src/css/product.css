@@ -1,5 +1,3 @@
-/* frontend/src/css/product.css */
-
 .main-grid {
     padding: 20px 160px;
 }
@@ -9,29 +7,24 @@
     padding: 20px 160px;
 }
 
-/* Novo estilo para o Link, para remover o sublinhado e manter a cor do texto */
 .product-card-link {
-    text-decoration: none; /* Remove o sublinhado padrão do link */
-    color: inherit; /* Garante que a cor do texto seja herdada dos elementos filhos */
-    /* Você pode adicionar display: block; ou inline-block; aqui se o link precisar ocupar todo o espaço */
+    text-decoration: none;
+    color: inherit;
 }
-
 
 .product-button {
     background: #fff;
     width: 250px;
-    border: none; /* Mantém a borda como none, já que não é mais um <button> nativo */
+    border: none;
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Adicione uma transição para suavizar a mudança de fundo ao passar o mouse */
     transition: background 0.2s ease-in-out;
 }
 
-/* O efeito de hover agora se aplica ao .product-button quando o .product-card-link é hover */
 .product-card-link:hover .product-button {
     background: #E9E9E9;
 }
@@ -44,9 +37,8 @@
 
 .product-info {
     margin-top: 10px;
-    /* Adicione um padding horizontal para o texto não encostar nas bordas */
     padding: 0 10px;
-    text-align: center; /* Centraliza o texto dentro do info */
+    text-align: center;
 }
 
 .product-type {
@@ -60,9 +52,9 @@
     margin: 3px 0;
     text-transform: uppercase;
     text-overflow: ellipsis;
-    white-space: nowrap; /* Evita que o texto quebre para garantir o ellipsis */
+    white-space: nowrap;
     overflow: hidden; /* Esconde o texto que excede */
-    max-width: 100%; /* Garante que o ellipsis funcione corretamente */
+    max-width: 100%;
 }
 
 .product-artist {

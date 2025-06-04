@@ -9,7 +9,6 @@ import mastercardLogo from "../assets/icons/logo-mastercard.png";
 import visaLogo from "../assets/icons/logo-visa.png";
 import pixLogo from "../assets/icons/logo-pix.png";
 
-
 function Footer () {
     return (
         <footer className="footer">

@@ -1,17 +1,13 @@
-// frontend/src/pages/Cart.jsx
-import React from 'react';
 import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-// Importe o hook de carrinho
 import { useCart } from '../hooks/useCart';
 
-// Importe Header e Footer
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/cart.css'; // Mantenha este import para outros estilos de layout
+import '../css/cart.css'; 
 
 function Cart() {
     const { cartItems, removeFromCart, updateQuantity, getCartSubtotal } = useCart();
@@ -65,10 +61,7 @@ function Cart() {
                     </Box>
                 ) : (
                     <Box>
-                        {/* Cabeçalhos da tabela do carrinho */}
                         <Box className="cart-header-row">
-                            {/* <Typography variant="subtitle1" className="cart-header-product">Product</Typography> */}
-                            {/* Ajuste o Typography para usar fontWeight diretamente via sx */}
                             <Typography variant="subtitle1" className="cart-header-product" sx={{ fontWeight: 'bold' }}>Product</Typography>
                             <Typography variant="subtitle1" className="cart-header-quantity" sx={{ fontWeight: 'bold' }}>Quantity</Typography>
                             <Typography variant="subtitle1" className="cart-header-unitary-price" sx={{ fontWeight: 'bold' }}>Unitary Price</Typography>
@@ -76,7 +69,6 @@ function Cart() {
                         </Box>
                         <hr className="cart-header-separator" />
 
-                        {/* Itens do carrinho */}
                         {cartItems.map((item) => (
                             <Box key={item.id} className="cart-item-row">
                                 <Box className="cart-item-product-info">
@@ -91,8 +83,8 @@ function Cart() {
                                                 e.preventDefault();
                                                 handleRemoveItem(item.id);
                                             }}
-                                            className="cart-remove-link" // Use a classe para estilos de Link
-                                            sx={{ fontWeight: 'bold' }} // <--- Adicione fontWeight aqui para o link
+                                            className="cart-remove-link"
+                                            sx={{ fontWeight: 'bold' }}
                                         >
                                             Remove Item
                                         </Link>
@@ -112,7 +104,6 @@ function Cart() {
                                     </Select>
                                 </Box>
 
-                                {/* Adicione fontWeight via sx para os valores numéricos */}
                                 <Typography variant="body1" className="cart-item-unitary-price" sx={{ fontWeight: 'bold' }}>
                                     ${item.price.toFixed(2)}
                                 </Typography>
@@ -141,7 +132,7 @@ function Cart() {
                                     padding: '12px 30px',
                                     textTransform: 'uppercase',
                                     fontSize: '1.1rem',
-                                    fontWeight: 'bold', // <--- Mantém aqui para o botão principal
+                                    fontWeight: 'bold',
                                     width: '100%',
                                     mt: 3
                                 }}
