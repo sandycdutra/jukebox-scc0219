@@ -3,6 +3,9 @@ import ProductCard from './ProductCard.jsx';
 import '../css/main.css';
 
 function ProductGrid({ products, showRemoveButton = false, onRemoveItem }) { 
+
+    products = [...products].sort(() => Math.random() - 0.5); // Mostrando em ordem aleatória
+
     const gridBreakpoints = {
         mobile: 12,
         tablet: 6,
