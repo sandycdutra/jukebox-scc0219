@@ -20,7 +20,7 @@ function Vinyl () {
     const [selectedGenreFilter, setSelectedGenreFilter] = useState('all');
 
     const genreCategoriesForSidebar = [
-        'All genres', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
+        'All', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
     ];
 
     const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'vinyl');

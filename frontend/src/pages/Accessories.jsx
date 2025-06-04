@@ -31,12 +31,9 @@ function Accessories () {
         }
 
         const lowerCaseSelectedFilter = selectedGenreFilter.toLowerCase();
-        // Verifica se o 'type', 'genre' ou 'subgenre' do acessório corresponde ao filtro da sidebar.
-        // Se acessórios não têm 'genre' ou 'subgenre' no seu mockdata, pode ser que você precise
-        // adicionar um campo 'accessory_type' ou 'category' para eles.
+
         return (product.type && product.type.toLowerCase() === lowerCaseSelectedFilter) ||
-               (product.genre && product.genre.toLowerCase() === lowerCaseSelectedFilter) ||
-               (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedFilter);
+               (product.genre && product.genre.toLowerCase() === lowerCaseSelectedFilter)
     });
 
     // Ordenação
