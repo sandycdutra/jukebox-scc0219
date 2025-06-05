@@ -63,15 +63,15 @@ const products = [
         id: 5,
         type: 'vinyl',
         genre: 'pop',
-        title: 'The Highlights',
+        title: 'Hurry Up Tomorrow',
         artist: 'The Weeknd',
         price: 99.90,
-        image: 'https://universalmusic.vtexassets.com/arquivos/ids/188179/vinil-the-weeknd-the-highlights-2lp-importado-vinil-the-weeknd-the-highlights-2lp-00602435931975-00060243593197.jpg?v=638622776291070000',
-        description: 'The Highlights is the second greatest hits album, and first one released globally, by Canadian singer-songwriter the Weeknd.[4] It was released on February 5, 2021,[5] and follows the release of his fourth studio album After Hours (2020) and his first greatest hits album The Weeknd in Japan (2018).[6][7] It was released in anticipation of his performance at the Super Bowl LV halftime show.',
+        image: 'https://akamai.sscdn.co/uploadfile/letras/albuns/7/5/9/b/2621201738316056.jpg',
+        description: 'Hurry Up Tomorrow is the sixth studio album by Canadian singer-songwriter the Weeknd. It was released through XO and Republic Records on January 31, 2025. It also serves as a companion piece to the film of the same name. The standard album contains guest appearances from Anitta, Justice, Travis Scott, Florence and the Machine, Future, Playboi Carti, Giorgio Moroder, and Lana Del Rey, with a bonus edition containing an additional appearance from Swedish House Mafia.[1] Production was primarily handled by the Weeknd himself and his regular collaborators including Cirkut, DaHeala, Max Martin, Mike Dean, Metro Boomin, Prince85 and OPN, alongside various other producers.',
         images: [
-            'https://universalmusic.vtexassets.com/arquivos/ids/188179/vinil-the-weeknd-the-highlights-2lp-importado-vinil-the-weeknd-the-highlights-2lp-00602435931975-00060243593197.jpg?v=638622776291070000',
-            'https://universalmusic.vtexassets.com/arquivos/ids/188179/vinil-the-weeknd-the-highlights-2lp-importado-vinil-the-weeknd-the-highlights-2lp-00602435931975-00060243593197.jpg?v=638622776291070000',
-            'https://universalmusic.vtexassets.com/arquivos/ids/188179/vinil-the-weeknd-the-highlights-2lp-importado-vinil-the-weeknd-the-highlights-2lp-00602435931975-00060243593197.jpg?v=638622776291070000',
+            'https://akamai.sscdn.co/uploadfile/letras/albuns/7/5/9/b/2621201738316056.jpg',
+            'https://akamai.sscdn.co/uploadfile/letras/albuns/7/5/9/b/2621201738316056.jpg',
+            'https://akamai.sscdn.co/uploadfile/letras/albuns/7/5/9/b/2621201738316056.jpg',
         ]
     },
     {
@@ -108,15 +108,15 @@ const products = [
         id: 8,
         type: 'vinyl',
         genre: 'pop',
-        title: 'Un Verano Sin Ti',
+        title: 'DeBÍ TiRAR MáS FOToS',
         artist: 'Bad Bunny',
         price: 125.90,
-        image: 'https://upload.wikimedia.org/wikipedia/pt/6/60/Bad_Bunny_-_Un_Verano_Sin_Ti.png',
-        description: 'Un Verano Sin Ti (Spanish pronunciation: [um beˈɾano sin ˈti]; transl. A Summer Without You) is the fourth solo studio album, and fifth overall, by Puerto Rican rapper and singer Bad Bunny. It was released on May 6, 2022, by Rimas Entertainment, following nearly two years after the release of his previous record El Último Tour Del Mundo (2020). Comprising twenty-three tracks, the album is primarily a reggaeton, cumbia, and indie pop record, and features guest appearances from Chencho Corleone, Jhayco, Tony Dize, Rauw Alejandro, Bomba Estéreo, the Marías, Buscabulla, and frequent collaborator Tainy.',
+        image: 'https://monkeybuzz.com.br/wp-content/uploads/2025/01/capa-bb.jpg',
+        description: '"Debí Tirar Más Fotos" (Spanish for "I Should Have Taken More Photos"), stylized as DeBÍ TiRAR MáS FOToS and abbreviated as DtMF, is the sixth solo studio album (seventh overall) by Puerto Rican rapper and singer Bad Bunny. It was released on January 5, 2025, by Rimas Entertainment, following his previous album Nadie Sabe Lo Que Va a Pasar Mañana (2023). Musically, the album is primarily a reggaeton record that blends various elements of traditional Puerto Rican music from Bad Bunny’s childhood, including plena, jíbaro, and salsa, similar to his 2022 album Un Verano Sin Ti. The lyrics explore the complexities of Puerto Rico’s political status and related issues, such as gentrification and cultural identity loss. The album features collaborations with Chuwi, Omar Courtz, Los Pleneros de la Cresta, Dei V, and RaiNao.',
         images: [
-            'https://upload.wikimedia.org/wikipedia/pt/6/60/Bad_Bunny_-_Un_Verano_Sin_Ti.png',
-            'https://upload.wikimedia.org/wikipedia/pt/6/60/Bad_Bunny_-_Un_Verano_Sin_Ti.png',
-            'https://upload.wikimedia.org/wikipedia/pt/6/60/Bad_Bunny_-_Un_Verano_Sin_Ti.png',
+            'https://monkeybuzz.com.br/wp-content/uploads/2025/01/capa-bb.jpg',
+            'https://monkeybuzz.com.br/wp-content/uploads/2025/01/capa-bb.jpg',
+            'https://monkeybuzz.com.br/wp-content/uploads/2025/01/capa-bb.jpg',
         ]
     },
     {

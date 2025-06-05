@@ -4,21 +4,21 @@ import banner3 from "./banner3.png"
 
 const banners = [
     {
-        id: 1,
-        title: 'carousel 1',
-        alt:'alt-text',
+        id: 12,
+        title: 'Mayhem',
+        alt:'What\'s New: Mayhem, Lady Gaga',
         image: banner1
     },
     {
-        id: 2,
-        title: 'carousel 2',
-        alt:'alt-text',
+        id: 8,
+        title: 'DeBÍ TiRAR MáS FOToS',
+        alt:'What\'s New: DeBÍ TiRAR MáS FOToS, Bad Bunny',
         image: banner2
     },
     {
-        id: 3,
-        title: 'carousel 3',
-        alt:'alt-text',
+        id: 5,
+        title: 'Hurry Up Tomorrow',
+        alt:'What\'s New: Hurry Up Tomorrow, The Weeknd',
         image: banner3
     }
 ];

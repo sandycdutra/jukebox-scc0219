@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -19,7 +20,11 @@ function Carousel() {
             className="Swiper"
         >
             {banners.map((banner, index) => (
-                <SwiperSlide key={index}><button className="carousel-button"><img src={banner.image} alt = {banner.alt} /></button></SwiperSlide>
+                <SwiperSlide key={index}>
+                    <Link to={`/product/${banner.id}`} className="carousel-link">
+                        <img src={banner.image} alt={banner.alt} />
+                    </Link>
+                </SwiperSlide>
             ))}
         </Swiper>
         </section>
