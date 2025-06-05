@@ -31,8 +31,7 @@ function Vinyl () {
         }
 
         const lowerCaseSelectedGenre = selectedGenreFilter.toLowerCase();
-        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre) ||
-               (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedGenre);
+        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre);
     });
 
     // Ordenação

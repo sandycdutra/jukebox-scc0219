@@ -19,7 +19,6 @@ function CD () {
     // Filtro padrão: 'all'
     const [selectedGenreFilter, setSelectedGenreFilter] = useState('all');
 
-    // Gêneros da Sidebar
     const genreCategoriesForSidebar = [
         'All', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
     ];
@@ -32,8 +31,7 @@ function CD () {
             return true; // Se 'All' na sidebar, mostra todos os CDs
         }
         const lowerCaseSelectedGenre = selectedGenreFilter.toLowerCase();
-        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre) ||
-               (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedGenre);
+        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre);
     });
 
     // Ordenação

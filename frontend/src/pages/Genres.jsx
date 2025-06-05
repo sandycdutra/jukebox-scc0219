@@ -23,17 +23,19 @@ function Genres () {
         'All', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
     ];
 
-    const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'cd');
+    const baseProductsForPage = allProducts.filter(product => 
+        product.type.toLowerCase() === 'cd' || 
+        product.type.toLowerCase() === 'vinyl'
+    );
 
     // Filtro
     const filteredByGenre = baseProductsForPage.filter(product => {
         if (selectedGenreFilter === 'all') {
-            return true; // Se 'All' na sidebar, mostra todos os CDs
+            return true; // Se 'All' na sidebar, mostra todos os CDs e vinis
         }
 
         const lowerCaseSelectedGenre = selectedGenreFilter.toLowerCase();
-        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre) ||
-               (product.subgenre && product.subgenre.toLowerCase() === lowerCaseSelectedGenre);
+        return (product.genre && product.genre.toLowerCase() === lowerCaseSelectedGenre);
     });
 
     const sortedProducts = [...filteredByGenre].sort((a, b) => {
@@ -56,7 +58,7 @@ function Genres () {
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
                     </MuiLink>
-                    <Typography color="text.primary">CD</Typography>
+                    <Typography color="text.primary">Genres</Typography>
                 </Breadcrumbs>
 
                 <Box className="category-layout">
@@ -102,7 +104,7 @@ function Genres () {
                                     sx={{ backgroundColor: '#2009EA', '&:hover': { backgroundColor: '#1a07bb' } }}
                                     onClick={() => navigate('/')}
                                 >
-                                    Go to products
+                                    Go to home page
                                 </Button>
                             </Box>
                         ) : (

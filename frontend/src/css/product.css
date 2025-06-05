@@ -53,8 +53,8 @@
     text-transform: uppercase;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden; /* Esconde o texto que excede */
-    max-width: 100%;
+    overflow: hidden; /* Para cortar o título e fazer ele caber no card */
+    max-width: 250px;
 }
 
 .product-artist {

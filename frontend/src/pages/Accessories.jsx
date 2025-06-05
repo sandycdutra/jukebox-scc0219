@@ -25,6 +25,7 @@ function Accessories () {
 
     const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'accessory');
 
+    // O Gênero nesse caso é "acessory"
     const filteredByGenre = baseProductsForPage.filter(product => {
         if (selectedGenreFilter === 'all') {
             return true; // Se 'All' na sidebar, mostra todos os acessórios
