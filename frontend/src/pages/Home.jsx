@@ -22,24 +22,6 @@ function Home() {
                 <ProductGrid products={allProducts}/>
             </Box>
 
-            <Box sx={{ textAlign: 'center', mt: 5, mb: 5 }}>
-                <Button
-                    variant="outlined"
-                    onClick={resetAllStock}
-                    sx={{
-                        borderColor: 'orange',
-                        color: 'orange',
-                        '&:hover': {
-                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                            borderColor: 'darkorange',
-                            color: 'darkorange'
-                        }
-                    }}
-                >
-                    Reset Stock to 5 Units (ADMIN)
-                </Button>
-            </Box>
-
             <Footer/>
         </>
     );

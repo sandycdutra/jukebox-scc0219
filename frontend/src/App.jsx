@@ -11,6 +11,7 @@ import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Register from './pages/Register';
 import Checkout from './pages/Checkout';
+import MyAccount from './pages/MyAccount'
 import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
                     <Route path='/Register' element={<Register />} />
                     <Route path='/Checkout' element={<Checkout />} />
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
+                    <Route path='/my-account' element={<MyAccount />} /> 
                 </Routes>
             </main>
         </div>

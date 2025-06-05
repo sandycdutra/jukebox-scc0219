@@ -6,6 +6,9 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+import { useAuth } from '../hooks/useAuth'; 
+import mockUsers from '../mockdata/users'; 
+
 import '../css/main.css';
 import '../css/login.css';
 
@@ -15,44 +18,28 @@ function Login () {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
-        e.preventDefault(); // Previne o recarregamento da página quando o formulário é enviado
+        e.preventDefault(); 
         setLoading(true);
         setError('');
 
-        // --- Lógica de Autenticação (Apenas Mock/Exemplo) ---
-        // Em um projeto real, você faria uma chamada para o seu backend aqui:
-        // try {
-        //     const response = await fetch('/api/login', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({ email, password })
-        //     });
-        //     const data = await response.json();
-        //     if (response.ok) {
-        //         // Autenticação bem-sucedida
-        //         console.log('Login bem-sucedido:', data);
-        //         // Ex: Salvar token no localStorage, redirecionar para a home ou dashboard
-        //         navigate('/');
-        //     } else {
-        //         // Erro na autenticação
-        //         setError(data.message || 'Credenciais inválidas.');
-        //     }
-        // } catch (err) {
-        //     setError('Erro ao conectar ao servidor. Tente novamente.');
-        //     console.error('Erro de rede ou servidor:', err);
-        // } finally {
-        //     setLoading(false);
-        // }
 
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulação de atraso de rede
-        if (email === 'test@example.com' && password === 'password123') {
-            console.log('Login local bem-sucedido!');
-            alert('Login bem-sucedido!');
-            navigate('/'); // Redirecionamento
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        //busca o usuário mockado
+        const foundUser = mockUsers.find(
+            user => user.email === email && user.password === password
+        );
+
+        if (foundUser) {
+            console.log('Login successful!', foundUser);
+            login(foundUser); 
+            alert('Login successful!');
+            navigate('/'); // Redireciona para a página inicial
         } else {
-            setError('Email ou senha inválidos.');
+            setError('Invalid email or password.');
         }
         setLoading(false);
     };
