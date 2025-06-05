@@ -101,7 +101,7 @@ export function useCart() {
             const itemToRemove = prevItems.find(item => item.id === productId);
             if (itemToRemove) {
                 // Ao remover do carrinho, devolve o estoque
-                updateProductStock(productId, getStock(productId) + itemToRemove.quantity);
+                //updateProductStock(productId, getStock(productId) + itemToRemove.quantity);
             }
             return prevItems.filter(item => item.id !== productId); // Use item.id para filtrar
         });
