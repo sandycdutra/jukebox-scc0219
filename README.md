@@ -156,7 +156,7 @@ Note: the admin pages are not reachable by the prototype, here's the pages:
 
 ## Functionalities explained
 
-### Client Login
+### How to Login to your Client Account
 
 Starting from the Home Page, click on the profile icon.
 
@@ -182,7 +182,46 @@ If everything goes well, an alert will appear:
 
 ![image](https://github.com/user-attachments/assets/adfdfc96-e41f-4397-917a-9437b5d001d1)
 
-### Cart
+### How to Purchase an item
+
+Starting from the Home Page, choose an item to purchase.
+
+![image](https://github.com/user-attachments/assets/c925eaba-f6bf-481f-97ee-57b21cb2c97b)
+
+Clicking it will lead to the item's page. Then, you need to click "Add to cart".
+
+![image](https://github.com/user-attachments/assets/5329603e-81a8-4bc2-a581-55a8d2b3cfaa)
+
+This will lead you to the cart page. Here, you can choose the quantity and review the price. You may also add more products or remove added items.
+
+![image](https://github.com/user-attachments/assets/c590597d-8adc-4baa-9543-5de746389384)
+
+If you are happy with how your cart is looking, clicking on the "Buy Shopping Cart" button will lead you to the checkout page, where you can review your purchase, select an address and how you wish to pay:
+
+![image](https://github.com/user-attachments/assets/3b768f5f-76e4-41e6-85a7-5a6b39da7899)
+
+Clicking "Finish Purchase" will complete the purchase and this pop up will appear:
+
+![image](https://github.com/user-attachments/assets/b3792a22-853f-46f6-82c2-025fab0a8146)
+
+After you purchase an item, the amount left in stock will change.
+
+![image](https://github.com/user-attachments/assets/73ba2903-96f2-4263-8822-fda4527653ac)
+
+### How to Favorite an item (Special Functionality)
+
+Starting from the Home Page, choose an item to favorite.
+
+![image](https://github.com/user-attachments/assets/c925eaba-f6bf-481f-97ee-57b21cb2c97b)
+
+In the item page, click on the heart button.
+
+![image](https://github.com/user-attachments/assets/75820086-4956-42ae-9cf1-f9b9aaa1b037)
+
+This will add the item to your favorite page. You may add as many items as you wish.
+
+![image](https://github.com/user-attachments/assets/9834f283-5d03-436d-b4e3-e29569f269dc)
+
 
 ---
 
