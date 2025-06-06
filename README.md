@@ -7,6 +7,40 @@ Sandy da Costa Dutra, 12544570
 
 ---
 
+## Project Description
+JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, designed to meet the specified requirements through the following implementations:
+
+### System Architecture
+- **Frontend**: React.js (responsive UI for desktop/mobile)
+- **Backend**: Node.js (REST API)
+- **Database**: PostgreSQL (stores users, products)
+
+### Functionalities
+
+#### User Management
+- **Admins**:
+  - Access admin dashboard
+  - CRUD operations via API endpoints (`POST /api/products`, etc.)
+- **Customers**:
+  - Signup/login with email validation
+  - Profile management (edit address/phone)
+
+#### Product Catalog
+- Product cards display:
+  - Cover art, price, stock status
+- Search & Filters:
+  - By genre, artist, release year
+
+#### Shopping Flow
+- **Cart System**:
+  - Local storage for guest users; synced to DB after login
+  - Real-time stock validation at checkout
+- **Checkout**:
+  - Credit card/PIX payment processing
+  - Stock updates: `quantity_in_stock -= ordered_quantity`
+
+---
+
 ## Requirements
 
 ### User Types
@@ -43,37 +77,6 @@ Sandy da Costa Dutra, 12544570
 
 ---
 
-## Project Description
-JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, designed to meet the specified requirements through the following implementations:
-
-### System Architecture
-- **Frontend**: React.js (responsive UI for desktop/mobile)
-- **Backend**: Node.js (REST API)
-- **Database**: PostgreSQL (stores users, products)
-
-### Implemented Functionalities
-
-#### User Management
-- **Admins**:
-  - Access admin dashboard
-  - CRUD operations via API endpoints (`POST /api/products`, etc.)
-- **Customers**:
-  - Signup/login with email validation
-  - Profile management (edit address/phone)
-
-#### Product Catalog
-- Product cards display:
-  - Cover art, price, stock status
-- Search & Filters:
-  - By genre, artist, release year
-
-#### Shopping Flow
-- **Cart System**:
-  - Local storage for guest users; synced to DB after login
-  - Real-time stock validation at checkout
-- **Checkout**:
-  - Credit card/PIX payment processing
-  - Stock updates: `quantity_in_stock -= ordered_quantity`
 ### Data to be Stored on Server
 #### 1. User Data
 ```
@@ -152,7 +155,7 @@ Note: the admin pages are not reachable by the prototype, here's the pages:
 ---
 
 ## Comments About the Code
-The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display our best-sellers. the products are organized in a grid. For the vinyl page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
+The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display all products. The products are organized in a grid. For the Vinyl, CD and Accessories page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
 
 ---
 
@@ -161,6 +164,7 @@ The HTML structure is organized hierarchically, dividing the website into main s
 - **Backend**: Postman tests for API routes (users, products)
 - **Frontend**: Jest unit tests for React components
 - **Integration**: Manual testing of checkout flow
+- **User login**: frontend/src/mockdata/users.jsx
 
 ---
 
@@ -171,15 +175,28 @@ The HTML structure is organized hierarchically, dividing the website into main s
 
 ---
 
-## Build Procedures
-*Expected setup:*
-Node.js + PostgreSQL
-```bash
+## How to run
 
-npm install
-npm run db:setup
-npm start
+### First, clone the repository
+
+```bash
+git clone https://github.com/sandycdutra/jukebox-scc0219.git
+cd .\jukebox-scc0219\frontend\
 ````
+
+### Then install the dependencies
+
+```bash
+npm install
+````
+
+### Finally, run the project
+
+```bash
+npm run dev
+````
+
+#### The project is running at http://localhost:5173/
 ---
 
 ## Problems
