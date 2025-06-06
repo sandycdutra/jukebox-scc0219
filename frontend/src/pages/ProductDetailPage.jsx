@@ -26,7 +26,7 @@ function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
     const { addFavorite, removeFavorite, isFavorite } = useFavorites();
-    const { addToCart, getStock } = useCart(); // <--- OBTENHA addToCart E getStock
+    const { addToCart, getStock } = useCart(); 
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
@@ -107,9 +107,8 @@ function ProductDetailPage() {
         );
     }
 
-    // Array de opções de quantidade até o estoque disponível
     const quantityOptions = [];
-    for (let i = 1; i <= availableStock && i <= 5; i++) { // Max de 5 opções no dropdown ou até o estoque
+    for (let i = 1; i <= availableStock && i <= 5; i++) { 
         quantityOptions.push(i);
     }
     // Se não houver estoque

@@ -11,7 +11,7 @@ export function useCart() {
             const storedCartItems = localStorage.getItem(CART_STORAGE_KEY);
             return storedCartItems ? JSON.parse(storedCartItems) : [];
         } catch (error) {
-            console.error("Erro ao carregar itens do carrinho do localStorage:", error);
+            console.error(error);
             return [];
         }
     });
@@ -61,11 +61,9 @@ export function useCart() {
     }, []); // updateProductStock não depende de nada externo que mude a cada render, apenas de setMockStock que é estável.
 
 
-    // MEMOIZE addToCart com useCallback
     const addToCart = useCallback((product, quantityToAdd) => {
         setCartItems((prevItems) => { // setCartItems é uma função estável fornecida pelo React
             const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
-            // Chama getStock aqui. Como getStock é memoizado com mockStock, não haverá loop.
             const currentStock = getStock(product.id);
             const currentCartQuantity = existingItemIndex > -1 ? prevItems[existingItemIndex].quantity : 0;
             const requestedTotalQuantity = currentCartQuantity + quantityToAdd;
@@ -93,21 +91,14 @@ export function useCart() {
                 return [...prevItems, { ...product, quantity: quantityToAdd }];
             }
         });
-    }, [getStock, setCartItems]); // <--- DEPENDÊNCIAS CORRETAS: getStock e setCartItems (setCartItems é estável)
+    }, [getStock, setCartItems]); 
 
-    // MEMOIZE removeFromCart com useCallback
     const removeFromCart = useCallback((productId) => {
         setCartItems((prevItems) => {
             const itemToRemove = prevItems.find(item => item.id === productId);
-            if (itemToRemove) {
-                // Ao remover do carrinho, devolve o estoque
-                updateProductStock(productId, getStock(productId) + itemToRemove.quantity);
-            }
-            return prevItems.filter(item => item.id !== productId); // Use item.id para filtrar
-        });
-    }, [updateProductStock, getStock, setCartItems]); // <--- DEPENDÊNCIAS CORRETAS: updateProductStock, getStock, setCartItems
+            return prevItems.filter(item => item.id !== productId); });
+    }, [updateProductStock, getStock, setCartItems]);
 
-    // MEMOIZE updateQuantity com useCallback
     const updateQuantity = useCallback((productId, newQuantity) => {
         setCartItems((prevItems) => {
             const updatedItems = prevItems.map(item => {
@@ -131,8 +122,7 @@ export function useCart() {
 
             return updatedItems;
         });
-    }, [getStock, setCartItems]); // <--- DEPENDÊNCIAS CORRETAS: getStock, setCartItems
-
+    }, [getStock, setCartItems]); 
     const getCartSubtotal = () => {
         return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
