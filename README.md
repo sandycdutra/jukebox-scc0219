@@ -154,6 +154,38 @@ Note: the admin pages are not reachable by the prototype, here's the pages:
   
 ---
 
+## Functionalities explained
+
+### Client Login
+
+Starting from the Home Page, click on the profile icon.
+
+![image](https://github.com/user-attachments/assets/6e227545-0e5d-4956-bb78-ae82d4597622)
+
+If you are not logged in, it will take you to the login page.
+
+![image](https://github.com/user-attachments/assets/0c0b8d0d-48c7-4f2b-a416-9c2268acad3f)
+
+Then, you need to type your email and password.
+
+![image](https://github.com/user-attachments/assets/fcce75c6-a220-4d41-a1b0-23f80c82c89b)
+
+If you have made a mistake, it will show the following message:
+
+![image](https://github.com/user-attachments/assets/6eaff204-349c-42e8-bf3b-5652e9349712)
+
+If you don't fill all the spaces, it will warn you:
+
+![image](https://github.com/user-attachments/assets/55d03e7a-b770-4290-92a7-7e7c79ce89fa)
+
+If everything goes well, an alert will appear:
+
+![image](https://github.com/user-attachments/assets/adfdfc96-e41f-4397-917a-9437b5d001d1)
+
+### Cart
+
+---
+
 ## Comments About the Code
 The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display all products. The products are organized in a grid. For the Vinyl, CD and Accessories page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
 
