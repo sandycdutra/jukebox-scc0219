@@ -24,42 +24,19 @@ function Register () {
         setError('');
 
         if (password !== confirmPassword) {
-            setError('As senhas não coincidem.');
+            setError('Passwords do not match.');
             setLoading(false);
             return;
         }
-
-        // --- Lógica de Registro (Apenas Mock/Exemplo) ---
-        // Em um projeto real, você faria uma chamada para o seu backend aqui:
-        // try {
-        //     const response = await fetch('/api/register', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({ name, email, password })
-        //     });
-        //     const data = await response.json();
-        //     if (response.ok) {
-        //         console.log('Registro bem-sucedido:', data);
-        //         alert('Registro bem-sucedido! Faça login para continuar.');
-        //         navigate('/Login'); // Redireciona para a página de login
-        //     } else {
-        //         setError(data.message || 'Erro no registro. Tente novamente.');
-        //     }
-        // } catch (err) {
-        //     setError('Erro ao conectar ao servidor. Tente novamente.');
-        //     console.error('Erro de rede ou servidor:', err);
-        // } finally {
-        //     setLoading(false);
-        // }
 
         // Exemplo de simulação de registro local
         await new Promise(resolve => setTimeout(resolve, 1500)); // Simula um atraso de rede
         if (email && password && name) { // Validação básica
             console.log('Registro local simulado com sucesso!');
-            alert('Registro bem-sucedido! Por favor, faça login.');
+            alert('Registration successful! Please login.');
             navigate('/Login'); // Redireciona para a página de login
         } else {
-            setError('Por favor, preencha todos os campos.');
+            setError('Please fill in all fields.');
         }
         setLoading(false);
     };

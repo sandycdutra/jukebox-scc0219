@@ -1,16 +1,22 @@
-import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, Link } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// frontend/src/pages/Cart.jsx
+import React from 'react';
+import { Box, Typography, Button, Select, MenuItem, Breadcrumbs } from '@mui/material';
+import MuiLink from '@mui/material/Link'; // Importe Link do MUI
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+// Importe os hooks de carrinho e autenticação
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth'; // <--- IMPORTE O HOOK DE AUTENTICAÇÃO
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/cart.css'; 
+import '../css/cart.css';
 
 function Cart() {
     const { cartItems, removeFromCart, updateQuantity, getCartSubtotal } = useCart();
+    const { isAuthenticated } = useAuth(); // <--- OBTENHA O ESTADO DE AUTENTICAÇÃO
     const navigate = useNavigate();
 
     const handleRemoveItem = (productId) => {
@@ -21,13 +27,20 @@ function Cart() {
         updateQuantity(productId, event.target.value);
     };
 
-
     const handleBuyCart = () => {
-        if (cartItems.length > 0) {
-            navigate('/Checkout'); // <--- Redireciona para a página de checkout
-        } else {
+        if (cartItems.length === 0) {
             alert('Your cart is empty! Add products before purchasing.');
+            return; // Não faz nada se o carrinho estiver vazio
         }
+
+        if (!isAuthenticated) { // <--- VERIFICA SE O USUÁRIO ESTÁ AUTENTICADO
+            alert('Please log in or register to continue with your purchase.');
+            navigate('/Login'); // Redireciona para a página de Login
+            return; // Interrompe a função aqui
+        }
+
+        // Se o usuário estiver autenticado e o carrinho não estiver vazio, navega para o Checkout
+        navigate('/Checkout');
     };
 
     return (
@@ -36,9 +49,9 @@ function Cart() {
 
             <Box className="cart-page-container">
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
-                    <Link underline="hover" color="inherit" href="/">
+                    <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
-                    </Link>
+                    </MuiLink>
                     <Typography color="text.primary">Shopping Cart</Typography>
                 </Breadcrumbs>
 
@@ -49,18 +62,19 @@ function Cart() {
                 {cartItems.length === 0 ? (
                     <Box sx={{ textAlign: 'center', mt: 8 }}>
                         <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-                            Your shopping cart is empty.
+                            Seu carrinho está vazio.
                         </Typography>
                         <Button
                             variant="contained"
                             sx={{ backgroundColor: '#2009EA', '&:hover': { backgroundColor: '#1a07bb' } }}
                             onClick={() => navigate('/')}
                         >
-                            GO TO PRODUCTS
+                            Explorar Produtos
                         </Button>
                     </Box>
                 ) : (
                     <Box>
+                        {/* Cabeçalhos da tabela do carrinho */}
                         <Box className="cart-header-row">
                             <Typography variant="subtitle1" className="cart-header-product" sx={{ fontWeight: 'bold' }}>Product</Typography>
                             <Typography variant="subtitle1" className="cart-header-quantity" sx={{ fontWeight: 'bold' }}>Quantity</Typography>
@@ -69,6 +83,7 @@ function Cart() {
                         </Box>
                         <hr className="cart-header-separator" />
 
+                        {/* Itens do carrinho */}
                         {cartItems.map((item) => (
                             <Box key={item.id} className="cart-item-row">
                                 <Box className="cart-item-product-info">
@@ -77,7 +92,7 @@ function Cart() {
                                         <Typography variant="caption" className="cart-item-type">{item.type.toUpperCase()}</Typography>
                                         <Typography variant="h6" className="cart-item-title">{item.title}</Typography>
                                         <Typography variant="body2" className="cart-item-artist">{item.artist}</Typography>
-                                        <Link
+                                        <MuiLink
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
@@ -87,7 +102,7 @@ function Cart() {
                                             sx={{ fontWeight: 'bold' }}
                                         >
                                             Remove Item
-                                        </Link>
+                                        </MuiLink>
                                     </Box>
                                 </Box>
 
@@ -129,13 +144,12 @@ function Cart() {
                                     color: '#fff',
                                     '&:hover': { backgroundColor: '#1a07bb' },
                                     borderRadius: '8px',
-                                    padding: '12px 30px',
+                                    padding: '12px 0',
                                     textTransform: 'uppercase',
                                     fontSize: '1.1rem',
                                     fontWeight: 'bold',
-                                    width: '100%',
-                                    mt: 3
                                 }}
+                                disabled={cartItems.length === 0}
                             >
                                 BUY SHOPPING CART
                             </Button>

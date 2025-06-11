@@ -37,7 +37,7 @@ function Login () {
             console.log('Login successful!', foundUser);
             login(foundUser); 
             alert('Login successful!');
-            navigate('/'); // Redireciona para a página inicial
+            navigate('/'); //redireciona para a página inicial
         } else {
             setError('Invalid email or password.');
         }

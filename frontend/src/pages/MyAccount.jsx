@@ -61,7 +61,7 @@ function MyAccount() {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>Carregando conta...</Typography>
+                <Typography variant="h6" sx={{ ml: 2 }}>Loading account...</Typography>
             </Box>
         );
     }
@@ -116,7 +116,7 @@ function MyAccount() {
                             </Box>
                             <Button
                                 variant="outlined"
-                                onClick={() => alert('Funcionalidade de edição de perfil não implementada.')}
+                                onClick={() => alert('Profile editing functionality not implemented.')}
                                 sx={{ mt: 3, color: '#2009EA', borderColor: '#2009EA', '&:hover': { borderColor: '#1a07bb' } }}
                             >
                                 Edit Profile
