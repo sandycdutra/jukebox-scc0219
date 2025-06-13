@@ -9,34 +9,44 @@ import ProductGrid from '../components/ProductGrid';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+
 import '../css/main.css';
-import '../css/favorites.css';
+import '../css/favorites.css'; 
 
 function Favorites() {
-    const { favorites, removeFavorite } = useFavorites();
+    const { favorites, removeFavorite } = useFavorites(); 
     const navigate = useNavigate();
 
     const [sortBy, setSortBy] = useState('none');
     const [selectedCategory, setSelectedCategory] = useState('all');
 
-    const categories = [
-        'All', 'CD', 'Vinyl', 'Accessories', 'Classical', 'Country',
-        'Electronic', 'Hip Hop', 'Indie', 'Pop', 'Rap', 'R&B', 'Rock'
+    // A lista de categorias para a sidebar 
+    const categoriesForSidebar = [
+        'All', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
+
     ];
 
+    // Lógica de filtragem: filtra a lista 'favorites'
     const filteredFavorites = favorites.filter(product => {
         if (selectedCategory === 'all') {
-            return true;
+            return true; // Se 'All' na sidebar, mostra todos os favoritos
         }
-        return product.type.toLowerCase() === selectedCategory.toLowerCase();
+
+        const lowerCaseSelectedCategory = selectedCategory.toLowerCase();
+
+        // Verifica se o produto corresponde à categoria selecionada (por tipo ou por gênero)
+        return (product.type && product.type.toLowerCase() === lowerCaseSelectedCategory) ||
+               (product.metadata?.genre && product.metadata.genre.toLowerCase() === lowerCaseSelectedCategory) ||
+               (product.metadata?.subgenre && product.metadata.subgenre.toLowerCase() === lowerCaseSelectedCategory);
     });
 
+    // Lógica de ordenação
     const sortedFavorites = [...filteredFavorites].sort((a, b) => {
         if (sortBy === 'title-asc') {
-            return a.title.localeCompare(b.title);
+            return a.name.localeCompare(b.name); 
         }
         if (sortBy === 'title-desc') {
-            return b.title.localeCompare(a.title);
+            return b.name.localeCompare(a.name); 
         }
         return 0;
     });
@@ -46,7 +56,6 @@ function Favorites() {
             <Header />
 
             <Box className="favorites-page-container">
-                
                 <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 4, mt: 2 }}>
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to="/">
                         Home
@@ -55,10 +64,9 @@ function Favorites() {
                 </Breadcrumbs>
 
                 <Box className="favorites-main-content">
-                    
                     <Box className="favorites-sidebar">
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Favourites</Typography>
-                        {categories.map(category => (
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Categories</Typography> {/* Título para a sidebar */}
+                        {categoriesForSidebar.map(category => ( // <--- Usa categoriesForSidebar
                             <MuiLink
                                 key={category}
                                 href="#"
@@ -78,7 +86,7 @@ function Favorites() {
                                 <Select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    label="Ordenar por:"
+                                    label="Order by:"
                                 >
                                     <MenuItem value="none">Nothing</MenuItem>
                                     <MenuItem value="title-asc">A - Z</MenuItem>
@@ -106,8 +114,8 @@ function Favorites() {
                         ) : (
                             <ProductGrid
                                 products={sortedFavorites}
-                                showRemoveButton={true}
-                                onRemoveItem={removeFavorite}
+                                showRemoveButton={true} // Diz ao ProductGrid para mostrar o botão de remover
+                                onRemoveItem={removeFavorite} // Passa a função para remover
                             />
                         )}
                     </Box>

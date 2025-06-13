@@ -1,13 +1,16 @@
+// frontend/src/pages/Register.jsx
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
 import MuiLink from '@mui/material/Link';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; 
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+import { useAuth } from '../hooks/useAuth'; // Importe o useAuth hook
+
 import '../css/main.css';
-import '../css/login.css';
+import '../css/login.css'; // Reutiliza o CSS da tela de login
 
 function Register () {
     const [name, setName] = useState('');
@@ -17,6 +20,7 @@ function Register () {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { register } = useAuth(); // Obtenha a função de registro do hook
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -24,19 +28,19 @@ function Register () {
         setError('');
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+            setError('Passwords do not match.'); // Mensagem traduzida
             setLoading(false);
             return;
         }
 
-        // Exemplo de simulação de registro local
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simula um atraso de rede
-        if (email && password && name) { // Validação básica
-            console.log('Registro local simulado com sucesso!');
-            alert('Registration successful! Please login.');
+        // Chama a função de registro do hook, que faz a chamada para o backend
+        const result = await register({ name, email, password }); // Passa os dados do usuário
+
+        if (result.success) {
+            alert('Registration successful! Please log in to continue.'); // Alerta traduzido
             navigate('/Login'); // Redireciona para a página de login
         } else {
-            setError('Please fill in all fields.');
+            setError(result.message || 'Registration failed. Please try again.'); // Exibe mensagem de erro do backend
         }
         setLoading(false);
     };

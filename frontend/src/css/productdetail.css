@@ -339,3 +339,63 @@
 .swiper-pagination-bullet-active {
     background-color: #2009EA !important;
 }
+/* Estilos para o novo controle de quantidade (+ e -) */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #2009EA; /* Borda da cor do botão principal */
+    border-radius: 8px;
+    overflow: hidden;
+    height: 48px; /* <--- ALTURA MAIOR PARA ALINHAR COM BOTÃO ADD TO CART PADRÃO */
+    width: 150px; /* <--- LARGURA MAIOR PARA O CONTROLE COMPLETO */
+}
+
+/* Estilos para os botões de Ícone (+ e -) dentro do controle de quantidade */
+.quantity-control .MuiIconButton-root {
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: #2009EA !important; /* FORÇA O FUNDO AZUL */
+    color: white !important; /* FORÇA A COR DO ÍCONE BRANCA */
+    width: 48px; /* <--- LARGURA DO BOTÃO AUMENTADA */
+    height: 100%; /* Ocupa a altura total do container */
+}
+
+.quantity-control .MuiIconButton-root:hover {
+    background-color: #1a07bb !important; /* FORÇA O AZUL MAIS ESCURO NO HOVER */
+    border-color: #1a07bb !important;
+}
+
+.quantity-control .MuiIconButton-root:disabled {
+    background-color: #f0f0f0 !important; /* Cinza claro para desabilitado */
+    color: #bbb !important; /* Cor do ícone desabilitado */
+}
+
+/* Estilos para o TextField (input numérico) dentro do controle de quantidade */
+.quantity-control .MuiInputBase-root {
+    height: 100%;
+    padding: 0;
+    flex-grow: 1; /* Permite que o TextField ocupe o espaço restante entre os botões */
+}
+
+.quantity-control .MuiInputBase-input {
+    height: 100%;
+    padding: 0;
+    text-align: center;
+    border: none;
+    background-color: #fff; /* Fundo branco para o input */
+    color: #333; /* Cor do texto do número */
+    font-size: 1.1rem; /* <--- AUMENTA O TAMANHO DA FONTE DO NÚMERO */
+}
+
+.quantity-control .MuiOutlinedInput-notchedOutline {
+    border-color: transparent !important; /* Remove a borda padrão do outlined input */
+}
+
+/* Ajustes gerais de espaçamento para os botões ADD TO CART e coracao */
+.product-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 30px; /* Ajustado espaçamento superior */
+    flex-wrap: wrap;
+    gap: 10px;
+}

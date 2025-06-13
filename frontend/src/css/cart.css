@@ -159,3 +159,67 @@
     }
 }
 
+.cart-item-quantity .quantity-control { /* Mais específico para garantir que aplique apenas aqui */
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc; /* Borda leve para o container */
+    border-radius: 8px;
+    overflow: hidden;
+    height: 40px;
+    width: 120px; /* Largura fixa para o controle de quantidade, ajuste se precisar */
+}
+
+/* Estilos para os botões de Ícone (+ e -) dentro do controle de quantidade */
+.cart-item-quantity .quantity-control .MuiIconButton-root {
+    border: none;
+    border-radius: 0;
+    background-color: #2009EA; /* <--- AZUL DO BOTÃO */
+    color: white; /* <--- ÍCONE BRANCO */
+    width: 40px;
+    height: 100%;
+}
+
+.cart-item-quantity .quantity-control .MuiIconButton-root:hover {
+    background-color: #1a07bb; /* <--- AZUL MAIS ESCURO NO HOVER */
+    border-color: #1a07bb; /* Borda também mais escura no hover */
+}
+
+.cart-item-quantity .quantity-control .MuiIconButton-root:disabled {
+    background-color: #ccc; /* Cinza para desabilitado */
+    color: #888; /* Cor mais escura para o ícone desabilitado */
+}
+
+/* Estilos para o TextField (input numérico) dentro do controle de quantidade */
+.cart-item-quantity .quantity-control .MuiInputBase-root {
+    height: 100%;
+    padding: 0;
+    flex-grow: 1; /* Permite que o TextField ocupe o espaço restante entre os botões */
+}
+
+.cart-item-quantity .quantity-control .MuiInputBase-input {
+    height: 100%;
+    padding: 0;
+    text-align: center;
+    border: none;
+    background-color: #fff; /* Fundo branco para o input */
+    color: #333; /* Cor do texto do número */
+}
+
+.cart-item-quantity .quantity-control .MuiOutlinedInput-notchedOutline {
+    border-color: transparent !important; /* Remove a borda padrão do outlined input */
+}
+
+/* Ajustes para o link "Remove Item" */
+.cart-remove-link {
+    font-size: 0.85rem;
+    color: #2009EA; /* <--- AZUL DO BOTÃO */
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 5px;
+    font-weight: bold; /* Mantém o negrito, se desejado */
+    transition: color 0.2s ease-in-out;
+}
+
+.cart-remove-link:hover {
+    color: #1a07bb; /* Azul mais escuro no hover */
+}

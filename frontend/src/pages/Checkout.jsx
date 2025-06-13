@@ -1,17 +1,20 @@
+// frontend/src/pages/Checkout.jsx
 import React, { useState, useEffect } from 'react';
-import {
-    Box, Typography, TextField, Button, CircularProgress, Grid,
+import { Box, Typography, TextField, Button, CircularProgress, Grid,
     RadioGroup, FormControlLabel, Radio, IconButton,
     Breadcrumbs
 } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+// Ícones
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
+// Importe os hooks de carrinho e autenticação
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth'; // Para obter o token de autenticação
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -20,25 +23,27 @@ import '../css/main.css';
 import '../css/checkout.css';
 
 function Checkout() {
-    const { cartItems, getCartSubtotal, setCartItems, updateProductStock, getStock } = useCart();
+    const { cartItems, getCartSubtotal, setCartItems } = useCart();
+    const { isAuthenticated, user, token } = useAuth(); // <--- Obtenha o user e o token
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [formErrors, setFormErrors] = useState({});
 
-    const [selectedAddress, setSelectedAddress] = useState('addr1'); // Endereço selecionado
-    const [addresses, setAddresses] = useState([ // Lista de endereços
-        { id: 'addr1', fullAddress: 'Rua Principal, 123, Bairro Central, Cidade, SP, 12345-678' },
-        { id: 'addr2', fullAddress: 'Avenida Secundária, 456, Bairro Longe, Cidade, SP, 98765-432' },
+    // --- Estados para Endereços e Pagamento Simulados (para o Checkout) ---
+    // Em um sistema real, você buscaria os endereços/cartões do usuário do backend
+    const [selectedAddress, setSelectedAddress] = useState('addr1');
+    const [addresses, setAddresses] = useState([
+        { id: 'addr1', fullAddress: 'Rua Principal, 123, Bairro Central, Cidade, SP, 12345-678', street: 'Rua Principal', city: 'Cidade', state: 'SP', zip_code: '12345-678' }, // Adicionado detalhes para o Order Model
+        { id: 'addr2', fullAddress: 'Avenida Secundária, 456, Bairro Longe, Cidade, SP, 98765-432', street: 'Avenida Secundária', city: 'Cidade', state: 'SP', zip_code: '98765-432' },
     ]);
-    const [paymentMethod, setPaymentMethod] = useState('credit_card'); // Método de pagamento selecionado
-    const [selectedCard, setSelectedCard] = useState('card1'); // Cartão selecionado
-    const [cards, setCards] = useState([ // Lista de cartões
+    const [paymentMethod, setPaymentMethod] = useState('credit_card');
+    const [selectedCard, setSelectedCard] = useState('card1');
+    const [cards, setCards] = useState([
         { id: 'card1', display: 'Mastercard XXXX-XXXX-XXXX-1234' },
         { id: 'card2', display: 'Visa XXXX-XXXX-XXXX-5678' },
     ]);
-
-    // Formulário (Add new address)
+    // Estados para os campos do formulário de entrega (se for adicionar novo endereço)
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address1, setAddress1] = useState('');
@@ -49,38 +54,41 @@ function Checkout() {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
 
-    // Add new card
+    // Estados para os campos do formulário de pagamento (se for adicionar novo cartão)
     const [cardName, setCardName] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCvv, setCardCvv] = useState('');
+
 
     const subtotal = getCartSubtotal();
     const shippingCost = subtotal > 0 ? 15.00 : 0;
     const total = subtotal + shippingCost;
 
     useEffect(() => {
-        if (cartItems.length === 0) {
-            navigate('/Cart');
+        if (!isAuthenticated) {
+            alert('You need to be logged in to access checkout.');
+            navigate('/Login');
+            return;
         }
-    }, [cartItems, navigate]);
+        if (cartItems.length === 0) {
+            alert('Your cart is empty! Please add products before checking out.');
+            navigate('/Cart');
+            return;
+        }
+    }, [cartItems, navigate, isAuthenticated]);
 
 
     const validateForm = () => {
         let errors = {};
-        if (!selectedAddress && addresses.length > 0) { // Se não tem endereço selecionado e há endereços, erro
-             errors.addressSelection = 'Please select a delivery address.';
-        }
-        if (!selectedAddress && addresses.length === 0 && !address1) { // Se não tem endereço e nenhum novo preenchido
-             errors.address1 = 'Address is required';
+        if (addresses.length === 0 && !firstName) errors.firstName = 'First Name is required';
+        if (addresses.length > 0 && !selectedAddress) errors.addressSelection = 'Please select a delivery address.';
+
+        if (paymentMethod === 'credit_card') {
+            if (cards.length === 0 && !cardName) errors.cardName = 'Name on card is required';
+            if (cards.length > 0 && !selectedCard) errors.cardSelection = 'Please select a card.';
         }
 
-        if (!selectedCard && paymentMethod === 'credit_card' && cards.length > 0) {
-             errors.cardSelection = 'Please select a card.';
-        }
-        if (paymentMethod === 'credit_card' && !selectedCard && cards.length === 0 && !cardNumber) {
-             errors.cardNumber = 'Card Number is required';
-        }
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -89,43 +97,99 @@ function Checkout() {
         e.preventDefault();
 
         if (!validateForm()) {
-            alert('Please fill in all required fields correctly!');
+            alert('Please fill in all required fields correctly.');
             return;
         }
 
         setLoading(true);
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            if (subtotal === 0) {
+                 alert('Your cart is empty. Please add products before finalizing the order.');
+                 navigate('/');
+                 return;
+            }
 
-        if (subtotal > 0) {
-            // DIMINUIR O ESTOQUE
-            cartItems.forEach(item => {
-                const currentStockInSystem = getStock(item.id);
-                const newStock = currentStockInSystem - item.quantity;
+            // --- LÓGICA DE DIMINUIÇÃO DE ESTOQUE NO BACKEND ---
+            const stockUpdatePromises = cartItems.map(async (item) => {
+                const newStockQuantity = (item.stock_quantity || 0) - item.quantity;
+                const newSoldQuantity = (item.sold_quantity || 0) + item.quantity;
 
-                // Estoque não negativo
-                if (newStock >= 0) {
-                    updateProductStock(item.id, newStock);
-                } else {
-                    console.error(`Error: Attempt to set negative stock for product ${item.id}. Quantity: ${item.quantity}, Current Stock: ${currentStockInSystem}`);
+                const response = await fetch(`http://localhost:5000/api/products/${item.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Envia o token para proteger a rota PUT de produto
+                    },
+                    body: JSON.stringify({
+                        stock_quantity: newStockQuantity,
+                        sold_quantity: newSoldQuantity
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to update stock for product ${item.name}. Status: ${response.status}`);
                 }
+                return response.json();
             });
 
-            console.log('Order completed:', {
+            await Promise.all(stockUpdatePromises); // Espera todas as atualizações de estoque
+
+            // --- LÓGICA DE CRIAÇÃO DO PEDIDO NO BACKEND ---
+            // Prepara os dados do pedido
+            const orderItems = cartItems.map(item => ({
+                product_id: item.id,
+                name: item.name,
+                image: item.images && item.images.length > 0 ? item.images[0] : '', // Primeira imagem do produto
+                quantity: item.quantity,
+                unit_price: item.price,
+            }));
+
+            // Em um app real, o selectedAddress seria o ID do endereço do usuário
+            // Por enquanto, vamos usar o objeto do endereço selecionado (mockado)
+            const selectedDeliveryAddress = addresses.find(addr => addr.id === selectedAddress);
+
+            const orderResponse = await fetch('http://localhost:5000/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Envia o token do usuário logado
+                },
+                body: JSON.stringify({
+                    items: orderItems,
+                    shipping_address: selectedDeliveryAddress, // Objeto de endereço
+                    payment_method: paymentMethod,
+                    total_amount: total,
+                })
+            });
+
+            if (!orderResponse.ok) {
+                const errorData = await orderResponse.json();
+                throw new Error(errorData.message || `Failed to create order. Status: ${orderResponse.status}`);
+            }
+
+            const orderData = await orderResponse.json();
+            console.log('Order created successfully:', orderData);
+
+
+            console.log('Order finalized:', {
                 items: cartItems,
                 subtotal: subtotal,
                 shipping: shippingCost,
                 total: total,
+                selectedAddress: selectedDeliveryAddress,
+                paymentMethod: paymentMethod,
             });
-            alert('Request placed successfully! You will receive a confirmation email shortly.');
-            setCartItems([]); // Limpa o carrinho depois do pedido
-            navigate('/'); // Redirecionamento
-        } else {
-            alert('Your cart is empty. Please add products before checking out.');
-            navigate('/');
+            alert('Order placed successfully! You will receive a confirmation email shortly.');
+            setCartItems([]); // Limpa o carrinho após o pedido
+            navigate('/my-account'); // Redireciona para a página da conta para ver o histórico
+        } catch (error) {
+            console.error("Error placing order:", error);
+            alert(`An error occurred while placing your order: ${error.message}. Please try again.`);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
+
 
     return (
         <>
@@ -147,8 +211,9 @@ function Checkout() {
                 </Typography>
 
                 <Grid container spacing={4} className="checkout-grid">
+                    {/* Seção de Informações de Entrega e Pagamento (Esquerda) */}
                     <Grid item xs={12} md={8} className="checkout-form-section">
-                        
+                        {/* --- Seção Select an Address --- */}
                         <Box className="checkout-section-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
                                 Select an address
@@ -185,6 +250,7 @@ function Checkout() {
                             <hr className="section-separator" />
                         </Box>
 
+                        {/* --- Seção Payment --- */}
                         <Box className="checkout-section-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
                                 Payment
@@ -237,6 +303,7 @@ function Checkout() {
                         </Box>
                     </Grid>
 
+                    {/* Seção de Resumo do Pedido (Direita) */}
                     <Grid item xs={12} md={4} className="checkout-summary-section">
                         <Box className="order-summary-box">
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -255,7 +322,7 @@ function Checkout() {
                             {cartItems.map((item) => (
                                 <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                                     <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                                        {item.title} (x{item.quantity})
+                                        {item.name} (x{item.quantity}) {/* Usar item.name */}
                                     </Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                                         ${(item.price * item.quantity).toFixed(2)}
@@ -303,7 +370,7 @@ function Checkout() {
                             </Button>
                         </Box>
                     </Grid>
-                </Grid>
+                </Grid> 
             </Box>
 
             <Footer />

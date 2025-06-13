@@ -1,51 +1,122 @@
 // frontend/src/hooks/useFavorites.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from './useAuth';
+import { useNavigate } from 'react-router-dom';
 
-const FAVORITES_STORAGE_KEY = 'jukebox_favorites';
+
+// REMOVIDO: import allProductsData from '../mockdata/products'; // Esta linha deve ter sido removida em uma etapa anterior.
+// Se ainda estiver lá, remova-a para evitar dependência de mockdata.
+
+const FAVORITES_STORAGE_KEY = 'jukebox_favorites_local_cache'; // Manter para cache local, se quiser
 
 export function useFavorites() {
-    // Inicializa o estado com os favoritos do localStorage ou um array vazio
-    const [favorites, setFavorites] = useState(() => {
-        try {
-            const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
-            return storedFavorites ? JSON.parse(storedFavorites) : [];
-        } catch (error) {
-            console.error("Erro ao carregar favoritos do localStorage:", error);
-            return [];
-        }
-    });
+    const { user, token, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const [favorites, setFavorites] = useState([]);
+    const [loadingFavorites, setLoadingFavorites] = useState(true);
+    const [errorFavorites, setErrorFavorites] = useState(null);
 
-    // Efeito para salvar os favoritos no localStorage sempre que o estado 'favorites' mudar
-    useEffect(() => {
-        try {
-            localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
-        } catch (error) {
-            console.error("Erro ao salvar favoritos no localStorage:", error);
+    const fetchFavorites = useCallback(async () => {
+        if (!isAuthenticated || !token || !user?._id) {
+            setFavorites([]);
+            setLoadingFavorites(false);
+            return;
         }
-    }, [favorites]); // Dependência: executa quando 'favorites' muda
 
-    // Função para adicionar um produto aos favoritos
-    const addFavorite = (product) => {
-        setFavorites((prevFavorites) => {
-            // Garante que o produto não seja adicionado duas vezes
-            if (!prevFavorites.some(fav => fav.id === product.id)) {
-                return [...prevFavorites, product];
+        setLoadingFavorites(true);
+        setErrorFavorites(null);
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/me/favorites`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
             }
-            return prevFavorites;
-        });
-    };
+            const detailedFavorites = await response.json();
 
-    // Função para remover um produto dos favoritos
-    const removeFavorite = (productId) => {
-        setFavorites((prevFavorites) =>
-            prevFavorites.filter(fav => fav.id !== productId)
-        );
-    };
+            setFavorites(detailedFavorites);
+        } catch (error) {
+            console.error("Error fetching favorites:", error);
+            setErrorFavorites('Failed to load favorites: ' + error.message);
+            setFavorites([]);
+        } finally {
+            setLoadingFavorites(false);
+        }
+    }, [isAuthenticated, token, user?._id]);
 
-    // Função para verificar se um produto está nos favoritos
-    const isFavorite = (productId) => {
-        return favorites.some(fav => fav.id === productId);
-    };
+    useEffect(() => {
+        fetchFavorites();
+    }, [fetchFavorites]);
 
-    return { favorites, addFavorite, removeFavorite, isFavorite };
+    const addFavorite = useCallback(async (product) => {
+        if (!isAuthenticated || !token || !user?._id) {
+            alert('Please log in to add favorites.');
+            navigate('/Login');
+            return { success: false, message: 'Not authenticated' };
+        }
+        if (favorites.some(fav => String(fav.id) === String(product.id))) {
+             return { success: true, message: 'Product already in favorites' };
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/users/favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ productId: product.id }) // <--- AJUSTADO: Removido userId
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Failed to add favorite. Status: ${response.status}`);
+            }
+            const data = await response.json();
+            await fetchFavorites();
+            return { success: true, message: data.message };
+        } catch (error) {
+            console.error("Error adding favorite:", error);
+            setErrorFavorites('Failed to add favorite: ' + error.message);
+            return { success: false, message: error.message || 'Failed to add favorite.' };
+        }
+    }, [isAuthenticated, token, favorites, user?._id, fetchFavorites, navigate]);
+
+
+    const removeFavorite = useCallback(async (productId) => {
+        if (!isAuthenticated || !token || !user?._id) {
+            alert('Please log in to remove favorites.');
+            navigate('/Login');
+            return { success: false, message: 'Not authenticated' };
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/favorites/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Failed to remove favorite. Status: ${response.status}`);
+            }
+            const data = await response.json();
+            await fetchFavorites();
+            return { success: true, message: data.message };
+        } catch (error) {
+            console.error("Error removing favorite:", error);
+            setErrorFavorites('Failed to remove favorite: ' + error.message);
+            return { success: false, message: error.message || 'Failed to remove favorite.' };
+        }
+    }, [isAuthenticated, token, user?._id, fetchFavorites, navigate]);
+
+
+    const isFavorite = useCallback((productId) => {
+        return favorites.some(fav => String(fav.id) === String(productId));
+    }, [favorites]);
+
+    return { favorites, addFavorite, removeFavorite, isFavorite, loadingFavorites, errorFavorites };
 }

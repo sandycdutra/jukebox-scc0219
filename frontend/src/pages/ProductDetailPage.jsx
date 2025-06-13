@@ -1,9 +1,15 @@
 // frontend/src/pages/ProductDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { Box, Typography, Button, Select, MenuItem, Breadcrumbs, CircularProgress } from '@mui/material';
+import {
+    Box, Typography, Button, Select, MenuItem, Breadcrumbs, CircularProgress,
+    IconButton, TextField
+} from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { FavoriteBorderOutlined as FavoriteIcon, Favorite as FilledFavoriteIcon } from '@mui/icons-material';
+
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -12,13 +18,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import { useFavorites } from '../hooks/useFavorites';
-import { useCart } from '../hooks/useCart'; // <--- Importe o hook de carrinho
+import { useCart } from '../hooks/useCart';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 
-import products from '../mockdata/products';
 import '../css/main.css';
 import '../css/productdetail.css';
 
@@ -26,57 +31,91 @@ function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
     const { addFavorite, removeFavorite, isFavorite } = useFavorites();
-    const { addToCart, getStock } = useCart(); 
+    const { addToCart } = useCart();
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(1);
     const [mainImage, setMainImage] = useState('');
-    const [availableStock, setAvailableStock] = useState(0); // <--- Novo estado para o estoque visível
     const [loading, setLoading] = useState(false);
     const productIsFavorite = product ? isFavorite(product.id) : false;
 
+    const MAX_QTY_PER_ORDER = 5; 
+
     useEffect(() => {
-        const idAsNumber = parseInt(productId, 10);
-        const foundProduct = products.find(p => p.id === idAsNumber);
+        const fetchProductAndRecommendations = async () => {
+            setProduct(null);
+            setLoading(true);
+            try {
+                const productResponse = await fetch(`http://localhost:5000/api/products/${productId}`);
+                if (!productResponse.ok) {
+                    throw new Error(`HTTP error! status: ${productResponse.status}`);
+                }
+                const productData = await productResponse.json();
+                setProduct(productData);
+                
+                if (productData.images && productData.images.length > 0) {
+                    setMainImage(productData.images[0]);
+                } else {
+                    setMainImage('https://placehold.co/600x400/cccccc/333333?text=No+Image');
+                }
 
-        if (foundProduct) {
-            setProduct(foundProduct);
-            if (foundProduct.images && foundProduct.images.length > 0) {
-                setMainImage(foundProduct.images[0]);
-            } else {
-                setMainImage(foundProduct.image || 'https://placehold.co/600x400/cccccc/333333?text=No+Image');
+                const allProductsResponse = await fetch('http://localhost:5000/api/products');
+                if (!allProductsResponse.ok) {
+                    throw new Error(`HTTP error! status: ${allProductsResponse.status}`);
+                }
+                const allProductsData = await allProductsResponse.json();
+
+                const filteredRecommendations = allProductsData.filter(
+                    p => p.type === productData.type && p.id !== productData.id
+                );
+                const shuffledRecommendations = filteredRecommendations.sort(() => 0.5 - Math.random());
+                setRecommendedProducts(shuffledRecommendations.slice(0, 6));
+
+            } catch (error) {
+                console.error("Error fetching product or recommendations:", error);
+                setProduct(null);
+            } finally {
+                setLoading(false);
             }
-            // Atualiza o estoque
-            setAvailableStock(getStock(foundProduct.id));
+        };
 
-            const filteredRecommendations = products.filter(
-                p => p.type === foundProduct.type && p.id !== foundProduct.id
-            );
-            const shuffledRecommendations = filteredRecommendations.sort(() => 0.5 - Math.random());
-            setRecommendedProducts(shuffledRecommendations.slice(0, 6));
-        } else {
-            console.error('Produto não encontrado:', productId);
+        fetchProductAndRecommendations();
+    }, [productId]); 
+
+    const currentAvailableStock = product ? product.stock_quantity : 0; // Isso vem do backend
+
+    const handleIncreaseQuantity = () => {
+        if (selectedQuantity < currentAvailableStock && selectedQuantity < MAX_QTY_PER_ORDER) {
+            setSelectedQuantity(prevQty => prevQty + 1);
+        } else if (selectedQuantity >= MAX_QTY_PER_ORDER && currentAvailableStock > MAX_QTY_PER_ORDER) {
+            setSelectedQuantity(prevQty => prevQty + 1);
         }
-    }, [productId, getStock]);
+    };
 
-    const handleQuantityChange = (event) => {
-        const newQty = event.target.value;
-        if (newQty > availableStock) {
-            alert(`Você não pode adicionar mais de ${availableStock} unidades.`);
-            setSelectedQuantity(availableStock); // Volta para o estoque máximo disponível
-        } else {
-            setSelectedQuantity(newQty);
+    const handleDecreaseQuantity = () => {
+        if (selectedQuantity > 1) {
+            setSelectedQuantity(prevQty => prevQty - 1);
         }
     };
 
     const handleAddToCart = async () => {
-         if (product) {
-            setLoading(true); 
-            await new Promise(resolve => setTimeout(resolve, 500)); 
-            addToCart(product, selectedQuantity);
-            console.log(`Adicionado ${selectedQuantity} de ${product.title} ao carrinho.`);
-            setLoading(false); 
+        if (product) {
+            if (selectedQuantity === 0 && currentAvailableStock > 0) {
+                setSelectedQuantity(1);
+                alert("Please select a quantity greater than zero.");
+                return;
+            }
+            if (selectedQuantity > currentAvailableStock) {
+                alert(`You cannot add more than ${currentAvailableStock} units.`);
+                return;
+            }
+            
+            setLoading(true);
+            addToCart(product, selectedQuantity); // product já tem stock_quantity e sold_quantity
+            console.log(`Added ${selectedQuantity} of ${product.name} to cart.`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            setLoading(false);
             navigate('/Cart');
         }
     };
@@ -85,10 +124,10 @@ function ProductDetailPage() {
         if (product) {
             if (productIsFavorite) {
                 removeFavorite(product.id);
-                console.log(`Produto ${product.title} removido dos favoritos.`);
+                console.log(`Product ${product.name} removed from favorites.`);
             } else {
                 addFavorite(product);
-                console.log(`Produto ${product.title} adicionado aos favoritos.`);
+                console.log(`Product ${product.name} added to favorites.`);
             }
             navigate('/Favorites');
         }
@@ -98,23 +137,24 @@ function ProductDetailPage() {
         setMainImage(imageSrc);
     };
 
-    if (!product) {
+    if (loading || !product) { 
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>Carregando produto...</Typography>
+                <Typography variant="h6" sx={{ ml: 2 }}>Loading product...</Typography>
             </Box>
         );
     }
-
+    
     const quantityOptions = [];
-    for (let i = 1; i <= availableStock && i <= 5; i++) { 
+    const maxSelectable = Math.min(currentAvailableStock, MAX_QTY_PER_ORDER);
+    for (let i = 1; i <= maxSelectable; i++) {
         quantityOptions.push(i);
     }
-    // Se não houver estoque
-    if (availableStock === 0 && quantityOptions.length === 0) {
-        quantityOptions.push(0); // Para o dropdown não ficar vazio
+    if (currentAvailableStock === 0) {
+        quantityOptions.push(0);
     }
+
 
     return (
         <>
@@ -128,7 +168,8 @@ function ProductDetailPage() {
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to={`/${product.type}`}>
                         {product.type.charAt(0).toUpperCase() + product.type.slice(1)}
                     </MuiLink>
-                    <Typography color="text.primary">{product.title}</Typography>
+                    {/* <--- CORRIGIDO AQUI: Usa product.name para o título no Breadcrumbs */}
+                    <Typography color="text.primary">{product.name}</Typography>
                 </Breadcrumbs>
 
                 <Box className="product-main-content">
@@ -145,37 +186,73 @@ function ProductDetailPage() {
                             ))}
                         </Box>
                         <Box className="product-main-image-container">
-                            <img src={mainImage} alt={product.title} className="product-main-image" />
+                            {/* <--- CORRIGIDO AQUI: Usa product.name para o alt text da imagem principal */}
+                            <img src={mainImage} alt={product.name} className="product-main-image" />
                         </Box>
                     </Box>
 
                     <Box className="product-info-section">
                         <Typography variant="overline" className="product-type-detail">{product.type.charAt(0).toUpperCase() + product.type.slice(1)}</Typography>
-                        <Typography variant="h4" component="h1" className="product-title-detail">{product.title}</Typography>
-                        <Typography variant="h6" className="product-artist-detail">{product.artist}</Typography>
+                        {/* <--- CORRIGIDO AQUI: Usa product.name para o título principal */}
+                        <Typography variant="h4" component="h1" className="product-title-detail">{product.name}</Typography>
+                        {/* <--- CORRIGIDO AQUI: Usa product.metadata?.artist para o artista */}
+                        <Typography variant="h6" className="product-artist-detail">{product.metadata?.artist}</Typography>
                         <Typography variant="h5" className="product-price-detail">${product.price.toFixed(2)}</Typography>
 
-                        <Typography variant="body2" sx={{ mt: 1, color: availableStock > 0 ? 'text.secondary' : 'error.main', fontWeight: 'bold' }}>
-                            Available Stock: {availableStock}
+                        {/* Exibir o Estoque Disponível */}
+                        <Typography variant="body2" sx={{ mt: 1, color: currentAvailableStock > 0 ? 'text.secondary' : 'error.main', fontWeight: 'bold' }}>
+                            Available Stock: {currentAvailableStock}
                         </Typography>
-                        {availableStock === 0 && (
+                        {currentAvailableStock === 0 && (
                             <Typography variant="body2" sx={{ color: 'error.main', mt: 0.5 }}>
                                 Sold Out
                             </Typography>
                         )}
 
                         <Box className="product-actions">
-                            <Select
-                                value={selectedQuantity}
-                                onChange={handleQuantityChange}
-                                sx={{ minWidth: 80, mr: 2, borderRadius: '8px' }}
-                                inputProps={{ 'aria-label': 'Select quantity' }}
-                                disabled={availableStock === 0} // Desabilita seletor se estoque for 0
-                            >
-                                {quantityOptions.map((qty) => (
-                                    <MenuItem key={qty} value={qty}>{`${qty}`}</MenuItem>
-                                ))}
-                            </Select>
+                            {/* NOVO CONTROLE DE QUANTIDADE: BOTÕES + e - */}
+                            <Box className="quantity-control">
+                                <IconButton
+                                    onClick={handleDecreaseQuantity}
+                                    disabled={selectedQuantity <= 1 || currentAvailableStock === 0}
+                                    size="small"
+                                    sx={{ border: '1px solid #ccc', borderRadius: '4px' }}
+                                >
+                                    <RemoveIcon />
+                                </IconButton>
+                                <TextField
+                                    value={selectedQuantity}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value, 10);
+                                        if (isNaN(value) || value < 1) {
+                                            setSelectedQuantity(1); // Garante mínimo de 1
+                                        } else if (value > currentAvailableStock) {
+                                            setSelectedQuantity(currentAvailableStock); // Não excede estoque
+                                        } else if (value > MAX_QTY_PER_ORDER) { // <--- Usa MAX_QTY_PER_ORDER
+                                            setSelectedQuantity(MAX_QTY_PER_ORDER);
+                                        } else {
+                                            setSelectedQuantity(value);
+                                        }
+                                    }}
+                                    inputProps={{
+                                        min: 1,
+                                        max: Math.min(currentAvailableStock, MAX_QTY_PER_ORDER), // <--- Usa MAX_QTY_PER_ORDER
+                                        style: { textAlign: 'center' }
+                                    }}
+                                    sx={{ width: '60px', mx: 1 }}
+                                    size="small"
+                                    disabled={currentAvailableStock === 0}
+                                />
+                                <IconButton
+                                    onClick={handleIncreaseQuantity}
+                                    disabled={selectedQuantity >= currentAvailableStock || selectedQuantity >= MAX_QTY_PER_ORDER || currentAvailableStock === 0} // <--- Usa MAX_QTY_PER_ORDER
+                                    size="small"
+                                    sx={{ border: '1px solid #ccc', borderRadius: '4px' }}
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                            </Box>
+
                             <Button
                                 variant="contained"
                                 onClick={handleAddToCart}
@@ -187,11 +264,11 @@ function ProductDetailPage() {
                                     padding: '10px 20px',
                                     textTransform: 'none',
                                     fontSize: '1rem',
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
                                 }}
-                                disabled={loading || availableStock === 0} // Desabilita botão se esgotado ou carregando
+                                disabled={loading || currentAvailableStock === 0 || selectedQuantity === 0}
                             >
-                                ADD TO CART
+                                {loading ? <CircularProgress size={24} color="inherit" /> : 'ADD TO CART'}
                             </Button>
                             <Button
                                 variant="outlined"

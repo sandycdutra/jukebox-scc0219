@@ -1,35 +1,52 @@
+/* frontend/src/css/favorites.css */
+
+/* Container principal da página de favoritos */
 .favorites-page-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    min-height: 60vh;
+    padding: 20px; /* Padding padrão para mobile */
+    max-width: 1200px; /* Largura máxima do conteúdo */
+    margin: 0 auto; /* Centraliza o container na tela */
+    min-height: 60vh; /* Garante que o footer não suba muito */
 }
 
-.favorites-main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
-
+/* Ajustes de padding para telas maiores, alinhando com o restante do site */
 @media (min-width: 768px) {
-    .favorites-main-content {
-        flex-direction: row;
-        align-items: flex-start;
+    .favorites-page-container {
+        padding: 30px 60px; /* Mais padding nas laterais para tablets */
+    }
+}
+@media (min-width: 1024px) {
+    .favorites-page-container {
+        padding: 40px 100px; /* Mais padding nas laterais para desktops */
     }
 }
 
+/* Layout principal da página (sidebar + conteúdo da grade) */
+.favorites-main-content {
+    display: flex;
+    flex-direction: column; /* Padrão: empilha em mobile */
+    gap: 30px; /* Espaçamento entre sidebar e conteúdo */
+}
+
+@media (min-width: 768px) { /* Layout de duas colunas em desktop */
+    .favorites-main-content {
+        flex-direction: row;
+        align-items: flex-start; /* Alinha as colunas ao topo */
+    }
+}
+
+/* --- Sidebar de Categorias na Página de Favoritos --- */
 .favorites-sidebar {
-    width: 100%;
-    margin-bottom: 20px;
-    padding-right: 20px;
+    width: 100%; /* Ocupa largura total em mobile */
+    margin-bottom: 20px; /* Espaço abaixo em mobile */
+    padding-right: 20px; /* Espaçamento à direita em desktop */
 }
 
 @media (min-width: 768px) {
     .favorites-sidebar {
-        width: 200px;
-        flex-shrink: 0;
-        position: sticky;
-        top: 20px;
+        width: 200px; /* Largura fixa para a sidebar em desktop */
+        flex-shrink: 0; /* Impede que a sidebar encolha */
+        position: sticky; /* Fixa a sidebar ao rolar */
+        top: 20px; /* Posição do topo (ajuste conforme a altura do seu header) */
     }
 }
 
@@ -50,13 +67,125 @@
     color: #2009EA;
 }
 
+/* --- Área da Grade de Produtos (onde o ProductGrid é renderizado na Favorites Page) --- */
 .favorites-grid-area {
-    flex-grow: 1;
-    width: 100%;
+    flex-grow: 1; /* Permite que ocupe o espaço restante */
+    width: 100%; /* Ocupa a largura total em mobile */
+    padding: 0; /* Remove qualquer padding extra que possa vir para este container */
 }
 
 @media (min-width: 768px) {
     .favorites-grid-area {
+        /* Calcula a largura para a área da grade: largura total - largura da sidebar - gap entre elas */
         width: calc(100% - 200px - 30px);
     }
+}
+
+/* ESTILOS PARA O CONTAINER INTERNO DO PRODUCTGRID DENTRO DE FAVORITOS */
+/* Esta é a classe que define como a grid interna se comporta */
+.favorites-grid-area .products-grid-container {
+    padding: 0 !important; /* Remove qualquer padding fixo que possa vir do ProductGrid padrão */
+    display: grid; /* Ativa o layout de grid */
+    /* Define colunas responsivas: preenche com o máximo possível de colunas, com largura mínima de 180px */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px; /* Espaçamento entre os cards na grade */
+    justify-content: center; /* Centraliza os cards se não preencherem toda a linha */
+}
+
+/* MEDIAS QUERIES PARA A GRID RESPONSIVA DE FAVORITOS */
+/* Ajusta o min-width das colunas para que mais cards caibam em telas maiores */
+@media (min-width: 600px) { /* Para telas maiores que 600px (mini-tablets) */
+    .favorites-grid-area .products-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Cada coluna no mínimo 200px */
+    }
+}
+@media (min-width: 900px) { /* Para telas maiores que 900px (laptops) */
+    .favorites-grid-area .products-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Cada coluna no mínimo 220px */
+    }
+}
+@media (min-width: 1200px) { /* Para telas maiores que 1200px (desktops grandes) */
+    .favorites-grid-area .products-grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Cada coluna no mínimo 250px */
+        /* Se você quer EXATAMENTE 3 colunas em desktop grande, pode usar:
+        grid-template-columns: repeat(3, 1fr);
+        No seu protótipo, parecem 3 ou 4 colunas em telas maiores, então minmax é flexível. */
+    }
+}
+
+
+/* ESTILOS PARA O BOTÃO DE REMOVER (X) DENTRO DO PRODUCTCARD */
+/* Este estilo posiciona o botão X no canto superior direito do ProductCard */
+.favorites-grid-area .product-card-link + .MuiButtonBase-root {
+    position: absolute;
+    top: 5px; /* Posição do topo do card */
+    right: 5px; /* Posição da direita do card */
+    z-index: 10; /* Garante que o botão X fique por cima do card */
+    background-color: rgba(255, 0, 0, 0.7); /* Fundo vermelho semi-transparente */
+    color: white; /* Cor do "X" */
+    border-radius: 50%; /* Torna o botão redondo */
+    padding: 4px; /* Espaçamento interno do botão */
+    min-width: unset; /* Remove largura mínima padrão do Material-UI para botões */
+    height: 28px; /* Altura fixa do botão */
+    width: 28px; /* Largura fixa do botão */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra sutil */
+    transition: background-color 0.2s ease; /* Transição suave no hover */
+}
+
+.favorites-grid-area .product-card-link + .MuiButtonBase-root:hover {
+    background-color: rgba(255, 0, 0, 1); /* Fundo vermelho sólido no hover */
+}
+
+
+/* Ajustes para o ProductCard dentro da grid de favoritos */
+/* Estas regras ajustam o tamanho e espaçamento dos elementos internos do ProductCard
+   para que eles caibam bem nas colunas menores da grid, mantendo a padronização. */
+.favorites-grid-area .product-card-link {
+    width: 100%; /* Faz o link ocupar toda a largura da coluna do grid */
+    height: 100%; /* <--- Garante que o link ocupe toda a altura do Grid item */
+    display: block; /* Essencial para width/height de 100% */
+    text-decoration: none; /* Remove sublinhado */
+    color: inherit; /* Hereda a cor do texto */
+}
+
+.favorites-grid-area .product-button {
+    width: 100%; /* Ocupa a largura total da coluna */
+    /* NÃO COLOQUE 'min-height' FIXO AQUI, use o do product.css para padronização base. */
+    height: 100%; /* Garante que o botão ocupe toda a altura do ProductCardLink (seu pai) */
+    padding-bottom: 10px; /* Espaço para o texto inferior */
+    box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+}
+
+.favorites-grid-area .product-button img {
+    height: 150px; /* Tamanho da imagem no card de favoritos/recomendações */
+    width: 100%; /* Ocupa a largura total da imagem */
+    object-fit: cover; /* A imagem preenche o espaço, cortando se necessário */
+}
+
+.favorites-grid-area .product-info {
+    padding: 0 5px; /* Espaçamento interno para o texto do produto */
+    text-align: center;
+    width: 100%;
+    /* As propriedades de min-height e display:flex para centralizar o conteúdo
+       já virão do .product-info em product.css. */
+}
+
+/* Estilos para o texto dentro do ProductCard em grids menores */
+.favorites-grid-area .product-title {
+    font-size: 0.95rem; /* Ajusta o tamanho da fonte do título */
+    white-space: normal; /* Permite que o texto quebre linha */
+    overflow: hidden; /* Esconde o excesso se max-height for atingido */
+    text-overflow: unset; /* Remove ellipsis */
+    min-height: 2.5em; /* Garante espaço para 2 linhas */
+    line-height: 1.25;
+    margin-bottom: 0px;
+}
+.favorites-grid-area .product-artist,
+.favorites-grid-area .product-price {
+    font-size: 0.85rem; /* Ajusta o tamanho da fonte do artista e preço */
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: unset;
+    margin-top: 0px;
+    margin-bottom: 3px;
 }

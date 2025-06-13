@@ -1,3 +1,4 @@
+// frontend/src/pages/Login.jsx
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
 import MuiLink from '@mui/material/Link';
@@ -6,8 +7,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useAuth } from '../hooks/useAuth'; 
-import mockUsers from '../mockdata/users'; 
+import { useAuth } from '../hooks/useAuth'; // Importe o useAuth hook
+// REMOVIDO: import mockUsers from '../mockdata/users'; // <--- REMOVA ESTA LINHA
 
 import '../css/main.css';
 import '../css/login.css';
@@ -18,28 +19,21 @@ function Login () {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login } = useAuth(); // Obtenha a função de login do hook
 
     const handleLogin = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         setLoading(true);
         setError('');
 
+        // Chama a função de login do hook, que faz a chamada para o backend
+        const result = await login(email, password);
 
-
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        //busca o usuário mockado
-        const foundUser = mockUsers.find(
-            user => user.email === email && user.password === password
-        );
-
-        if (foundUser) {
-            console.log('Login successful!', foundUser);
-            login(foundUser); 
-            alert('Login successful!');
-            navigate('/'); //redireciona para a página inicial
+        if (result.success) {
+            alert('Login successful!'); // Alerta traduzido
+            navigate('/'); // Redireciona para a página inicial
         } else {
-            setError('Invalid email or password.');
+            setError(result.message || 'Login failed.'); // Exibe mensagem de erro do backend
         }
         setLoading(false);
     };
@@ -99,7 +93,7 @@ function Login () {
                                 fontWeight: 'bold',
                                 mb: 2
                             }}
-                            disabled={loading} // Desabilita o botão durante o carregamento
+                            disabled={loading}
                         >
                             {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
                         </Button>
