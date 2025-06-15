@@ -13,6 +13,7 @@ import Register from './pages/Register';
 import Checkout from './pages/Checkout';
 import MyAccount from './pages/MyAccount'
 import ProductDetailPage from './pages/ProductDetailPage';
+import EditProfile from './pages/EditProfile';
 
 function App() {
     const [count, setCount] = useState(0)
@@ -35,6 +36,7 @@ function App() {
                     <Route path='/Checkout' element={<Checkout />} />
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
                     <Route path='/my-account' element={<MyAccount />} /> 
+                    <Route path='/edit-profile' element={<EditProfile />} />
                 </Routes>
             </main>
         </div>

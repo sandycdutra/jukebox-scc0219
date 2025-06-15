@@ -7,8 +7,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useAuth } from '../hooks/useAuth'; // Importe o useAuth hook
-// REMOVIDO: import mockUsers from '../mockdata/users'; // <--- REMOVA ESTA LINHA
+import { useAuth } from '../hooks/useAuth'; 
+import { useCart } from '../hooks/useCart';
 
 import '../css/main.css';
 import '../css/login.css';
@@ -19,7 +19,8 @@ function Login () {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth(); // Obtenha a função de login do hook
+    const { login } = useAuth();
+    const { migrateGuestCartToUser } = useCart();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -30,6 +31,7 @@ function Login () {
         const result = await login(email, password);
 
         if (result.success) {
+            await migrateGuestCartToUser();
             alert('Login successful!'); // Alerta traduzido
             navigate('/'); // Redireciona para a página inicial
         } else {

@@ -1,8 +1,8 @@
 // frontend/src/pages/Cart.jsx
 import React from 'react';
-import {
-    Box, Typography, Button, Select, MenuItem, Breadcrumbs,
-    IconButton, TextField // Adicionado IconButton e TextField
+import { Box, Typography, TextField, Button, CircularProgress, Grid,
+    RadioGroup, FormControlLabel, Radio, IconButton,
+    Breadcrumbs
 } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -19,10 +19,10 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import '../css/main.css';
-import '../css/cart.css'; 
+import '../css/cart.css';
 
 function Cart() {
-    const { cartItems, removeFromCart, updateQuantity, getCartSubtotal } = useCart();
+    const { cartItems, removeFromCart, updateQuantity, getCartSubtotal, loadingCart, errorCart } = useCart(); // <--- OBTER loadingCart e errorCart
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
@@ -69,6 +69,25 @@ function Cart() {
         navigate('/Checkout');
     };
 
+    // <--- ADICIONAR CONDICIONAIS DE CARREGAMENTO E ERRO AQUI
+    if (loadingCart) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+                <Typography variant="h6" sx={{ ml: 2 }}>Loading cart...</Typography>
+            </Box>
+        );
+    }
+    if (errorCart) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+                <Typography color="error" variant="h6">{errorCart}</Typography>
+                <Button onClick={() => window.location.reload()} sx={{ mt: 2 }}>Retry</Button>
+            </Box>
+        );
+    }
+
+
     return (
         <>
             <Header />
@@ -113,8 +132,9 @@ function Cart() {
                         {cartItems.map((item) => (
                             <Box key={item.id} className="cart-item-row">
                                 <Box className="cart-item-product-info">
+                                    {/* <--- AQUI: Usa item.image para a imagem */}
                                     <img
-                                        src={item.images && item.images.length > 0 ? item.images[0] : 'https://placehold.co/100x100/cccccc/333333?text=No+Image'}
+                                        src={item.image || 'https://placehold.co/100x100/cccccc/333333?text=No+Image'}
                                         alt={item.name}
                                         className="cart-item-image"
                                     />
@@ -129,27 +149,27 @@ function Cart() {
                                                 handleRemoveItem(item.id);
                                             }}
                                             className="cart-remove-link"
-                                            sx={{ fontWeight: 'bold', color: '#2009EA' }} 
+                                            sx={{ fontWeight: 'bold', color: '#2009EA' }}
                                         >
                                             Remove Item
                                         </MuiLink>
                                     </Box>
                                 </Box>
 
-                                {/* BOTÕES + e - */}
-                                <Box className="cart-item-quantity"> {/* Usa a classe existente para alinhamento */}
-                                    <Box className="quantity-control"> {/* Nova classe para o grupo de botões */}
+                                {/* CONTROLE DE QUANTIDADE: BOTÕES + e - */}
+                                <Box className="cart-item-quantity">
+                                    <Box className="quantity-control">
                                         <IconButton
                                             onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
                                             disabled={item.quantity <= 1}
                                             size="small"
                                             sx={{
-                                                border: '1px solid #2009EA', /* Borda azul */
+                                                border: '1px solid #2009EA',
                                                 borderRadius: '4px',
-                                                backgroundColor: '#2009EA', /* Fundo azul */
-                                                color: 'white', /* Cor do ícone branco */
+                                                backgroundColor: '#2009EA',
+                                                color: 'white',
                                                 '&:hover': {
-                                                    backgroundColor: '#1a07bb', /* Azul mais escuro no hover */
+                                                    backgroundColor: '#1a07bb',
                                                     borderColor: '#1a07bb'
                                                 }
                                             }}
@@ -161,23 +181,24 @@ function Cart() {
                                             onChange={(e) => handleQuantityInputChange(e, item.id)}
                                             inputProps={{
                                                 min: 1,
-                                                max: Math.min(item.stock_quantity || 10, 10), // Max 10 ou estoque real
+                                                max: Math.min(item.stock_quantity || 10, 10), // <--- Usa item.stock_quantity
                                                 style: { textAlign: 'center' }
                                             }}
                                             sx={{ width: '60px', mx: 1 }}
                                             size="small"
+                                            disabled={item.stock_quantity === 0} // <--- Desabilita se estoque for 0
                                         />
                                         <IconButton
-                                            onClick={() => handleIncreaseQuantity(item.id, item.quantity, item.stock_quantity)}
-                                            disabled={item.quantity >= (item.stock_quantity || 10) || item.quantity >= 10}
+                                            onClick={() => handleIncreaseQuantity(item.id, item.quantity, item.stock_quantity)} // <--- Usa item.stock_quantity
+                                            disabled={item.quantity >= (item.stock_quantity || 10) || item.quantity >= 10 || item.stock_quantity === 0} // <--- Desabilita se estoque ou limite de 10
                                             size="small"
                                             sx={{
-                                                border: '1px solid #2009EA', /* Borda azul */
+                                                border: '1px solid #2009EA',
                                                 borderRadius: '4px',
-                                                backgroundColor: '#2009EA', /* Fundo azul */
-                                                color: 'white', /* Cor do ícone branco */
+                                                backgroundColor: '#2009EA',
+                                                color: 'white',
                                                 '&:hover': {
-                                                    backgroundColor: '#1a07bb', /* Azul mais escuro no hover */
+                                                    backgroundColor: '#1a07bb',
                                                     borderColor: '#1a07bb'
                                                 }
                                             }}

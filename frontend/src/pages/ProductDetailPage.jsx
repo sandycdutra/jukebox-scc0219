@@ -19,6 +19,7 @@ import 'swiper/css/pagination';
 
 import { useFavorites } from '../hooks/useFavorites';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth'; // <--- IMPORTE O HOOK DE AUTENTICAÇÃO
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -32,6 +33,7 @@ function ProductDetailPage() {
     const navigate = useNavigate();
     const { addFavorite, removeFavorite, isFavorite } = useFavorites();
     const { addToCart } = useCart();
+    const { isAuthenticated } = useAuth(); // <--- OBTENHA O ESTADO DE AUTENTICAÇÃO
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
@@ -39,7 +41,8 @@ function ProductDetailPage() {
     const [mainImage, setMainImage] = useState('');
     const [loading, setLoading] = useState(false);
     const productIsFavorite = product ? isFavorite(product.id) : false;
-
+    const currentAvailableStock = product ? product.stock_quantity : 0;
+    const isSoldOut = currentAvailableStock <= 0;
     const MAX_QTY_PER_ORDER = 5; 
 
     useEffect(() => {
@@ -83,7 +86,6 @@ function ProductDetailPage() {
         fetchProductAndRecommendations();
     }, [productId]); 
 
-    const currentAvailableStock = product ? product.stock_quantity : 0; // Isso vem do backend
 
     const handleIncreaseQuantity = () => {
         if (selectedQuantity < currentAvailableStock && selectedQuantity < MAX_QTY_PER_ORDER) {
@@ -100,6 +102,14 @@ function ProductDetailPage() {
     };
 
     const handleAddToCart = async () => {
+        // <--- NOVA VERIFICAÇÃO DE AUTENTICAÇÃO AQUI ---
+        if (!isAuthenticated) {
+            alert('Please log in to add items to your cart.'); // Mensagem traduzida
+            navigate('/Login'); // Redireciona para a página de Login
+            return; // Interrompe a função
+        }
+        // --- FIM DA NOVA VERIFICAÇÃO ---
+
         if (product) {
             if (selectedQuantity === 0 && currentAvailableStock > 0) {
                 setSelectedQuantity(1);
@@ -168,7 +178,6 @@ function ProductDetailPage() {
                     <MuiLink underline="hover" color="inherit" component={RouterLink} to={`/${product.type}`}>
                         {product.type.charAt(0).toUpperCase() + product.type.slice(1)}
                     </MuiLink>
-                    {/* <--- CORRIGIDO AQUI: Usa product.name para o título no Breadcrumbs */}
                     <Typography color="text.primary">{product.name}</Typography>
                 </Breadcrumbs>
 
@@ -186,37 +195,31 @@ function ProductDetailPage() {
                             ))}
                         </Box>
                         <Box className="product-main-image-container">
-                            {/* <--- CORRIGIDO AQUI: Usa product.name para o alt text da imagem principal */}
                             <img src={mainImage} alt={product.name} className="product-main-image" />
                         </Box>
                     </Box>
 
                     <Box className="product-info-section">
                         <Typography variant="overline" className="product-type-detail">{product.type.charAt(0).toUpperCase() + product.type.slice(1)}</Typography>
-                        {/* <--- CORRIGIDO AQUI: Usa product.name para o título principal */}
                         <Typography variant="h4" component="h1" className="product-title-detail">{product.name}</Typography>
-                        {/* <--- CORRIGIDO AQUI: Usa product.metadata?.artist para o artista */}
                         <Typography variant="h6" className="product-artist-detail">{product.metadata?.artist}</Typography>
                         <Typography variant="h5" className="product-price-detail">${product.price.toFixed(2)}</Typography>
 
-                        {/* Exibir o Estoque Disponível */}
-                        <Typography variant="body2" sx={{ mt: 1, color: currentAvailableStock > 0 ? 'text.secondary' : 'error.main', fontWeight: 'bold' }}>
-                            Available Stock: {currentAvailableStock}
+                        {/* <--- CORRIGIDO AQUI: Exibe "Sold Out" ou o estoque disponível --- */}
+                        <Typography variant="body2" sx={{ mt: 1, color: isSoldOut ? 'error.main' : 'text.secondary', fontWeight: 'bold' }}>
+                            {isSoldOut ? 'Sold Out' : `Available Stock: ${currentAvailableStock}`}
                         </Typography>
-                        {currentAvailableStock === 0 && (
-                            <Typography variant="body2" sx={{ color: 'error.main', mt: 0.5 }}>
-                                Sold Out
-                            </Typography>
-                        )}
+                        {/* Removido o segundo Typography de "Sold Out" */}
+
 
                         <Box className="product-actions">
                             {/* NOVO CONTROLE DE QUANTIDADE: BOTÕES + e - */}
                             <Box className="quantity-control">
                                 <IconButton
                                     onClick={handleDecreaseQuantity}
-                                    disabled={selectedQuantity <= 1 || currentAvailableStock === 0}
+                                    disabled={selectedQuantity <= 1 || isSoldOut} // Desabilita se esgotado
                                     size="small"
-                                    sx={{ border: '1px solid #ccc', borderRadius: '4px' }}
+                                    sx={{ border: '1px solid #2009EA', borderRadius: '4px' }}
                                 >
                                     <RemoveIcon />
                                 </IconButton>
@@ -225,10 +228,10 @@ function ProductDetailPage() {
                                     onChange={(e) => {
                                         const value = parseInt(e.target.value, 10);
                                         if (isNaN(value) || value < 1) {
-                                            setSelectedQuantity(1); // Garante mínimo de 1
+                                            setSelectedQuantity(1);
                                         } else if (value > currentAvailableStock) {
-                                            setSelectedQuantity(currentAvailableStock); // Não excede estoque
-                                        } else if (value > MAX_QTY_PER_ORDER) { // <--- Usa MAX_QTY_PER_ORDER
+                                            setSelectedQuantity(currentAvailableStock);
+                                        } else if (value > MAX_QTY_PER_ORDER) {
                                             setSelectedQuantity(MAX_QTY_PER_ORDER);
                                         } else {
                                             setSelectedQuantity(value);
@@ -236,18 +239,18 @@ function ProductDetailPage() {
                                     }}
                                     inputProps={{
                                         min: 1,
-                                        max: Math.min(currentAvailableStock, MAX_QTY_PER_ORDER), // <--- Usa MAX_QTY_PER_ORDER
+                                        max: Math.min(currentAvailableStock, MAX_QTY_PER_ORDER),
                                         style: { textAlign: 'center' }
                                     }}
                                     sx={{ width: '60px', mx: 1 }}
                                     size="small"
-                                    disabled={currentAvailableStock === 0}
+                                    disabled={isSoldOut} // Desabilita se esgotado
                                 />
                                 <IconButton
                                     onClick={handleIncreaseQuantity}
-                                    disabled={selectedQuantity >= currentAvailableStock || selectedQuantity >= MAX_QTY_PER_ORDER || currentAvailableStock === 0} // <--- Usa MAX_QTY_PER_ORDER
+                                    disabled={selectedQuantity >= currentAvailableStock || selectedQuantity >= MAX_QTY_PER_ORDER || isSoldOut} // Desabilita se esgotado
                                     size="small"
-                                    sx={{ border: '1px solid #ccc', borderRadius: '4px' }}
+                                    sx={{ border: '1px solid #2009EA', borderRadius: '4px' }}
                                 >
                                     <AddIcon />
                                 </IconButton>
@@ -266,7 +269,7 @@ function ProductDetailPage() {
                                     fontSize: '1rem',
                                     fontWeight: 'bold',
                                 }}
-                                disabled={loading || currentAvailableStock === 0 || selectedQuantity === 0}
+                                disabled={loading || isSoldOut || selectedQuantity === 0} // Desabilita se esgotado, carregando, ou qto 0
                             >
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'ADD TO CART'}
                             </Button>

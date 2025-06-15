@@ -23,7 +23,7 @@ const createOrder = async (req, res) => {
             shipping_address,
             payment_method,
             total_amount,
-            payment_status: 'completed', // Na simulação, o pagamento é sempre concluído aqui
+            payment_status: 'completed', 
         });
 
         const createdOrder = await order.save();

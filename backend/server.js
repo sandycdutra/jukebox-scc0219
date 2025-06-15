@@ -6,7 +6,8 @@ const cors = require('cors');
 const productRoutes = require('./src/routes/productRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const favoriteRoutes = require('./src/routes/favoriteRoutes');
-const orderRoutes = require('./src/routes/orderRoutes'); 
+const orderRoutes = require('./src/routes/orderRoutes');
+const cartRoutes = require('./src/routes/cartRoutes'); 
 
 dotenv.config();
 
@@ -25,8 +26,10 @@ app.get('/api/hello', (req, res) => {
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/users', favoriteRoutes);
-app.use('/api/orders', orderRoutes); 
+app.use('/api/users', favoriteRoutes); 
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes); 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
