@@ -24,13 +24,13 @@ import '../css/checkout.css';
 
 function Checkout() {
     const { cartItems, getCartSubtotal, clearCart, loadingCart, errorCart } = useCart();
-    // <--- OBTEM user, token, e as funções addAddress, deleteAddress, addPaymentMethod, deletePaymentMethod
     const { isAuthenticated, user, token, addAddress, deleteAddress, addPaymentMethod, deletePaymentMethod } = useAuth();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [formErrors, setFormErrors] = useState({});
     const [purchaseCompleted, setPurchaseCompleted] = useState(false); 
+    const [error, setError] = useState(''); // <-- Adicionado: Estado para mensagens de erro
 
     // Estados para Endereços
     const [selectedAddress, setSelectedAddress] = useState(''); // ID do endereço selecionado
@@ -39,9 +39,9 @@ function Checkout() {
     // ESTADOS PARA O FORMULÁRIO DE ADICIONAR NOVO ENDEREÇO
     const [newAddressStreet, setNewAddressStreet] = useState('');
     const [newAddressCity, setNewAddressCity] = useState('');
-    const [newAddressState, setNewAddressState] = '';
-    const [newAddressZipCode, setNewAddressZipCode] = '';
-    const [newAddressPhone, setNewAddressPhone] = '';
+    const [newAddressState, setNewAddressState] = useState('');
+    const [newAddressZipCode, setNewAddressZipCode] = useState('');
+    const [newAddressPhone, setNewAddressPhone] = useState('');
 
     // Estados para PAGAMENTO
     const [paymentMethod, setPaymentMethod] = useState('credit_card'); // Default
@@ -50,10 +50,9 @@ function Checkout() {
 
     // ESTADOS PARA O FORMULÁRIO DE ADICIONAR NOVO CARTÃO
     const [newCardName, setNewCardName] = useState('');
-    const [newCardNumber, setNewCardNumber] = '';
-    const [newCardExpiry, setNewCardExpiry] = '';
-    const [newCardCvv, setNewCardCvv] = '';
-
+    const [newCardNumber, setNewCardNumber] = useState('');
+    const [newCardExpiry, setNewCardExpiry] = useState('');
+    const [newCardCvv, setNewCardCvv] = useState('');
 
     const subtotal = getCartSubtotal();
     const shippingCost = subtotal > 0 ? 15.00 : 0;
@@ -61,11 +60,10 @@ function Checkout() {
 
     console.log("[Checkout] Rendered. cartItems length:", cartItems.length, "loadingCart:", loadingCart, "errorCart:", errorCart, "purchaseCompleted:", purchaseCompleted);
 
-
     useEffect(() => {
         if (!isAuthenticated) {
             console.log("[Checkout:useEffect] Not authenticated, redirecting to Login.");
-            alert('You need to be logged in to access checkout.');
+            // alert('You need to be logged in to access checkout.');
             navigate('/Login');
             return;
         }
@@ -83,7 +81,7 @@ function Checkout() {
 
         if (!loadingCart && cartItems.length === 0 && !purchaseCompleted) { 
             console.log("[Checkout:useEffect] Cart is empty after loading (and no purchase completed), redirecting to Cart.");
-            alert('Your cart is empty! Please add products before checking out.');
+            // alert('Your cart is empty! Please add products before checking out.');
             navigate('/Cart');
             return;
         }
@@ -103,9 +101,9 @@ function Checkout() {
             if (!newAddressState) errors.newAddressState = 'State is required';
             if (!newAddressZipCode) errors.newAddressZipCode = 'ZIP Code is required';
             // Campos obrigatórios do novo endereço
-            if (!newAddressStreet || !newAddressCity || !newAddressState || !newAddressZipCode) {
-                errors.newAddressForm = "All new address fields are required.";
-            }
+            // if (!newAddressStreet || !newAddressCity || !newAddressState || !newAddressZipCode) {
+            //     errors.newAddressForm = "All new address fields are required.";
+            // }
         } else { // Se usando endereços salvos
             if (!userHasAddresses) { 
                 errors.addressSelection = "Please add a new address or ensure your account has saved addresses.";
@@ -142,7 +140,7 @@ function Checkout() {
             return;
         }
         setLoading(true);
-        setError('');
+        setError(''); // Limpa erros anteriores
         try {
             const newAddrData = {
                 street: newAddressStreet,
@@ -178,9 +176,9 @@ function Checkout() {
 
     // <--- FUNÇÃO PARA DELETAR ENDEREÇO ---
     const handleDeleteAddress = async (addressId) => {
-        if (!window.confirm('Are you sure you want to delete this address?')) return; // Confirmação
+        if (!window.confirm('Are you sure you want to delete this address?')) return; 
         setLoading(true);
-        setError('');
+        setError(''); // Limpa erros anteriores
         try {
             const result = await deleteAddress(addressId); // Chama a função do useAuth
             if (result.success) {
@@ -221,7 +219,7 @@ function Checkout() {
         }
 
         setLoading(true);
-        setError('');
+        setError(''); // Limpa erros anteriores
         try {
             const newMethodData = {
                 cardType: 'Credit/Debit', // Pode ser dinâmico no futuro
@@ -256,9 +254,9 @@ function Checkout() {
 
     // <--- FUNÇÃO PARA DELETAR CARTÃO ---
     const handleDeletePaymentMethod = async (cardId) => {
-        if (!window.confirm('Are you sure you want to delete this card?')) return; // Confirmação
+        if (!window.confirm('Are you sure you want to delete this card?')) return; 
         setLoading(true);
-        setError('');
+        setError(''); // Limpa erros anteriores
         try {
             const result = await deletePaymentMethod(cardId); // Chama a função do useAuth
             if (result.success) {
@@ -288,12 +286,13 @@ function Checkout() {
         }
 
         setLoading(true);
+        setError(''); // Limpa erros anteriores
 
         try {
             if (cartItems.length === 0) {
-                 alert('Your cart is empty. Please add products before finalizing the order.');
-                 navigate('/Cart');
-                 return;
+                alert('Your cart is empty. Please add products before finalizing the order.');
+                navigate('/Cart');
+                return;
             }
 
             // --- Gerenciamento de Endereço de Entrega ---
@@ -301,7 +300,7 @@ function Checkout() {
             // Se o usuário não tem endereços salvos, mas preencheu o formulário de novo endereço
             if ((!user?.addresses || user.addresses.length === 0) && showNewAddressForm) {
                 deliveryAddressForOrder = {
-                    id: `new-${Date.now()}`, // Gerar um ID temporário (no real, seria do DB)
+                    // id: `new-${Date.now()}`, // Gerar um ID temporário (no real, seria do DB) - O backend deve gerar o ID?
                     street: newAddressStreet,
                     city: newAddressCity,
                     state: newAddressState,
@@ -590,7 +589,7 @@ function Checkout() {
                                                         control={<Radio />}
                                                         label={<Typography variant="body1" className="card-text">{`${card.cardType} **** **** **** ${card.cardNumberLast4}`}</Typography>}
                                                     />
-                                                    <IconButton size="small" aria-label="delete card" onClick={() => deletePaymentMethod(card.id)}>
+                                                    <IconButton size="small" aria-label="delete card" onClick={() => handleDeletePaymentMethod(card.id)}>
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>
                                                 </Box>

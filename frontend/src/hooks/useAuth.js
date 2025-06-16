@@ -1,5 +1,6 @@
 // frontend/src/hooks/useAuth.js
 import { useState, useEffect, useCallback } from 'react';
+// import { v4 as uuidv4 } from 'uuid'; 
 
 const USER_STORAGE_KEY = 'jukebox_logged_in_user';
 const TOKEN_STORAGE_KEY = 'jukebox_auth_token';
@@ -59,14 +60,14 @@ export function useAuth() {
             const data = await response.json();
 
             if (response.ok) {
-                setUser({ // Salva dados do usuário (sem o token, token é separado)
+                // Ao fazer login, a resposta do backend deve ter os arrays de endereços e pagamentos
+                setUser({ 
                     _id: data._id,
                     name: data.name,
                     email: data.email,
-                    // NOVO:
-                    addresses: data.addresses || [],
-                    payment_methods: data.payment_methods || [],
-                    phone: data.phone || '', // Garante que phone venha ou seja vazio
+                    addresses: data.addresses || [], // Garante que é um array, mesmo se vazio
+                    payment_methods: data.payment_methods || [], // Garante que é um array, mesmo se vazio
+                    phone: data.phone || '', 
                     favorite_products: data.favorite_products,
                     role: data.role
                 });
@@ -76,6 +77,7 @@ export function useAuth() {
                 return { success: false, message: data.message || 'Login failed' };
             }
         } catch (error) {
+            console.error("Server error during login:", error);
             return { success: false, message: 'Server error during login' };
         }
     }, []);
@@ -94,10 +96,9 @@ export function useAuth() {
                     _id: data._id,
                     name: data.name,
                     email: data.email,
-                    // NOVO:
-                    addresses: data.addresses || [],
-                    payment_methods: data.payment_methods || [],
-                    phone: data.phone || '', // Garante que phone venha ou seja vazio
+                    addresses: data.addresses || [], // Garante que é um array, mesmo se vazio
+                    payment_methods: data.payment_methods || [], // Garante que é um array, mesmo se vazio
+                    phone: data.phone || '',
                     favorite_products: data.favorite_products,
                     role: data.role
                 });
@@ -107,6 +108,7 @@ export function useAuth() {
                 return { success: false, message: data.message || 'Registration failed' };
             }
         } catch (error) {
+            console.error("Server error during registration:", error); // Melhor log
             return { success: false, message: 'Server error during registration' };
         }
     }, []);
@@ -118,61 +120,72 @@ export function useAuth() {
 
     const isAuthenticated = !!user && !!token;
 
-    // --- NOVAS FUNÇÕES PARA GERENCIAR ENDEREÇOS E MÉTODOS DE PAGAMENTO VIA API ---
-
+    // --- FUNÇÕES PARA GERENCIAR ENDEREÇOS ---
     const addAddress = useCallback(async (newAddressData) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Not authenticated' };
         try {
-            const response = await fetch('http://localhost:5000/api/auth/profile', { // Atualiza o perfil inteiro
-                method: 'PUT',
+            // Chame o endpoint específico para adicionar endereço
+            const response = await fetch('http://localhost:5000/api/users/profile/address', {
+                method: 'PUT', // PUT para adicionar a um array no perfil
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ addresses: [...(user.addresses || []), { ...newAddressData, id: uuidv4() }] }) // Adiciona ID
+                body: JSON.stringify(newAddressData) // Envia os dados do endereço
             });
             const data = await response.json();
+
             if (response.ok) {
-                setUser(prevUser => ({ ...prevUser, addresses: data.addresses }));
-                // Opcional: setToken(data.token); se o token é atualizado no PUT profile
-                return { success: true, user: data };
+                // O backend deve retornar o objeto de usuário ATUALIZADO
+                setUser(prevUser => ({ 
+                    ...prevUser, 
+                    addresses: data.user.addresses // Atualiza com o array de endereços que vem do backend
+                }));
+                return { success: true, message: data.message, address: data.address }; // Retorna o endereço com o ID gerado pelo backend
             } else {
                 return { success: false, message: data.message || 'Failed to add address.' };
             }
         } catch (error) {
+            console.error("Error adding address:", error);
             return { success: false, message: 'Server error adding address.' };
         }
-    }, [isAuthenticated, token, user, setUser]);
+    }, [isAuthenticated, token, setUser]); // user removido das dependências para evitar loop, pois data.user já está atualizando
 
     const deleteAddress = useCallback(async (addressId) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Not authenticated' };
         try {
-            const updatedAddresses = user.addresses.filter(addr => addr.id !== addressId);
-            const response = await fetch('http://localhost:5000/api/auth/profile', { // Atualiza o perfil inteiro
-                method: 'PUT',
+            // Chame o endpoint específico para deletar endereço
+            const response = await fetch(`http://localhost:5000/api/users/profile/address/${addressId}`, {
+                method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ addresses: updatedAddresses })
+                }
             });
             const data = await response.json();
+
             if (response.ok) {
-                setUser(prevUser => ({ ...prevUser, addresses: data.addresses }));
-                return { success: true, user: data };
+                // O backend deve retornar o objeto de usuário ATUALIZADO
+                setUser(prevUser => ({ 
+                    ...prevUser, 
+                    addresses: data.user.addresses // Atualiza com o array de endereços que vem do backend
+                }));
+                return { success: true, message: data.message };
             } else {
                 return { success: false, message: data.message || 'Failed to delete address.' };
             }
         } catch (error) {
+            console.error("Error deleting address:", error);
             return { success: false, message: 'Server error deleting address.' };
         }
-    }, [isAuthenticated, token, user, setUser]);
+    }, [isAuthenticated, token, setUser]);
 
+    // --- FUNÇÕES PARA GERENCIAR MÉTODOS DE PAGAMENTO ---
     const addPaymentMethod = useCallback(async (newMethodData) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Not authenticated' };
         try {
-            const response = await fetch('http://localhost:5000/api/auth/payment-methods', {
-                method: 'POST',
+            // Chame o endpoint específico para adicionar método de pagamento
+            const response = await fetch('http://localhost:5000/api/users/profile/payment', {
+                method: 'PUT', // PUT para adicionar a um array no perfil
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -180,37 +193,50 @@ export function useAuth() {
                 body: JSON.stringify(newMethodData)
             });
             const data = await response.json();
+
             if (response.ok) {
-                setUser(prevUser => ({ ...prevUser, payment_methods: data.userPaymentMethods }));
-                return { success: true, paymentMethod: data.paymentMethod };
+                // O backend deve retornar o objeto de usuário ATUALIZADO
+                setUser(prevUser => ({ 
+                    ...prevUser, 
+                    payment_methods: data.user.payment_methods // Atualiza com o array de métodos que vem do backend
+                }));
+                return { success: true, message: data.message, paymentMethod: data.paymentMethod }; // Retorna o método com o ID gerado pelo backend
             } else {
                 return { success: false, message: data.message || 'Failed to add payment method.' };
             }
         } catch (error) {
+            console.error("Error adding payment method:", error);
             return { success: false, message: 'Server error adding payment method.' };
         }
-    }, [isAuthenticated, token, user, setUser]);
+    }, [isAuthenticated, token, setUser]);
 
     const deletePaymentMethod = useCallback(async (methodId) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Not authenticated' };
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/payment-methods/${methodId}`, {
+            // Chame o endpoint específico para deletar método de pagamento
+            const response = await fetch(`http://localhost:5000/api/users/profile/payment/${methodId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
             const data = await response.json();
+
             if (response.ok) {
-                setUser(prevUser => ({ ...prevUser, payment_methods: data.userPaymentMethods }));
+                // O backend deve retornar o objeto de usuário ATUALIZADO
+                setUser(prevUser => ({ 
+                    ...prevUser, 
+                    payment_methods: data.user.payment_methods // Atualiza com o array de métodos que vem do backend
+                }));
                 return { success: true, message: data.message };
             } else {
                 return { success: false, message: data.message || 'Failed to delete payment method.' };
             }
         } catch (error) {
+            console.error("Error deleting payment method:", error);
             return { success: false, message: 'Server error deleting payment method.' };
         }
-    }, [isAuthenticated, token, user, setUser]);
+    }, [isAuthenticated, token, setUser]);
 
 
     return { user, isAuthenticated, token, login, register, logout, addAddress, deleteAddress, addPaymentMethod, deletePaymentMethod };
