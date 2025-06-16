@@ -1,9 +1,9 @@
 // backend/src/controllers/userController.js
-const User = require('../models/User'); // Importe seu modelo de usuário
-const Product = require('../models/Product'); // <-- NOVO: Importe o modelo de Produto
-const mongoose = require('mongoose'); // Necessário para gerar ObjectId ou UUIDs
+const User = require('../models/User'); 
+const Product = require('../models/Product'); 
+const mongoose = require('mongoose'); 
 
-// --- Funções de Gerenciamento de Perfil (já existentes) ---
+// --- Funções de Gerenciamento de Perfil ---
 
 // @desc    Get user profile data
 // @route   GET /api/users/me
@@ -16,15 +16,20 @@ const getMe = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        // CORREÇÃO AQUI: Retorne o user completo sob a chave 'user'
         res.status(200).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            addresses: user.addresses || [], 
-            payment_methods: user.payment_methods || [],
-            phone: user.phone || '', 
-            favorite_products: user.favorite_products || [], 
-            role: user.role, 
+            success: true, // Adicionado para consistência
+            message: 'User profile fetched successfully!', // Adicionado para consistência
+            user: { 
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                addresses: user.addresses || [], 
+                payment_methods: user.payment_methods || [],
+                phone: user.phone || '', 
+                favorite_products: user.favorite_products || [], 
+                role: user.role, 
+            }
         });
     } catch (error) {
         console.error('Error in getMe:', error);
@@ -73,11 +78,12 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
-// @desc    Add a new address to user profile
+// @desc    Add a new address to user profile (or update existing)
 // @route   PUT /api/users/profile/address
 // @access  Private (requires token)
 const addAddressToProfile = async (req, res) => {
-    const { street, city, state, zip_code, phone } = req.body; 
+    // New: Check for 'id' to determine if it's an update or new add
+    const { id, street, city, state, zip_code, phone, isDefault } = req.body; 
     const userId = req.user.id; 
 
     try {
@@ -87,29 +93,56 @@ const addAddressToProfile = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const newAddressId = new mongoose.Types.ObjectId().toString(); 
-        
-        const newAddress = {
-            id: newAddressId, 
-            street,
-            city,
-            state,
-            zip_code,
-            phone: phone || '', 
-        };
+        let updatedAddress;
+        let message;
+        if (id) {
+            // Attempt to find and update an existing address
+            const addressIndex = user.addresses.findIndex(addr => String(addr.id) === String(id));
+            if (addressIndex > -1) {
+                // Update existing address fields
+                user.addresses[addressIndex].street = street !== undefined ? street : user.addresses[addressIndex].street;
+                user.addresses[addressIndex].city = city !== undefined ? city : user.addresses[addressIndex].city;
+                user.addresses[addressIndex].state = state !== undefined ? state : user.addresses[addressIndex].state;
+                user.addresses[addressIndex].zip_code = zip_code !== undefined ? zip_code : user.addresses[addressIndex].zip_code;
+                user.addresses[addressIndex].phone = phone !== undefined ? phone : user.addresses[addressIndex].phone;
+                
+                if (isDefault !== undefined) {
+                    user.addresses.forEach(addr => addr.isDefault = false); // Clear other defaults
+                    user.addresses[addressIndex].isDefault = isDefault;
+                }
+                updatedAddress = user.addresses[addressIndex];
+                message = 'Address updated successfully!';
+            } else {
+                return res.status(404).json({ success: false, message: 'Address to update not found.' });
+            }
+        } else {
+            // Add new address (original logic)
+            const newAddressId = new mongoose.Types.ObjectId().toString(); 
+            const newAddress = {
+                id: newAddressId, 
+                street,
+                city,
+                state,
+                zip_code,
+                phone: phone || '',
+                isDefault: user.addresses.length === 0 ? true : (isDefault || false) // First address is default, or use provided isDefault
+            };
+            user.addresses.push(newAddress); 
+            updatedAddress = newAddress;
+            message = 'Address added successfully!';
+        }
 
-        user.addresses.push(newAddress); 
         await user.save(); 
 
         res.status(200).json({
             success: true,
-            message: 'Address added successfully!',
-            address: newAddress, 
+            message: message,
+            address: updatedAddress, 
             user: { 
                 _id: user._id, 
                 name: user.name,
                 email: user.email,
-                addresses: user.addresses,
+                addresses: user.addresses, // Retorna o array de endereços ATUALIZADO
                 payment_methods: user.payment_methods,
                 phone: user.phone || '',
                 favorite_products: user.favorite_products || [],
@@ -118,8 +151,8 @@ const addAddressToProfile = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error adding address:', error);
-        res.status(500).json({ success: false, message: 'Server error adding address' });
+        console.error('Error adding/updating address:', error);
+        res.status(500).json({ success: false, message: 'Server error adding/updating address' });
     }
 };
 
@@ -138,7 +171,7 @@ const deleteAddressFromProfile = async (req, res) => {
         }
 
         const initialAddressCount = user.addresses.length;
-        user.addresses = user.addresses.filter(addr => String(addr.id) !== String(addressId)); // Garante comparação de string
+        user.addresses = user.addresses.filter(addr => String(addr.id) !== String(addressId)); 
 
         if (user.addresses.length === initialAddressCount) {
             return res.status(404).json({ success: false, message: 'Address not found or already deleted' });
@@ -231,7 +264,7 @@ const deletePaymentMethodFromProfile = async (req, res) => {
         }
 
         const initialPaymentCount = user.payment_methods.length;
-        user.payment_methods = user.payment_methods.filter(method => String(method.id) !== String(paymentId)); // Garante comparação de string
+        user.payment_methods = user.payment_methods.filter(method => String(method.id) !== String(paymentId)); 
 
         if (user.payment_methods.length === initialPaymentCount) {
             return res.status(404).json({ success: false, message: 'Payment method not found or already deleted' });
@@ -260,10 +293,10 @@ const deletePaymentMethodFromProfile = async (req, res) => {
     }
 };
 
-// --- NOVAS FUNÇÕES DE GERENCIAMENTO DE FAVORITOS (MOVIDAS DO favoriteController.js) ---
+// --- Funções de Gerenciamento de Favoritos ---
 
 // @desc    Obter favoritos do usuário logado
-// @route   GET /api/users/me/favorites (rota lógica, a rota real será definida no userRoutes.js)
+// @route   GET /api/users/me/favorites (rota lógica)
 // @access  Private (requer token)
 const getUserFavorites = async (req, res) => {
     try {
@@ -273,15 +306,31 @@ const getUserFavorites = async (req, res) => {
         }
         const favoriteProductIds = user.favorite_products; 
         const favoritesWithDetails = await Product.find({ id: { $in: favoriteProductIds } });
-        res.json(favoritesWithDetails); 
+        
+        // CORREÇÃO AQUI: Retorne o user completo sob a chave 'user', e os favoritos como um array separado ou dentro do user
+        res.status(200).json({
+            success: true,
+            message: 'User favorites fetched successfully!',
+            favorites: favoritesWithDetails, // Array de produtos favoritos completos
+            user: { // Retorne o user COMPLETO para consistência
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                addresses: user.addresses || [],
+                payment_methods: user.payment_methods || [],
+                phone: user.phone || '',
+                favorite_products: user.favorite_products || [], // Retorne os IDs dos favoritos
+                role: user.role,
+            }
+        });
     } catch (error) {
-        console.error('Error in getUserFavorites:', error); // Log mais específico
+        console.error('Error in getUserFavorites:', error); 
         res.status(500).json({ message: 'Server Error: Failed to get user favorites' });
     }
 };
 
 // @desc    Adicionar produto aos favoritos do usuário logado
-// @route   POST /api/users/favorites (rota lógica, a rota real será definida no userRoutes.js)
+// @route   POST /api/users/favorites (rota lógica)
 // @access  Private (requer token)
 const addFavoriteProduct = async (req, res) => {
     const { productId } = req.body; 
@@ -302,15 +351,31 @@ const addFavoriteProduct = async (req, res) => {
         }
         user.favorite_products.push(productId); 
         await user.save(); 
-        res.status(200).json({ message: 'Product added to favorites', favorites: user.favorite_products });
+
+        // CORREÇÃO AQUI: Retorne o user completo sob a chave 'user'
+        res.status(200).json({ 
+            success: true, // Adicionado para consistência
+            message: 'Product added to favorites', 
+            favorites: user.favorite_products, // Ainda retorna o array de IDs favoritos para compatibilidade com frontend
+            user: { // Retorne o user COMPLETO para consistência
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                addresses: user.addresses || [],
+                payment_methods: user.payment_methods || [],
+                phone: user.phone || '',
+                favorite_products: user.favorite_products || [],
+                role: user.role,
+            }
+        });
     } catch (error) {
-        console.error('Error in addFavoriteProduct:', error); // Log mais específico
+        console.error('Error in addFavoriteProduct:', error); 
         res.status(500).json({ message: 'Server Error: Failed to add product to favorites' });
     }
 };
 
 // @desc    Remover produto dos favoritos do usuário logado
-// @route   DELETE /api/users/favorites/:productId (rota lógica, a rota real será definida no userRoutes.js)
+// @route   DELETE /api/users/favorites/:productId (rota lógica)
 // @access  Private (requer token)
 const removeFavoriteProduct = async (req, res) => {
     const { productId } = req.params; 
@@ -330,9 +395,25 @@ const removeFavoriteProduct = async (req, res) => {
         }
 
         await user.save(); 
-        res.status(200).json({ message: 'Product removed from favorites', favorites: user.favorite_products });
+        
+        // CORREÇÃO AQUI: Retorne o user completo sob a chave 'user'
+        res.status(200).json({ 
+            success: true, // Adicionado para consistência
+            message: 'Product removed from favorites', 
+            favorites: user.favorite_products, // Ainda retorna o array de IDs favoritos
+            user: { // Retorne o user COMPLETO para consistência
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                addresses: user.addresses || [],
+                payment_methods: user.payment_methods || [],
+                phone: user.phone || '',
+                favorite_products: user.favorite_products || [],
+                role: user.role,
+            }
+        });
     } catch (error) {
-        console.error('Error in removeFavoriteProduct:', error); // Log mais específico
+        console.error('Error in removeFavoriteProduct:', error); 
         res.status(500).json({ message: 'Server Error: Failed to remove product from favorites' });
     }
 };
@@ -344,7 +425,6 @@ module.exports = {
     deleteAddressFromProfile,
     addPaymentMethodToProfile,
     deletePaymentMethodFromProfile,
-    // Exportar as novas funções de favoritos
     getUserFavorites,
     addFavoriteProduct,
     removeFavoriteProduct,

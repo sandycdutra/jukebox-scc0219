@@ -8,16 +8,14 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
-
 
 import '../css/main.css';
 import '../css/myaccount.css';
@@ -45,7 +43,6 @@ function MyAccount() {
             return dateString;
         }
     };
-
 
     useEffect(() => {
         const fetchUserOrders = async () => {
@@ -112,6 +109,9 @@ function MyAccount() {
         );
     }
 
+    // Encontre o endereço padrão ou o primeiro, se existir
+    // Faça isso fora do return() para que seja calculado uma vez por render
+    const defaultOrFirstAddress = user?.addresses?.find(addr => addr.isDefault) || user?.addresses?.[0];
 
     return (
         <>
@@ -148,11 +148,12 @@ function MyAccount() {
                             </Box>
                             <Box className="info-item">
                                 <LocationOnIcon sx={{ mr: 1 }} />
-                                <Typography variant="body1">{formatAddress(user.cep)}</Typography>
+                                {/* Passe o endereço encontrado para formatAddress */}
+                                <Typography variant="body1">{formatAddress(defaultOrFirstAddress)}</Typography>
                             </Box>
                             <Button
                                 variant="outlined"
-                                onClick={() => navigate('/edit-profile')} // <--- NAVEGA PARA A TELA DE EDIÇÃO
+                                onClick={() => navigate('/edit-profile')}
                                 sx={{ mt: 3, color: '#2009EA', borderColor: '#2009EA', '&:hover': { borderColor: '#1a07bb' } }}
                             >
                                 Edit Profile

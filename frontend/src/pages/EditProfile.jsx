@@ -11,22 +11,23 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useAuth } from '../hooks/useAuth'; // Para obter dados do usuário e a função de login (para re-logar se token mudar)
-
-import '../css/main.css';
-import '../css/login.css'; // Reutiliza estilos de formulário/caixa de login
+import { useAuth } from '../hooks/useAuth'; // Importa useAuth para usar updateUserProfile e addAddress
 
 function EditProfile() {
-    const { user, token, isAuthenticated, login, logout } = useAuth(); // Precisa da função 'login' para atualizar o contexto
-    const navigate = useNavigate();
+    // Importa updateUserProfile e addAddress do useAuth
+    const { user, isAuthenticated, navigate, updateUserProfile, addAddress } = useAuth(); 
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    
+    // Estados para o endereço do formulário, que representará o endereço padrão (ou o primeiro)
+    const [addressId, setAddressId] = useState(null); // Para guardar o ID do endereço que está sendo editado
     const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
+
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -34,22 +35,36 @@ function EditProfile() {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Preenche os campos do formulário com os dados atuais do usuário ao carregar
+    // Preenche os campos do formulário com os dados atuais do usuário ao carregar ou quando 'user' muda
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/Login');
             return;
         }
-        if (user) {
+        if (user) { // user é a dependência, então este efeito re-executa quando o 'user' no contexto muda
             setName(user.name || '');
             setEmail(user.email || '');
             setPhone(user.phone || '');
-            setStreet(user.cep?.street || '');
-            setCity(user.cep?.city || '');
-            setState(user.cep?.state || '');
-            setZipCode(user.cep?.zip_code || '');
+            
+            // Encontrar o endereço padrão ou o primeiro endereço no array
+            const defaultAddress = user.addresses?.find(addr => addr.isDefault) || user.addresses?.[0];
+
+            if (defaultAddress) {
+                setAddressId(defaultAddress.id); // Guardar o ID do endereço para futuras atualizações
+                setStreet(defaultAddress.street || '');
+                setCity(defaultAddress.city || '');
+                setState(defaultAddress.state || '');
+                setZipCode(defaultAddress.zip_code || '');
+            } else {
+                // Se não há endereços, garanta que os campos de endereço estejam vazios
+                setAddressId(null);
+                setStreet('');
+                setCity('');
+                setState('');
+                setZipCode('');
+            }
         }
-    }, [user, isAuthenticated, navigate]);
+    }, [user, isAuthenticated, navigate]); // user é uma dependência essencial aqui
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
@@ -64,42 +79,55 @@ function EditProfile() {
         }
 
         try {
-            const updateData = {
+            const profileUpdateData = { // Dados para a atualização geral do perfil (nome, email, phone, password)
                 name,
                 email,
                 phone,
-                cep: { street, city, state, zip_code: zipCode },
             };
             if (password) {
-                updateData.password = password;
+                profileUpdateData.password = password;
             }
 
-            const response = await fetch('http://localhost:5000/api/auth/profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Envia o token JWT
-                },
-                body: JSON.stringify(updateData)
-            });
+            // 1. Chamar updateUserProfile do useAuth para atualizar dados gerais
+            const resultGeneral = await updateUserProfile(profileUpdateData); 
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Ao atualizar o perfil, o backend retorna um novo token (se a senha mudou)
-                // Precisamos atualizar o estado do usuário e o token no useAuth.
-                // A forma mais simples é "re-logar" o usuário no contexto useAuth com os novos dados.
-                login(data.email, password || 'password123'); // Assume a senha antiga se não mudou, ou use uma lógica de re-login melhor
-
-                setSuccessMessage('Profile updated successfully!');
-                alert('Profile updated successfully!'); // Alerta de sucesso
-                navigate('/my-account'); // Redireciona de volta para My Account
-            } else {
-                setError(data.message || 'Failed to update profile.');
+            if (!resultGeneral.success) {
+                setError(resultGeneral.message || 'Falha ao atualizar informações gerais do perfil.');
+                setLoading(false);
+                return;
             }
+
+            // 2. Chamar addAddress do useAuth para atualizar/adicionar o endereço
+            // Esta lógica assume que 'addAddress' no useAuth (e seu backend) lida com adição OU atualização
+            if (street || city || state || zipCode) { // Só tenta atualizar se os campos de endereço não estiverem vazios
+                 const addressUpdateData = {
+                    street,
+                    city,
+                    state,
+                    zip_code: zipCode,
+                    phone: phone, // Assume que o telefone do perfil principal é usado para o endereço também
+                    ...(addressId && { id: addressId }), // Inclui 'id' se estiver atualizando um endereço existente
+                 };
+
+                 const resultAddress = await addAddress(addressUpdateData); 
+
+                 if (!resultAddress.success) {
+                    setError(resultAddress.message || 'Falha ao atualizar informações de endereço.');
+                    setLoading(false);
+                    return;
+                 }
+            }
+            
+            // Neste ponto, o estado 'user' no useAuth JÁ foi atualizado
+            // pelas chamadas a 'updateUserProfile' e 'addAddress' (via 'updateUserContext').
+            // Então, não é necessária uma nova requisição para obter os dados.
+
+            setSuccessMessage('Perfil atualizado com sucesso!');
+            alert('Perfil atualizado com sucesso!'); // Alerta de sucesso
+            navigate('/my-account'); // Redireciona para My Account, que exibirá os dados atualizados
         } catch (err) {
-            console.error("Error updating profile:", err);
-            setError('Server error: Could not update profile.');
+            console.error("Erro ao atualizar perfil:", err);
+            setError('Erro do servidor: Não foi possível atualizar o perfil.');
         } finally {
             setLoading(false);
         }
@@ -109,7 +137,7 @@ function EditProfile() {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>Redirecting to login...</Typography>
+                <Typography variant="h6" sx={{ ml: 2 }}>Redirecionando para login...</Typography>
             </Box>
         );
     }
@@ -118,7 +146,7 @@ function EditProfile() {
         <>
             <Header />
 
-            <Box className="login-page-container"> {/* Reutiliza classes de login para centralização */}
+            <Box className="login-page-container"> 
                 <Box className="login-box">
                     <Typography variant="h5" component="h1" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
                         Edit Profile
@@ -157,7 +185,7 @@ function EditProfile() {
                             sx={{ mb: 2 }}
                         />
 
-                        <Typography variant="subtitle1" sx={{ mt: 3, mb: 1, fontWeight: 'bold' }}>Address (CEP)</Typography>
+                        <Typography variant="subtitle1" sx={{ mt: 3, mb: 1, fontWeight: 'bold' }}>Address</Typography>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
