@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Product = require('./src/models/Product'); 
-const productsData = require('../frontend/src/mockdata/products.jsx').default;
+const productsData = require('../frontend/src/mockdata/products.js');
 dotenv.config(); 
 
 // Conecta ao MongoDB
