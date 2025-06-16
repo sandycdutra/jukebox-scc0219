@@ -258,24 +258,23 @@ export function useAuth() {
 
     // --- Funções de favoritos (certifique-se de que também chamam updateUserContext) ---
     // Exemplo:
-    const addFavoriteProduct = useCallback(async (productId) => {
+    const addFavoriteProduct = useCallback(async (productId) => { // productId, não product
         if (!isAuthenticated || !token) return { success: false, message: 'Não autenticado' };
         try {
-            const response = await fetch('http://localhost:5000/api/users/favorites', { // ou /api/users/favorites/add, dependendo da sua rota
+            const response = await fetch('http://localhost:5000/api/users/favorites', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ productId })
+                body: JSON.stringify({ productId }) // Envia apenas o productId
             });
-            const data = await response.json();
+            const data = await response.json(); // Data aqui deve conter { user: {...}, favorites: [...] } do backend
+
             if (response.ok) {
-                // O backend deve retornar o user completo aqui também, ou pelo menos o array de favoritos
-                // Se o backend retorna user.favorites, atualize assim:
-                updateUserContext({ ...user, favorite_products: data.favorites });
-                // Se o backend retorna data.user completo, use: updateUserContext(data.user);
-                return { success: true, message: data.message, favorites: data.favorites };
+                // Se o backend retorna user: {...}, atualize o user completo no contexto
+                updateUserContext(data.user); // <-- CRÍTICO: Atualiza o user no contexto
+                return { success: true, message: data.message, favorites: data.favorites }; // Retorna o array de IDs dos favoritos
             } else {
                 return { success: false, message: data.message || 'Falha ao adicionar favorito.' };
             }
@@ -283,7 +282,8 @@ export function useAuth() {
             console.error("Erro ao adicionar favorito:", error);
             return { success: false, message: 'Erro do servidor ao adicionar favorito.' };
         }
-    }, [isAuthenticated, token, user, updateUserContext]); 
+    }, [isAuthenticated, token, updateUserContext]);
+
 
     const removeFavoriteProduct = useCallback(async (productId) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Não autenticado' };
@@ -294,11 +294,12 @@ export function useAuth() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            const data = await response.json();
+            const data = await response.json(); // Data aqui deve conter { user: {...}, favorites: [...] } do backend
+
             if (response.ok) {
-                // O backend deve retornar o user completo aqui também, ou pelo menos o array de favoritos
-                updateUserContext({ ...user, favorite_products: data.favorites });
-                return { success: true, message: data.message, favorites: data.favorites };
+                // Se o backend retorna user: {...}, atualize o user completo no contexto
+                updateUserContext(data.user);
+                return { success: true, message: data.message, favorites: data.favorites }; // Retorna o array de IDs dos favoritos
             } else {
                 return { success: false, message: data.message || 'Falha ao remover favorito.' };
             }
@@ -306,8 +307,10 @@ export function useAuth() {
             console.error("Erro ao remover favorito:", error);
             return { success: false, message: 'Erro do servidor ao remover favorito.' };
         }
-    }, [isAuthenticated, token, user, updateUserContext]); 
+    }, [isAuthenticated, token, updateUserContext]);
 
+    // getUserFavorites NÃO PRECISA chamar updateUserContext, pois ele só "lê" os dados.
+    // Ele já busca os favoritos detalhados.
     const getUserFavorites = useCallback(async () => {
         if (!isAuthenticated || !token) return [];
         try {
@@ -322,7 +325,8 @@ export function useAuth() {
             }
             const data = await response.json();
             // Esta função GET apenas puxa dados, não modifica o perfil, então não precisa de updateUserContext
-            return data; 
+            // A resposta de getUserFavorites no backend é { favorites: [...], user: {...} }
+            return data.favorites; // Retorna o array de produtos favoritos completos
         } catch (error) {
             console.error("Erro ao obter favoritos:", error);
             return [];
@@ -337,14 +341,14 @@ export function useAuth() {
         login,
         register,
         logout,
-        updateUserContext,     // Exportado
-        updateUserProfile,     // Exportado
-        addAddress,            // Exportado
-        deleteAddress,         // Exportado
-        addPaymentMethod,      // Exportado
-        deletePaymentMethod,   // Exportado
-        addFavoriteProduct,    // Exportado
-        removeFavoriteProduct, // Exportado
-        getUserFavorites,      // Exportado
+        updateUserContext,
+        updateUserProfile,
+        addAddress,
+        deleteAddress,
+        addPaymentMethod,
+        deletePaymentMethod,
+        addFavoriteProduct,
+        removeFavoriteProduct,
+        getUserFavorites,
     };
 }
