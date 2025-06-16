@@ -1,31 +1,54 @@
+.carousel-section {
+    width: 100%;
+    overflow: hidden;
+    margin: 10px auto;
+    padding: 5px 160px;
+}
+
+/* Para telas menores que 768px (Mobile) */
+@media (max-width: 767.98px) {
+    .carousel-section {
+        padding: 5px 0px;
+    }
+}
+
+/* Para telas entre 768px e 1024px (Tablets) */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+    .carousel-section {
+        padding: 5px 40px;
+    }
+}
+
+.Swiper {
+    width: 100%;
+    height: auto;
+}
+
+.Swiper .swiper-slide img {
+    width: 100%; /* Imagem preenche 100% da largura do slide */
+    height: auto; /* Mantém a proporção da imagem */
+    display: block; /* Remove o espaço em branco extra que navegadores podem adicionar */
+    object-fit: cover; /* Garante que a imagem preencha a área sem distorcer, cortando se necessário */
+}
 
 .swiper-button-next,
 .swiper-button-prev {
-  color: #2009ea;
-  transform: scale(0.6);
+    color: #2009ea; /* Cor das setas */
+    transform: scale(0.6); /* Reduz o tamanho das setas */
 }
 
+.swiper-pagination {
+    bottom: 10px !important; /* Posiciona os pontos na parte inferior do carrossel */
+}
+
+/* Estilo para cada ponto individual (inativo) */
+.swiper-pagination-bullet {
+    background-color: white !important; /* Cor dos pontos inativos */
+    opacity: 0.8; /* Transparência dos pontos inativos */
+}
+
+/* Estilo para o ponto ativo (o slide atual) */
 .swiper-pagination-bullet-active {
-  background: #2009ea;
-}
-
-.swiper img {
-  width: 100%;
-}
-
-.carousel-button {
-  background: #fff;
-  width: 100%;
-  border: none;
-  border-radius: 5px;
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.carousel-section {
-  padding: 5px 160px;
-  width: 100%;
-  margin: 10px auto;
+    background-color: #2009ea !important; /* Cor do ponto ativo */
+    opacity: 1; /* Sem transparência para o ponto ativo */
 }
