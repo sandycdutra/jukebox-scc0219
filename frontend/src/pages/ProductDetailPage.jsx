@@ -139,7 +139,7 @@ function ProductDetailPage() {
                 addFavorite(product);
                 console.log(`Product ${product.name} added to favorites.`);
             }
-            navigate('/Favorites');
+            navigate('/Login');
         }
     };
 

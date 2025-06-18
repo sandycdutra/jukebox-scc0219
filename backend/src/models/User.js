@@ -2,14 +2,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Sub-schema para o endereço 
 const addressSchema = new mongoose.Schema({
     id: { type: String, required: true },
     street: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
     zip_code: { type: String, required: true },
-    phone: { type: String },
     isDefault: { type: Boolean, default: false }
 });
 
@@ -26,8 +24,9 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
-    addresses: [addressSchema], // Array de endereços (já existente)
-    payment_methods: [paymentMethodSchema], // <--- NOVO: Array de métodos de pagamento/cartões
+    phone: { type: String }, // <--- MOVIDO: Telefone agora é campo direto do usuário
+    addresses: [addressSchema], // Array de endereços
+    payment_methods: [paymentMethodSchema],
     
     favorite_products: [{ type: String }],
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' }

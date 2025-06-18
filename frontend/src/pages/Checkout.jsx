@@ -1,8 +1,10 @@
 // frontend/src/pages/Checkout.jsx
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, CircularProgress, Grid,
-    RadioGroup, FormControlLabel, Radio, IconButton, Collapse, // Adicionado Collapse
-    Breadcrumbs
+import {
+    Box, Typography, TextField, Button, CircularProgress, Grid,
+    RadioGroup, FormControlLabel, Radio, IconButton, Collapse,
+    Breadcrumbs,
+    Dialog, DialogTitle, DialogContent, DialogActions // Adicionado para o Modal
 } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -30,11 +32,23 @@ function Checkout() {
     const [loading, setLoading] = useState(false);
     const [formErrors, setFormErrors] = useState({});
     const [purchaseCompleted, setPurchaseCompleted] = useState(false); 
-    const [error, setError] = useState(''); // <-- Adicionado: Estado para mensagens de erro
+    const [error, setError] = useState(''); // Estado para mensagens de erro
+
+    // --- NOVOS ESTADOS PARA O MODAL DE EDIÇÃO DE ENDEREÇO ---
+    const [editAddressModalOpen, setEditAddressModalOpen] = useState(false);
+    const [addressToEdit, setAddressToEdit] = useState(null); // Armazena o endereço a ser editado
+    // Campos do formulário dentro do modal (poderiam ser os mesmos de newAddress, ou específicos)
+    const [modalStreet, setModalStreet] = useState('');
+    const [modalCity, setModalCity] = useState('');
+    const [modalState, setModalState] = useState('');
+    const [modalZipCode, setModalZipCode] = useState('');
+    const [modalPhone, setModalPhone] = useState('');
+    // --- FIM DOS NOVOS ESTADOS ---
+
 
     // Estados para Endereços
-    const [selectedAddress, setSelectedAddress] = useState(''); // ID do endereço selecionado
-    const [showNewAddressForm, setShowNewAddressForm] = useState(false); // Estado para mostrar/esconder form
+    const [selectedAddress, setSelectedAddress] = useState('');
+    const [showNewAddressForm, setShowNewAddressForm] = useState(false);
     
     // ESTADOS PARA O FORMULÁRIO DE ADICIONAR NOVO ENDEREÇO
     const [newAddressStreet, setNewAddressStreet] = useState('');
@@ -44,8 +58,8 @@ function Checkout() {
     const [newAddressPhone, setNewAddressPhone] = useState('');
 
     // Estados para PAGAMENTO
-    const [paymentMethod, setPaymentMethod] = useState('credit_card'); // Default
-    const [selectedCard, setSelectedCard] = useState(''); // ID do cartão selecionado
+    const [paymentMethod, setPaymentMethod] = useState('credit_card');
+    const [selectedCard, setSelectedCard] = useState('');
     const [showNewCardForm, setShowNewCardForm] = useState(false);
 
     // ESTADOS PARA O FORMULÁRIO DE ADICIONAR NOVO CARTÃO
@@ -63,25 +77,19 @@ function Checkout() {
     useEffect(() => {
         if (!isAuthenticated) {
             console.log("[Checkout:useEffect] Not authenticated, redirecting to Login.");
-            // alert('You need to be logged in to access checkout.');
             navigate('/Login');
             return;
         }
 
-        // <--- AQUI: Inicializa selectedAddress com base nos user.addresses
-        // Se o usuário tem endereços e nenhum está selecionado, selecione o primeiro como padrão
         if (user?.addresses && user.addresses.length > 0 && !selectedAddress) {
             setSelectedAddress(user.addresses[0].id);
         }
-        // Inicializa selectedCard com base nos user.payment_methods (se for cartão)
         if (user?.payment_methods && user.payment_methods.length > 0 && !selectedCard && paymentMethod === 'credit_card') {
             setSelectedCard(user.payment_methods[0].id);
         }
 
-
         if (!loadingCart && cartItems.length === 0 && !purchaseCompleted) { 
             console.log("[Checkout:useEffect] Cart is empty after loading (and no purchase completed), redirecting to Cart.");
-            // alert('Your cart is empty! Please add products before checking out.');
             navigate('/Cart');
             return;
         }
@@ -95,16 +103,12 @@ function Checkout() {
         const userHasCards = user?.payment_methods && user.payment_methods.length > 0;
 
         // Validação de endereço
-        if (showNewAddressForm) { // Se o formulário de novo endereço está visível, valida ele
+        if (showNewAddressForm) {
             if (!newAddressStreet) errors.newAddressStreet = 'Street is required';
             if (!newAddressCity) errors.newAddressCity = 'City is required';
             if (!newAddressState) errors.newAddressState = 'State is required';
             if (!newAddressZipCode) errors.newAddressZipCode = 'ZIP Code is required';
-            // Campos obrigatórios do novo endereço
-            // if (!newAddressStreet || !newAddressCity || !newAddressState || !newAddressZipCode) {
-            //     errors.newAddressForm = "All new address fields are required.";
-            // }
-        } else { // Se usando endereços salvos
+        } else {
             if (!userHasAddresses) { 
                 errors.addressSelection = "Please add a new address or ensure your account has saved addresses.";
             } else if (!selectedAddress) {
@@ -114,12 +118,12 @@ function Checkout() {
 
         // Validação de pagamento
         if (paymentMethod === 'credit_card') {
-            if (showNewCardForm) { // Se está adicionando novo cartão
+            if (showNewCardForm) {
                 if (!newCardName) errors.newCardName = 'Name on Card is required';
                 if (!newCardNumber || !/^\d{16}$/.test(newCardNumber)) errors.newCardNumber = 'Card Number is invalid (16 digits)';
                 if (!newCardExpiry || !/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(newCardExpiry)) errors.newCardExpiry = 'Expiry Date is invalid (MM/YY)';
                 if (!newCardCvv || !/^\d{3,4}$/.test(newCardCvv)) errors.newCardCvv = 'CVV is invalid (3 or 4 digits)';
-            } else { // Se usando cartões salvos
+            } else {
                 if (!userHasCards) {
                     errors.cardSelection = "Please add a new card or ensure your account has saved cards.";
                 } else if (!selectedCard) {
@@ -132,9 +136,61 @@ function Checkout() {
         return Object.keys(errors).length === 0;
     };
 
+    // --- FUNÇÕES DO MODAL DE EDIÇÃO ---
+    const handleOpenEditAddressModal = (address) => {
+        setAddressToEdit(address);
+        setModalStreet(address.street || '');
+        setModalCity(address.city || '');
+        setModalState(address.state || '');
+        setModalZipCode(address.zip_code || '');
+        setModalPhone(address.phone || '');
+        setEditAddressModalOpen(true);
+    };
+
+    const handleCloseEditAddressModal = () => {
+        setEditAddressModalOpen(false);
+        setAddressToEdit(null);
+        // Limpar erros do formulário do modal se houver
+    };
+
+    const handleSaveEditedAddress = async () => {
+        // Validação básica dos campos do modal
+        if (!modalStreet || !modalCity || !modalState || !modalZipCode) {
+            alert('Please fill in all required fields for the address.');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+        try {
+            const updatedAddrData = {
+                id: addressToEdit.id, // O ID é crucial para atualizar!
+                street: modalStreet,
+                city: modalCity,
+                state: modalState,
+                zip_code: modalZipCode,
+                phone: modalPhone || user?.phone || ''
+            };
+            const result = await addAddress(updatedAddrData); // addAddress funciona para update se tem ID
+            if (result.success) {
+                alert('Address updated successfully!');
+                handleCloseEditAddressModal(); // Fecha o modal
+            } else {
+                setError(result.message || 'Failed to update address.');
+            }
+        } catch (err) {
+            console.error("Error updating address:", err);
+            setError('Server error updating address.');
+        } finally {
+            setLoading(false);
+        }
+    };
+    // --- FIM DAS FUNÇÕES DO MODAL ---
+
+
     // <--- FUNÇÃO PARA ADICIONAR NOVO ENDEREÇO ---
     const handleAddAddress = async () => {
-        // Validações básicas antes de chamar a API
+        // ... (sua implementação existente)
         if (!newAddressStreet || !newAddressCity || !newAddressState || !newAddressZipCode) {
             alert('Please fill in all required address fields.');
             return;
@@ -176,6 +232,7 @@ function Checkout() {
 
     // <--- FUNÇÃO PARA DELETAR ENDEREÇO ---
     const handleDeleteAddress = async (addressId) => {
+        // ... (sua implementação existente)
         if (!window.confirm('Are you sure you want to delete this address?')) return; 
         setLoading(true);
         setError(''); // Limpa erros anteriores
@@ -198,7 +255,7 @@ function Checkout() {
         }
     };
 
-    // <--- FUNÇÃO PARA ADICIONAR NOVO CARTÃO ---
+        // <--- FUNÇÃO PARA ADICIONAR NOVO CARTÃO ---
     const handleAddPaymentMethod = async () => {
         // Validações básicas do formulário de cartão
         if (!newCardName || !newCardNumber || !newCardExpiry || !newCardCvv) {
@@ -286,7 +343,7 @@ function Checkout() {
         }
 
         setLoading(true);
-        setError(''); // Limpa erros anteriores
+        setError('');
 
         try {
             if (cartItems.length === 0) {
@@ -297,32 +354,29 @@ function Checkout() {
 
             // --- Gerenciamento de Endereço de Entrega ---
             let deliveryAddressForOrder = null;
-            // Se o usuário não tem endereços salvos, mas preencheu o formulário de novo endereço
             if ((!user?.addresses || user.addresses.length === 0) && showNewAddressForm) {
                 deliveryAddressForOrder = {
-                    // id: `new-${Date.now()}`, // Gerar um ID temporário (no real, seria do DB) - O backend deve gerar o ID?
                     street: newAddressStreet,
                     city: newAddressCity,
                     state: newAddressState,
                     zip_code: newAddressZipCode,
                     phone: newAddressPhone || user?.phone || ''
                 };
-                // Aqui você pode chamar addAddress para salvar esse novo endereço no perfil do user antes de criar o pedido
                 const addAddrResult = await addAddress(deliveryAddressForOrder);
                 if (!addAddrResult.success) {
                     alert(`Failed to save new address before order: ${addAddrResult.message}`);
                     setLoading(false);
                     return;
                 }
-                deliveryAddressForOrder = addAddrResult.address; // Usa o endereço que foi salvo (com ID real)
-            } else if (selectedAddress && user?.addresses) { // Se um endereço existente foi selecionado
+                deliveryAddressForOrder = addAddrResult.address;
+            } else if (selectedAddress && user?.addresses) {
                 deliveryAddressForOrder = user.addresses.find(addr => addr.id === selectedAddress);
-            } else { // Se não tem nenhum endereço e não preencheu o formulário (erro de validação)
+            } else {
                 alert('No delivery address found or selected.');
                 setLoading(false);
                 return;
             }
-            if (!deliveryAddressForOrder) { // Checagem de segurança final
+            if (!deliveryAddressForOrder) {
                 alert('Invalid delivery address selected/provided.');
                 setLoading(false);
                 return;
@@ -355,8 +409,8 @@ function Checkout() {
             const orderItems = cartItems.map(item => ({
                 product_id: item.id,
                 name: item.name,
-                image: item.image, // Acessar item.image (singular)
-                artist: item.metadata?.artist || 'N/A', // Acessar item.metadata?.artist
+                image: item.image,
+                artist: item.metadata?.artist || 'N/A',
                 quantity: item.quantity,
                 unit_price: item.price,
             }));
@@ -397,7 +451,7 @@ function Checkout() {
                         phone: deliveryAddressForOrder.phone || user.phone || ''
                     },
                     payment_method: paymentMethod,
-                    payment_details: paymentDetailsForOrder, // <--- ADICIONADO AQUI
+                    payment_details: paymentDetailsForOrder,
                     total_amount: total,
                 })
             });
@@ -418,7 +472,7 @@ function Checkout() {
                 total: total,
                 selectedAddress: deliveryAddressForOrder,
                 paymentMethod: paymentMethod,
-                paymentDetails: paymentDetailsForOrder, // Logar também
+                paymentDetails: paymentDetailsForOrder,
             });
             await clearCart(); 
             setPurchaseCompleted(true);
@@ -494,7 +548,12 @@ function Checkout() {
                                                 label={<Typography variant="body1" className="address-text">{`${addr.street}, ${addr.city} - ${addr.state}, ${addr.zip_code}`}</Typography>}
                                             />
                                             <Box className="address-actions">
-                                                <IconButton size="small" aria-label="edit address">
+                                                <IconButton
+                                                    size="small"
+                                                    aria-label="edit address"
+                                                    // **AQUI ESTÁ A MUDANÇA (CHAMANDO O MODAL):**
+                                                    onClick={() => handleOpenEditAddressModal(addr)}
+                                                >
                                                     <EditIcon fontSize="small" />
                                                 </IconButton>
                                                 <IconButton size="small" aria-label="delete address" onClick={() => handleDeleteAddress(addr.id)}>
@@ -516,7 +575,7 @@ function Checkout() {
                                 <AddIcon sx={{ mr: 0.5 }} /> {showNewAddressForm ? 'Cancel Add Address' : 'Add new address'}
                             </MuiLink>
 
-                            {/* Formulário para Adicionar Novo Endereço */}
+                            {/* Formulário para Adicionar Novo Endereço (Collapse) */}
                             <Collapse in={showNewAddressForm} timeout="auto" unmountOnExit>
                                 <Box sx={{ mt: 3, p: 2, border: '1px solid #eee', borderRadius: '8px' }}>
                                     <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>New Address Details</Typography>
@@ -573,7 +632,6 @@ function Checkout() {
                             {paymentMethod === 'credit_card' && (
                                 <Box sx={{ mt: 2 }}>
                                     <Typography variant="subtitle1" sx={{ mb: 1 }}>Select the card:</Typography>
-                                    {/* <--- AQUI: AGORA USA user.payment_methods para cartões */}
                                     {user?.payment_methods && user.payment_methods.length > 0 ? (
                                         <RadioGroup
                                             aria-label="card-selection"
@@ -607,7 +665,7 @@ function Checkout() {
                                         <AddIcon sx={{ mr: 0.5 }} /> {showNewCardForm ? 'Cancel Add Card' : 'Add new card'}
                                     </MuiLink>
 
-                                    {/* Formulário para Adicionar Novo Cartão */}
+                                    {/* Formulário para Adicionar Novo Cartão (Collapse) */}
                                     <Collapse in={showNewCardForm} timeout="auto" unmountOnExit>
                                         <Box sx={{ mt: 3, p: 2, border: '1px solid #eee', borderRadius: '8px' }}>
                                             <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>New Card Details</Typography>
@@ -718,6 +776,78 @@ function Checkout() {
             </Box>
 
             <Footer />
+
+            <Dialog open={editAddressModalOpen} onClose={handleCloseEditAddressModal}>
+                <DialogTitle>Edit Address</DialogTitle>
+                <DialogContent>
+                    {addressToEdit && (
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Street"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={modalStreet}
+                                    onChange={(e) => setModalStreet(e.target.value)}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="City"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={modalCity}
+                                    onChange={(e) => setModalCity(e.target.value)}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="State/Province"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={modalState}
+                                    onChange={(e) => setModalState(e.target.value)}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="ZIP / Postal Code"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={modalZipCode}
+                                    onChange={(e) => setModalZipCode(e.target.value)}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Phone Number"
+                                    type="tel"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={modalPhone}
+                                    onChange={(e) => setModalPhone(e.target.value)}
+                                />
+                            </Grid>
+                        </Grid>
+                    )}
+                    {error && (
+                        <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+                            {error}
+                        </Typography>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditAddressModal} disabled={loading}>Cancel</Button>
+                    <Button onClick={handleSaveEditedAddress} disabled={loading}>
+                        {loading ? <CircularProgress size={20} /> : 'Save Changes'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </>
     );
 }

@@ -8,14 +8,16 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
+
 
 import '../css/main.css';
 import '../css/myaccount.css';
@@ -30,8 +32,9 @@ function MyAccount() {
     const [errorOrders, setErrorOrders] = useState(null);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
 
+    // Função para formatar o endereço: agora espera um objeto de endereço individual
     const formatAddress = (addressObj) => {
-        if (!addressObj) return 'N/A';
+        if (!addressObj || !addressObj.street) return 'N/A'; // Se não há endereço ou rua, retorna N/A
         return `${addressObj.street || 'N/A'}, ${addressObj.city || 'N/A'} - ${addressObj.state || 'N/A'}, ${addressObj.zip_code || 'N/A'}`;
     };
 
@@ -43,6 +46,7 @@ function MyAccount() {
             return dateString;
         }
     };
+
 
     useEffect(() => {
         const fetchUserOrders = async () => {
@@ -92,6 +96,9 @@ function MyAccount() {
         setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
     };
 
+    // Obter o primeiro endereço do usuário para exibir na seção de informações
+    const displayAddressObject = user?.addresses && user.addresses.length > 0 ? user.addresses[0] : null;
+
     if (loadingOrders || !isAuthenticated) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -109,9 +116,6 @@ function MyAccount() {
         );
     }
 
-    // Encontre o endereço padrão ou o primeiro, se existir
-    // Faça isso fora do return() para que seja calculado uma vez por render
-    const defaultOrFirstAddress = user?.addresses?.find(addr => addr.isDefault) || user?.addresses?.[0];
 
     return (
         <>
@@ -144,12 +148,12 @@ function MyAccount() {
                             </Box>
                             <Box className="info-item">
                                 <PhoneIcon sx={{ mr: 1 }} />
-                                <Typography variant="body1">{user.phone || 'N/A'}</Typography>
+                                <Typography variant="body1">{user.phone || 'N/A'}</Typography> {/* <--- TELEFONE DIRETO DO USER */}
                             </Box>
                             <Box className="info-item">
                                 <LocationOnIcon sx={{ mr: 1 }} />
-                                {/* Passe o endereço encontrado para formatAddress */}
-                                <Typography variant="body1">{formatAddress(defaultOrFirstAddress)}</Typography>
+                                {/* Endereço formatado do primeiro endereço do array addresses */}
+                                <Typography variant="body1">{formatAddress(displayAddressObject)}</Typography> {/* <--- ENDEREÇO DO OBJETO */}
                             </Box>
                             <Button
                                 variant="outlined"

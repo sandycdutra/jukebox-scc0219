@@ -1,13 +1,14 @@
 // frontend/src/pages/Register.jsx
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
+// Removido Grid do import, pois não será mais usado para layout de endereço
+import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material'; 
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useAuth } from '../hooks/useAuth'; // Importe o useAuth hook
+import { useAuth } from '../hooks/useAuth';
 
 import '../css/main.css';
 import '../css/login.css'; // Reutiliza o CSS da tela de login
@@ -17,30 +18,66 @@ function Register () {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    // Apenas o telefone permanece como campo de registro
+    const [phone, setPhone] = useState(''); 
+    
+    // REMOVIDO: Estados para campos de endereço (street, city, state, zipCode)
+    // const [street, setStreet] = useState('');
+    // const [city, setCity] = useState('');
+    // const [state, setState] = useState('');
+    // const [zipCode, setZipCode] = '';
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [formErrors, setFormErrors] = useState({}); // Adicionado para validação
     const navigate = useNavigate();
-    const { register } = useAuth(); // Obtenha a função de registro do hook
+    const { register } = useAuth();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setFormErrors({}); // Limpa erros de formulário anteriores
 
-        if (password !== confirmPassword) {
-            setError('Passwords do not match.'); // Mensagem traduzida
+        // --- Validação Frontend ---
+        let currentFormErrors = {};
+
+        if (!name) currentFormErrors.name = 'Name is required.';
+        if (!email) currentFormErrors.email = 'Email is required.';
+        else if (!/\S+@\S+\.\S+/.test(email)) currentFormErrors.email = 'Email is invalid.';
+
+        if (!phone) currentFormErrors.phone = 'Phone number is required.'; // Validação do telefone
+        
+        if (!password) currentFormErrors.password = 'Password is required.';
+        if (password && password.length < 6) currentFormErrors.password = 'Password must be at least 6 characters.';
+        if (!confirmPassword) currentFormErrors.confirmPassword = 'Confirm Password is required.';
+        if (password !== confirmPassword) currentFormErrors.confirmPassword = 'Passwords do not match.';
+
+        if (Object.keys(currentFormErrors).length > 0) {
+            setFormErrors(currentFormErrors);
             setLoading(false);
             return;
         }
+        // --- FIM DA VALIDAÇÃO ---
 
-        // Chama a função de registro do hook, que faz a chamada para o backend
-        const result = await register({ name, email, password }); // Passa os dados do usuário
+
+        // Dados do usuário para registro
+        const userData = {
+            name,
+            email,
+            password,
+            phone, // <--- Telefone agora é passado DIRETAMENTE no userData
+            // REMOVIDO: endereços não são mais enviados no registro
+            // addresses: [{ ... }]
+        };
+
+        const result = await register(userData);
 
         if (result.success) {
-            alert('Registration successful! Please log in to continue.'); // Alerta traduzido
-            navigate('/Login'); // Redireciona para a página de login
+            alert('Registration successful! Please log in to continue.');
+            navigate('/Login');
         } else {
-            setError(result.message || 'Registration failed. Please try again.'); // Exibe mensagem de erro do backend
+            setError(result.message || 'Registration failed. Please try again.');
         }
         setLoading(false);
     };
@@ -65,6 +102,8 @@ function Register () {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
+                            error={!!formErrors.name}
+                            helperText={formErrors.name}
                             sx={{ mb: 2 }}
                         />
                         <TextField
@@ -76,8 +115,30 @@ function Register () {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            error={!!formErrors.email}
+                            helperText={formErrors.email}
                             sx={{ mb: 2 }}
                         />
+                        {/* REMOVIDO: CAMPOS DE ENDEREÇO DO JSX */}
+                        {/* <Typography variant="subtitle1" ... >Delivery Address</Typography>
+                        <Grid container spacing={2}>
+                            ... TextField ...
+                        </Grid> */}
+
+                        {/* <--- CAMPO TELEFONE (agora como campo direto) --- */}
+                        <TextField
+                            label="Phone Number"
+                            type="tel"
+                            variant="outlined"
+                            fullWidth
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required // Agora é obrigatório
+                            error={!!formErrors.phone}
+                            helperText={formErrors.phone}
+                            sx={{ mb: 2 }}
+                        />
+
                         <TextField
                             label="Password"
                             type="password"
@@ -87,6 +148,8 @@ function Register () {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            error={!!formErrors.password}
+                            helperText={formErrors.password}
                             sx={{ mb: 2 }}
                         />
                         <TextField
@@ -98,6 +161,8 @@ function Register () {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
+                            error={!!formErrors.confirmPassword}
+                            helperText={formErrors.confirmPassword}
                             sx={{ mb: 3 }}
                         />
 
