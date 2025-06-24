@@ -19,7 +19,7 @@ import 'swiper/css/pagination';
 
 import { useFavorites } from '../hooks/useFavorites';
 import { useCart } from '../hooks/useCart';
-import { useAuth } from '../hooks/useAuth'; // <--- IMPORTE O HOOK DE AUTENTICAÇÃO
+import { useAuth } from '../hooks/useAuth';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -31,9 +31,10 @@ import '../css/productdetail.css';
 function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
-    const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+    // <--- OBTEM loadingFavorites e errorFavorites também
+    const { addFavorite, removeFavorite, isFavorite, loadingFavorites, errorFavorites } = useFavorites(); 
     const { addToCart } = useCart();
-    const { isAuthenticated } = useAuth(); // <--- OBTENHA O ESTADO DE AUTENTICAÇÃO
+    const { isAuthenticated } = useAuth();
 
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
@@ -41,8 +42,7 @@ function ProductDetailPage() {
     const [mainImage, setMainImage] = useState('');
     const [loading, setLoading] = useState(false);
     const productIsFavorite = product ? isFavorite(product.id) : false;
-    const currentAvailableStock = product ? product.stock_quantity : 0;
-    const isSoldOut = currentAvailableStock <= 0;
+
     const MAX_QTY_PER_ORDER = 5; 
 
     useEffect(() => {
@@ -86,6 +86,8 @@ function ProductDetailPage() {
         fetchProductAndRecommendations();
     }, [productId]); 
 
+    const currentAvailableStock = product ? product.stock_quantity : 0;
+    const isSoldOut = currentAvailableStock <= 0;
 
     const handleIncreaseQuantity = () => {
         if (selectedQuantity < currentAvailableStock && selectedQuantity < MAX_QTY_PER_ORDER) {
@@ -102,13 +104,11 @@ function ProductDetailPage() {
     };
 
     const handleAddToCart = async () => {
-        // <--- NOVA VERIFICAÇÃO DE AUTENTICAÇÃO AQUI ---
         if (!isAuthenticated) {
-            alert('Please log in to add items to your cart.'); // Mensagem traduzida
-            navigate('/Login'); // Redireciona para a página de Login
-            return; // Interrompe a função
+            alert('Please log in to add items to your cart.');
+            navigate('/Login');
+            return;
         }
-        // --- FIM DA NOVA VERIFICAÇÃO ---
 
         if (product) {
             if (selectedQuantity === 0 && currentAvailableStock > 0) {
@@ -122,24 +122,34 @@ function ProductDetailPage() {
             }
             
             setLoading(true);
-            addToCart(product, selectedQuantity); // product já tem stock_quantity e sold_quantity
+            // addToCart é assíncrono, então pode ou não retornar algo para sucesso/erro.
+            // Para simplicidade, assumimos que ele gerencia alertas internos ou o `navigate('/Cart')` será o próximo passo.
+            addToCart(product, selectedQuantity); 
             console.log(`Added ${selectedQuantity} of ${product.name} to cart.`);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 500)); // Pequeno delay para feedback visual
             setLoading(false);
             navigate('/Cart');
         }
     };
 
-    const handleFavoriteToggle = () => {
+    // <--- CORRIGIDO AQUI: handleFavoriteToggle agora é assíncrono e verifica o resultado ---
+    const handleFavoriteToggle = async () => { // Marcar como async
         if (product) {
+            let result;
             if (productIsFavorite) {
-                removeFavorite(product.id);
-                console.log(`Product ${product.name} removed from favorites.`);
+                result = await removeFavorite(product.id); // Espera o resultado
+                console.log(`Product ${product.name} removed from favorites. Result:`, result);
             } else {
-                addFavorite(product);
-                console.log(`Product ${product.name} added to favorites.`);
+                result = await addFavorite(product); // Espera o resultado
+                console.log(`Product ${product.name} added to favorites. Result:`, result);
             }
-            navigate('/Login');
+
+            // Apenas navega para /Favorites se a operação foi bem-sucedida E
+            // se o useFavorites não cuidou do redirecionamento (ou seja, se o usuário estava logado)
+            if (result.success) { 
+                navigate('/Favorites');
+            }
+            // Se result.success for false, o useFavorites já alertou e redirecionou para /Login.
         }
     };
 
@@ -156,15 +166,8 @@ function ProductDetailPage() {
         );
     }
     
-    const quantityOptions = [];
+    // quantityOptions não é mais necessário
     const maxSelectable = Math.min(currentAvailableStock, MAX_QTY_PER_ORDER);
-    for (let i = 1; i <= maxSelectable; i++) {
-        quantityOptions.push(i);
-    }
-    if (currentAvailableStock === 0) {
-        quantityOptions.push(0);
-    }
-
 
     return (
         <>
@@ -205,11 +208,10 @@ function ProductDetailPage() {
                         <Typography variant="h6" className="product-artist-detail">{product.metadata?.artist}</Typography>
                         <Typography variant="h5" className="product-price-detail">${product.price.toFixed(2)}</Typography>
 
-                        {/* <--- CORRIGIDO AQUI: Exibe "Sold Out" ou o estoque disponível --- */}
+                        {/* Exibir o Estoque Disponível */}
                         <Typography variant="body2" sx={{ mt: 1, color: isSoldOut ? 'error.main' : 'text.secondary', fontWeight: 'bold' }}>
                             {isSoldOut ? 'Sold Out' : `Available Stock: ${currentAvailableStock}`}
                         </Typography>
-                        {/* Removido o segundo Typography de "Sold Out" */}
 
 
                         <Box className="product-actions">
@@ -217,7 +219,7 @@ function ProductDetailPage() {
                             <Box className="quantity-control">
                                 <IconButton
                                     onClick={handleDecreaseQuantity}
-                                    disabled={selectedQuantity <= 1 || isSoldOut} // Desabilita se esgotado
+                                    disabled={selectedQuantity <= 1 || isSoldOut}
                                     size="small"
                                     sx={{ border: '1px solid #2009EA', borderRadius: '4px' }}
                                 >
@@ -244,11 +246,11 @@ function ProductDetailPage() {
                                     }}
                                     sx={{ width: '60px', mx: 1 }}
                                     size="small"
-                                    disabled={isSoldOut} // Desabilita se esgotado
+                                    disabled={isSoldOut}
                                 />
                                 <IconButton
                                     onClick={handleIncreaseQuantity}
-                                    disabled={selectedQuantity >= currentAvailableStock || selectedQuantity >= MAX_QTY_PER_ORDER || isSoldOut} // Desabilita se esgotado
+                                    disabled={selectedQuantity >= currentAvailableStock || selectedQuantity >= MAX_QTY_PER_ORDER || isSoldOut}
                                     size="small"
                                     sx={{ border: '1px solid #2009EA', borderRadius: '4px' }}
                                 >
@@ -269,7 +271,7 @@ function ProductDetailPage() {
                                     fontSize: '1rem',
                                     fontWeight: 'bold',
                                 }}
-                                disabled={loading || isSoldOut || selectedQuantity === 0} // Desabilita se esgotado, carregando, ou qto 0
+                                disabled={loading || isSoldOut || selectedQuantity === 0}
                             >
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'ADD TO CART'}
                             </Button>

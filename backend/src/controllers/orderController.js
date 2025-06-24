@@ -75,6 +75,69 @@ const getOrderById = async (req, res) => {
         res.status(500).json({ message: 'Server Error: Failed to get order by ID' });
     }
 };
+// @desc    Obter todos os pedidos no sistema (apenas para Admin)
+// @route   GET /api/admin/orders
+// @access  Private/Admin (requer token e role de admin)
+const getAllOrders = async (req, res) => {
+    try {
+        // Encontra todos os pedidos. Opcional: .populate('user', 'name email') para trazer dados do user.
+        // Se a entidade 'user' no modelo Order for um ObjectId, populate traria o user.
+        // No seu caso, 'user' é ObjectId, então podemos popular.
+        const orders = await Order.find({})
+            .sort({ createdAt: -1 }) // Ordena do mais recente para o mais antigo
+            .populate('user', 'name email phone'); // Popula o campo 'user' do pedido com nome, email e telefone do User.
 
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error("Error in getAllOrders controller:", error);
+        res.status(500).json({ message: 'Server Error: Failed to get all orders', error: error.message });
+    }
+};
+// @desc    Atualizar um pedido existente (status, entregue, etc.)
+// @route   PUT /api/orders/:id
+// @access  Private/Admin
+const updateOrder = async (req, res) => {
+    const orderId = req.params.id; // O _id do pedido a ser atualizado
+    const { payment_status, isDelivered, deliveredAt } = req.body; // Campos que o admin pode atualizar
 
-module.exports = { createOrder, getMyOrders, getOrderById };
+    try {
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Atualiza os campos se forem fornecidos
+        order.payment_status = payment_status !== undefined ? payment_status : order.payment_status;
+        order.isDelivered = isDelivered !== undefined ? isDelivered : order.isDelivered;
+        order.deliveredAt = deliveredAt !== undefined ? deliveredAt : order.deliveredAt;
+
+        const updatedOrder = await order.save();
+        res.status(200).json(updatedOrder);
+    } catch (error) {
+        console.error("Error in updateOrder controller:", error);
+        res.status(500).json({ message: 'Server Error: Failed to update order', error: error.message });
+    }
+};
+
+// @desc    Deletar um pedido
+// @route   DELETE /api/orders/:id
+// @access  Private/Admin
+const deleteOrder = async (req, res) => {
+    const orderId = req.params.id; // O _id do pedido a ser deletado
+
+    try {
+        const order = await Order.findByIdAndDelete(orderId);
+
+        if (order) {
+            res.json({ message: 'Order removed' });
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        console.error("Error in deleteOrder controller:", error);
+        res.status(500).json({ message: 'Server Error: Failed to delete order', error: error.message });
+    }
+};
+
+module.exports = { createOrder, getMyOrders, getOrderById, getAllOrders, updateOrder, deleteOrder }; 

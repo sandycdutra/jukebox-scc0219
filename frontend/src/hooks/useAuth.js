@@ -50,8 +50,7 @@ export function useAuth() {
         }
     }, [token]);
 
-    // NOVO e CRÍTICO: Função para atualizar diretamente o objeto 'user' no contexto
-    // Todas as funções da API que retornam o usuário atualizado devem chamar isso.
+
     const updateUserContext = useCallback((updatedUserData) => {
         setUser(updatedUserData);
     }, []); // Não há dependências, pois só manipula o setUser
@@ -67,29 +66,17 @@ export function useAuth() {
             const data = await response.json();
 
             if (response.ok) {
-                // Ao fazer login, o backend deve retornar o user completo
-                updateUserContext({ // Use updateUserContext para definir o user
-                    _id: data._id,
-                    name: data.name,
-                    email: data.email,
-                    addresses: data.addresses || [],
-                    payment_methods: data.payment_methods || [],
-                    phone: data.phone || '',
-                    favorite_products: data.favorite_products || [],
-                    role: data.role
+                setUser({
+                    _id: data._id, name: data.name, email: data.email,
+                    phone: data.phone, addresses: data.addresses || [], payment_methods: data.payment_methods || [],
+                    favorite_products: data.favorite_products, role: data.role // <--- SALVA O PAPEL
                 });
                 setToken(data.token);
                 return { success: true, user: data };
-            } else {
-                return { success: false, message: data.message || 'Login failed' };
-            }
-        } catch (error) {
-            console.error("Server error during login:", error);
-            return { success: false, message: 'Server error during login' };
-        }
-    }, [updateUserContext]); // Adicione updateUserContext às dependências
+            } else { throw new Error(data.message || 'Login failed'); }
+        } catch (error) { throw new Error(error.message || 'Server error during login'); }
+    }, []);
 
-    // Função para registro
     const register = useCallback(async (userData) => {
         try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
@@ -100,26 +87,16 @@ export function useAuth() {
             const data = await response.json();
 
             if (response.ok) {
-                updateUserContext({ // Use updateUserContext para definir o user
-                    _id: data._id,
-                    name: data.name,
-                    email: data.email,
-                    addresses: data.addresses || [],
-                    payment_methods: data.payment_methods || [],
-                    phone: data.phone || '',
-                    favorite_products: data.favorite_products || [],
-                    role: data.role
+                setUser({
+                    _id: data._id, name: data.name, email: data.email,
+                    phone: data.phone, addresses: data.addresses || [], payment_methods: data.payment_methods || [],
+                    favorite_products: data.favorite_products, role: data.role // <--- SALVA O PAPEL
                 });
                 setToken(data.token);
                 return { success: true, user: data };
-            } else {
-                return { success: false, message: data.message || 'Registration failed' };
-            }
-        } catch (error) {
-            console.error("Server error during registration:", error);
-            return { success: false, message: 'Server error during registration' };
-        }
-    }, [updateUserContext]); // Adicione updateUserContext às dependências
+            } else { throw new Error(data.message || 'Registration failed'); }
+        } catch (error) { throw new Error(error.message || 'Server error during registration'); }
+    }, []);
 
     // Função para logout
     const logout = useCallback(() => {
@@ -128,7 +105,7 @@ export function useAuth() {
     }, []);
 
     const isAuthenticated = !!user && !!token;
-
+    const isAuthenticatedAdmin = isAuthenticated && user?.role === 'admin';
     // --- NOVO: Função para gerenciar dados gerais do perfil ---
     const updateUserProfile = useCallback(async (profileData) => {
         if (!isAuthenticated || !token) return { success: false, message: 'Não autenticado' };
@@ -337,6 +314,7 @@ export function useAuth() {
     return {
         user,
         isAuthenticated,
+        isAuthenticatedAdmin,
         token,
         login,
         register,

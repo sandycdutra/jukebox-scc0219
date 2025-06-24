@@ -1,19 +1,18 @@
 // backend/src/routes/productRoutes.js
 const express = require('express');
 const router = express.Router();
+const { protect, admin } = require('../middlewares/authMiddleware');
 const {
-    getProducts,
-    getProductById,
-    createProduct,
-    updateProduct // <--- Caminho corrigido e padrão
-} = require('../controllers/productController'); // <--- Caminho corrigido e padrão
+    getProducts, getProductById, createProduct, updateProduct, deleteProduct,
+} = require('../controllers/productController');
 
-// Rotas públicas de leitura
-router.get('/', getProducts); // GET /api/products
-router.get('/:id', getProductById); // GET /api/products/:id
+// Rotas públicas (leitura de produtos)
+router.get('/', getProducts);
+router.get('/:id', getProductById);
 
-// Rotas de escrita (futuramente protegidas por admin)
-router.post('/', createProduct); // POST /api/products
-router.put('/:id', updateProduct); // PUT /api/products/:id (para atualizar estoque, etc.)
+// Rotas protegidas por Admin (escrita de produtos)
+router.post('/', protect, admin, createProduct);
+router.put('/:id', protect, admin, updateProduct);
+router.delete('/:id', protect, admin, deleteProduct);
 
 module.exports = router;

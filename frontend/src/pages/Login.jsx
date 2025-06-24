@@ -25,21 +25,21 @@ function Login () {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
+        setError(''); 
 
-        // Chama a função de login do hook, que faz a chamada para o backend
-        const result = await login(email, password);
-
-        if (result.success) {
-            await migrateGuestCartToUser();
-            alert('Login successful!'); // Alerta traduzido
+        try {
+            const result = await login(email, password); 
+            await migrateGuestCartToUser(); // Migra o carrinho de convidado para o usuário
+            alert('Login successful!'); // Alerta de sucesso
             navigate('/'); // Redireciona para a página inicial
-        } else {
-            setError(result.message || 'Login failed.'); // Exibe mensagem de erro do backend
-        }
-        setLoading(false);
-    };
 
+        } catch (err) { // <--- ESTE CATCH VAI PEGAR O ERRO LANÇADO POR useAuth.login
+            console.error("Login failed:", err); // Loga o erro completo
+            setError(err.message || 'Login failed. Please try again.'); // Exibe a mensagem de erro lançada
+        } finally {
+            setLoading(false); // Sempre reseta o estado de carregamento
+        }
+    };
     return (
         <>
             <Header />

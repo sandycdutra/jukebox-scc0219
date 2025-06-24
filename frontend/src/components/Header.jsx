@@ -27,9 +27,8 @@ import "../css/header.css"; // Mantenha seu CSS personalizado, se necessário
 import "../css/main.css";
 
 function Header() {
-    const { user, isAuthenticated } = useAuth();
     const [drawerOpen, setDrawerOpen] = useState(false); // Estado para controlar a abertura do Drawer
-
+    const { user, isAuthenticated, isAuthenticatedAdmin } = useAuth(); 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
     };
@@ -42,6 +41,7 @@ function Header() {
         { name: "Accessories", path: "/Accessories" },
         { name: "Genres", path: "/Genres" },
         { name: "About", path: "/About" },
+        ...(isAuthenticatedAdmin ? [{ name: "Admin", path: "/admin/dashboard", adminLink: true }] : []),
     ];
 
     // Conteúdo do Drawer (menu lateral para mobile)
@@ -53,7 +53,13 @@ function Header() {
         >
             <List>
                 {navItems.map((item) => (
-                    <ListItem button key={item.name} component={RouterLink} to={item.path}>
+                    <ListItem 
+                        button 
+                        key={item.name} 
+                        component={RouterLink} 
+                        to={item.path}
+                        sx={item.adminLink ? { color: '#dc3545', fontWeight: 'bold' } : {}} // Estilo para link Admin
+                    >
                         <ListItemText primary={item.name} />
                     </ListItem>
                 ))}
@@ -87,7 +93,7 @@ function Header() {
             <AppBar position="static" sx={{ backgroundColor: 'white', borderBottom: '1px solid #ddd', boxShadow: 'none', padding: { xs: '10px 20px', md: '10px 160px' } }}>
                 <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                     {/* Botão de Menu (Hamburguer) - Visível apenas em telas pequenas (xs, sm) */}
-                    <Box sx={{ display: { xs: 'block', md: 'none' } }}> {/* Usando Box com display para responsividade */}
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }}>
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
@@ -107,27 +113,29 @@ function Header() {
                     </Box>
 
                     {/* Navegação Principal - Visível apenas em telas médias e grandes (md e up) */}
-                    <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}> {/* Usando Box com display para responsividade */}
+                    <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
                         {navItems.map((item) => (
                             <Button
                                 key={item.name}
                                 component={RouterLink}
                                 to={item.path}
+                                // <--- ESTILO CONDICIONAL PARA O LINK ADMIN ---
                                 sx={{
-                                    my: 2, // Margem vertical (top/bottom)
-                                    color: 'black',
-                                    display: 'block', // Garante que o botão ocupe a largura completa do item se necessário
-                                    textTransform: 'none', // Mantém o texto como está (sem maiúsculas automáticas)
+                                    my: 2, 
+                                    color: item.adminLink ? '#dc3545' : 'black', // Cor vermelha para Admin
+                                    fontWeight: item.adminLink ? 'bold' : 'normal', // Negrito para Admin
+                                    display: 'block', 
+                                    textTransform: 'none', 
                                     fontSize: '16px',
-                                    margin: '0 7px', // Margem horizontal (left/right)
+                                    margin: '0 7px',
                                     '&:hover': {
-                                        color: '#2009ea',
+                                        color: item.adminLink ? '#c82333' : '#2009ea', // Hover mais escuro para Admin
                                         textDecoration: 'underline'
                                     },
-                                    display: 'flex',       // Trata o botão como um container flex
-                                    alignItems: 'center',  // Centraliza o conteúdo verticalmente
-                                    justifyContent: 'center', // Centraliza o conteúdo horizontalmente
-                                    padding: '6px 12px', // Um padding razoável, se precisar ajustar o "tamanho da caixa"
+                                    display: 'flex',       
+                                    alignItems: 'center',  
+                                    justifyContent: 'center', 
+                                    padding: '6px 12px', 
                                 }}
                             >
                                 {item.name}

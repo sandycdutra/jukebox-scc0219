@@ -14,7 +14,10 @@ import Checkout from './pages/Checkout';
 import MyAccount from './pages/MyAccount'
 import ProductDetailPage from './pages/ProductDetailPage';
 import EditProfile from './pages/EditProfile';
-
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProductManagement from './pages/AdminProductManagement'; 
+import AdminUserManagement from './pages/AdminUserManagement';  
+import AdminOrderManagement from './pages/AdminOrderManagement';
 function App() {
     const [count, setCount] = useState(0)
 
@@ -37,6 +40,10 @@ function App() {
                     <Route path='/product/:productId' element={<ProductDetailPage />} />
                     <Route path='/my-account' element={<MyAccount />} /> 
                     <Route path='/edit-profile' element={<EditProfile />} />
+                    <Route path='/admin/dashboard' element={<AdminDashboard />} />
+                    <Route path='/admin/products' element={<AdminProductManagement />} /> 
+                    <Route path='/admin/users' element={<AdminUserManagement />} />
+                    <Route path='/admin/orders' element={<AdminOrderManagement />} />
                 </Routes>
             </main>
         </div>
