@@ -270,6 +270,15 @@ npm install
 npm run dev
 ````
 
+### It's similar for the backend:
+
+```bash
+cd ..
+cd \backend\
+npm install
+npm run dev
+````
+
 ### On the mongoDB's '\bin' directory open 2 terminals
 
 #### First run:
@@ -286,3 +295,11 @@ npm run dev
 
 ### The interface is running at http://localhost:5173/, and the database at the 27017 port (mongoBD's default port)
 ---
+
+## ADMIN and functionalities
+
+- To create an admin user you have to register with an @jukebox.com e-mail
+- After logging with the admin account you can:
+    - Check, edit and delete all the orders of the users
+    - Check, edit and delete users
+    - Check, edit and delete products
