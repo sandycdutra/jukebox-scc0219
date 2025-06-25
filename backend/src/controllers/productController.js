@@ -35,23 +35,49 @@ const getProductById = async (req, res) => {
 // @route   POST /api/products
 // @access  Admin (precisa do middleware 'admin')
 const createProduct = async (req, res) => {
-    const { id, sku, name, type, price, description, stock_quantity, sold_quantity, images, artist, genre, subgenre, condition } = req.body;
+    // Desestrutura todos os campos que vêm do frontend.
+    // Inclui 'metadata' diretamente, mas vamos garantir que ele seja um objeto.
+    const { id, sku, name, type, price, description, stock_quantity, sold_quantity, images, artist, genre, subgenre, condition, metadata } = req.body;
+
     try {
+        // Você pode adicionar validações de campo obrigatório aqui, se necessário.
+        if (!id || !sku || !name || !type || !price || !description || !stock_quantity || !artist || !genre || !images || images.length === 0) {
+            return res.status(400).json({ message: 'Missing required product fields (id, sku, name, type, price, description, stock, artist, genre, images).' });
+        }
+
         const product = new Product({
-            id, sku, name, type, price, description, stock_quantity, sold_quantity, images, artist, genre,
-            metadata: {
-                artist: metadata?.artist || artist,
-                release_year: metadata?.release_year || 2023,
-                genre: metadata?.genre || genre,
-                subgenre: metadata?.subgenre || subgenre,
-                condition: metadata?.condition || condition || 'new'
+            id,
+            sku,
+            name,
+            type,
+            price,
+            description,
+            stock_quantity,
+            sold_quantity: sold_quantity || 0,
+            images, // As imagens já devem vir como um array do frontend
+            artist, // Campo 'artist' direto
+            genre,  // Campo 'genre' direto
+            metadata: { // Garante que metadata é um objeto, e populado com fallback
+                artist: (metadata && metadata.artist) || artist, // Prioriza metadata.artist, fallback para artist direto
+                release_year: (metadata && metadata.release_year) || null, // Permite nulo ou default
+                genre: (metadata && metadata.genre) || genre, // Prioriza metadata.genre, fallback para genre direto
+                subgenre: (metadata && metadata.subgenre) || subgenre,
+                condition: (metadata && metadata.condition) || condition || 'new'
             }
         });
+
         const createdProduct = await product.save();
         res.status(201).json(createdProduct);
     } catch (error) {
-        console.error("Error in createProduct controller:", error);
-        res.status(500).json({ message: 'Server Error: Failed to create product', error: error.message });
+        console.error("Error in createProduct controller (Backend):", error);
+        // Tratamento de erros mais detalhado
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: 'Validation Error', details: error.errors });
+        }
+        if (error.code === 11000) { // Erro de duplicidade (para campos unique: true como id, sku)
+            return res.status(400).json({ message: 'Duplicate ID or SKU.', details: error.keyValue });
+        }
+        res.status(500).json({ message: 'Server Error: Failed to create product', details: error.message });
     }
 };
 
