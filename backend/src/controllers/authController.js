@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
         if (street && city && state && zip_code) {
             addresses.push({ id: uuidv4(), street, city, state, zip_code, phone: phone || '', isDefault: true });
         }
-        const role = email.endsWith('@jukebox.com') ? 'admin' : 'customer'; // Define role
+        const role = email.endsWith('@jukebox.com') ? 'admin' : 'customer';
         const user = await User.create({ name, email, password, phone, addresses, payment_methods: [], favorite_products: [], role });
         if (user) {
             res.status(201).json({
@@ -60,7 +60,8 @@ const loginUser = async (req, res) => {
 // @access  Private
 const getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('-password'); // req.user.id é o _id do usuário
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id).select('-password'); 
         if (user) {
             res.json({
                 _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
@@ -77,7 +78,8 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
     const { name, email, password, phone, addresses, payment_methods } = req.body;
     try {
-        const user = await User.findById(req.user._id);
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id); 
         if (user) {
             user.name = name !== undefined ? name : user.name;
             user.email = email !== undefined ? email : user.email;
@@ -104,7 +106,8 @@ const updateUserProfile = async (req, res) => {
 const addPaymentMethod = async (req, res) => {
     const { cardType, cardNumberLast4, cardName, cardExpiry, isDefault = false } = req.body;
     try {
-        const user = await User.findById(req.user._id);
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const newMethod = { id: uuidv4(), cardType, cardNumberLast4, cardName, cardExpiry, isDefault };
         user.payment_methods.push(newMethod);
@@ -119,7 +122,8 @@ const addPaymentMethod = async (req, res) => {
 const deletePaymentMethod = async (req, res) => {
     const { methodId } = req.params;
     try {
-        const user = await User.findById(req.user._id);
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const initialLength = user.payment_methods.length;
         user.payment_methods = user.payment_methods.filter(method => String(method.id) !== String(methodId));
@@ -136,14 +140,14 @@ const deletePaymentMethod = async (req, res) => {
 // @access  Private
 const getUserFavorites = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('favorite_products');
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id).select('favorite_products'); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const favoriteProductIds = user.favorite_products;
         const favoritesWithDetails = await Product.find({ id: { $in: favoriteProductIds } });
         res.status(200).json({
             success: true, message: 'User favorites fetched successfully!', favorites: favoritesWithDetails,
-            user: { // Retorna o user COMPLETO para consistência no frontend
-                _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
+            user: { _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
                 addresses: user.addresses || [], payment_methods: user.payment_methods || [],
                 favorite_products: user.favorite_products || [], role: user.role,
             }
@@ -157,7 +161,8 @@ const getUserFavorites = async (req, res) => {
 const addFavoriteProduct = async (req, res) => {
     const { productId } = req.body;
     try {
-        const user = await User.findById(req.user._id);
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id); 
         const productExists = await Product.findOne({ id: productId });
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         if (!productExists) { return res.status(404).json({ message: 'Product not found' }); }
@@ -166,8 +171,7 @@ const addFavoriteProduct = async (req, res) => {
         await user.save();
         res.status(200).json({
             success: true, message: 'Product added to favorites', favorites: user.favorite_products,
-            user: { // Retorna o user COMPLETO para consistência
-                _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
+            user: { _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
                 addresses: user.addresses || [], payment_methods: user.payment_methods || [],
                 favorite_products: user.favorite_products || [], role: user.role,
             }
@@ -181,7 +185,8 @@ const addFavoriteProduct = async (req, res) => {
 const removeFavoriteProduct = async (req, res) => {
     const { productId } = req.params;
     try {
-        const user = await User.findById(req.user._id);
+        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
+        const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const initialLength = user.favorite_products.length;
         user.favorite_products = user.favorite_products.filter(favId => String(favId) !== String(productId));
@@ -189,8 +194,7 @@ const removeFavoriteProduct = async (req, res) => {
         await user.save();
         res.status(200).json({
             success: true, message: 'Product removed from favorites', favorites: user.favorite_products,
-            user: { // Retorna o user COMPLETO para consistência
-                _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
+            user: { _id: user._id, name: user.name, email: user.email, phone: user.phone || '',
                 addresses: user.addresses || [], payment_methods: user.payment_methods || [],
                 favorite_products: user.favorite_products || [], role: user.role,
             }
