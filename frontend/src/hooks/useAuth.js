@@ -1,7 +1,6 @@
 // frontend/src/hooks/useAuth.js
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-// <--- CORRIGIDO AQUI: Usar import para uuidv4
 import { v4 as uuidv4 } from 'uuid'; 
 
 

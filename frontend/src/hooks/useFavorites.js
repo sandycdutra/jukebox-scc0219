@@ -1,112 +1,127 @@
 // frontend/src/hooks/useFavorites.js
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from './useAuth'; 
+import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs temporários no frontend, se necessário
 
-const FAVORITES_STORAGE_KEY = 'jukebox_favorites_local_cache'; 
+const USER_STORAGE_KEY = 'jukebox_logged_in_user'; // Mantido para useAuth
+const TOKEN_STORAGE_KEY = 'jukebox_auth_token';   // Mantido para useAuth
+
+// Chave para carrinho de convidado (se o useCart ainda usar)
+const GUEST_CART_STORAGE_KEY = 'jukebox_guest_cart';
+
 
 export function useFavorites() {
-    // Pegue as funções de favoritos do useAuth (que agora estão atualizando o contexto do user)
-    const { user, token, isAuthenticated, getUserFavorites, addFavoriteProduct, removeFavoriteProduct } = useAuth(); 
-    const navigate = useNavigate();
-    const [favorites, setFavorites] = useState([]); 
+    // <--- OBTEM isAuthenticatedAdmin do useAuth
+    const { user, token, isAuthenticated, isAuthenticatedAdmin, logout } = useAuth(); 
+    const navigate = useNavigate(); // Obtenha navigate aqui para usar em callbacks
+
+    const [favorites, setFavorites] = useState([]);
     const [loadingFavorites, setLoadingFavorites] = useState(true);
     const [errorFavorites, setErrorFavorites] = useState(null);
 
+    // Função para buscar os favoritos do backend
     const fetchFavorites = useCallback(async () => {
-        if (!isAuthenticated || !token || !user?._id) {
-            setFavorites([]); 
-            setLoadingFavorites(false);
-            return;
-        }
-
         setLoadingFavorites(true);
         setErrorFavorites(null);
         try {
-            // getUserFavorites do useAuth agora retorna diretamente o array de produtos detalhados
-            const detailedFavorites = await getUserFavorites(); 
-            setFavorites(detailedFavorites); 
-        } catch (err) {
-            console.error("Error fetching favorites:", err);
-            setErrorFavorites('Failed to load favorites: ' + err.message);
-            setFavorites([]); 
+            // Se não autenticado ou se for admin, não busca favoritos (admin não tem favoritos de cliente)
+            if (!isAuthenticated || !token || !user?._id || isAuthenticatedAdmin) {
+                setFavorites([]);
+                setLoadingFavorites(false);
+                return;
+            }
+
+            const response = await fetch('http://localhost:5000/api/auth/me/favorites', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    logout();
+                    alert("Your session has expired. Please log in again.");
+                }
+                const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+                throw new Error(errorData.message);
+            }
+            const data = await response.json();
+            setFavorites(data.favorites); // A API retorna data.favorites
+        } catch (error) {
+            console.error("Erro ao obter favoritos:", error);
+            setErrorFavorites('Falha ao carregar favoritos: ' + error.message);
+            setFavorites([]);
         } finally {
             setLoadingFavorites(false);
         }
-    }, [isAuthenticated, token, user?._id, getUserFavorites]); // Adicione getUserFavorites às dependências
+    }, [isAuthenticated, isAuthenticatedAdmin, token, user, logout]); // Adicionado isAuthenticatedAdmin e logout
 
     useEffect(() => {
         fetchFavorites();
     }, [fetchFavorites]);
 
-    // O parâmetro 'product' aqui deve ser o objeto completo do produto que você quer favoritar
-    const handleAddFavorite = useCallback(async (product) => { 
+    // Função para adicionar um produto aos favoritos via Backend
+    const addFavorite = useCallback(async (product) => {
+        // <--- BLOQUEIO PARA ADMINISTRADORES AQUI ---
+        if (isAuthenticatedAdmin) {
+            alert('Administrators cannot add items to favorites.');
+            return { success: false, message: 'Admin cannot favorite items' };
+        }
+
         if (!isAuthenticated || !token || !user?._id) {
             alert('Please log in to add favorites.');
             navigate('/Login');
             return { success: false, message: 'Not authenticated' };
         }
-        // Verifica se o produto já está nos favoritos locais (para evitar chamada desnecessária à API)
-        if (favorites.some(fav => String(fav.id) === String(product.id))) {
+        if (favorites.some(fav => String(fav.id) === String(product.id))) { // Corrigido fav.id
              return { success: true, message: 'Product already in favorites' };
         }
 
         try {
-            // Chama a função do useAuth para adicionar favorito (envia apenas o ID)
-            const result = await addFavoriteProduct(product.id); 
-            
-            if (result.success) {
-                await fetchFavorites(); // Re-busca para garantir os detalhes completos
-                return { success: true, message: result.message };
-            }
-            return { success: false, message: result.message || 'Falha ao adicionar favorito.' };
-        } catch (error) {
-            console.error("Error adding favorite:", error);
-            setErrorFavorites('Failed to add favorite: ' + error.message);
-            return { success: false, message: error.message || 'Failed to add favorite.' };
+            const response = await fetch('http://localhost:5000/api/auth/favorites', {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ productId: product.id })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                // A API authController.js já atualiza o user no backend e retorna o user atualizado.
+                // O useAuth.js (updateUserProfile) lida com a atualização do contexto do user.
+                await fetchFavorites(); // Re-busca os favoritos para atualizar a lista
+                return { success: true, message: data.message, favorites: data.favorites };
+            } else { throw new Error(data.message || 'Failed to add favorite.'); }
+        } catch (error) { return { success: false, message: error.message || 'Server error adding favorite.' }; }
+    }, [isAuthenticated, isAuthenticatedAdmin, token, user, favorites, fetchFavorites, navigate]); // Adicionado isAuthenticatedAdmin
+
+    // Função para remover um produto dos favoritos via Backend
+    const removeFavorite = useCallback(async (productId) => {
+        // <--- BLOQUEIO PARA ADMINISTRADORES AQUI ---
+        if (isAuthenticatedAdmin) {
+            alert('Administrators cannot remove items from favorites.');
+            return { success: false, message: 'Admin cannot unfavorite items' };
         }
-    }, [isAuthenticated, token, user, favorites, fetchFavorites, navigate, addFavoriteProduct]);
 
-
-    const handleRemoveFavorite = useCallback(async (productId) => { // Recebe apenas o ID do produto a remover
         if (!isAuthenticated || !token || !user?._id) {
             alert('Please log in to remove favorites.');
             navigate('/Login');
             return { success: false, message: 'Not authenticated' };
         }
-        // Verifica se o produto está nos favoritos locais antes de tentar remover
-        if (!favorites.some(fav => String(fav.id) === String(productId))) {
-            return { success: true, message: 'Product not in favorites' };
-        }
-
         try {
-            // Chama a função do useAuth para remover favorito
-            const result = await removeFavoriteProduct(productId); 
+            const response = await fetch(`http://localhost:5000/api/auth/favorites/${productId}`, {
+                method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                await fetchFavorites(); // Re-busca os favoritos para atualizar a lista
+                return { success: true, message: data.message, favorites: data.favorites };
+            } else { throw new Error(data.message || 'Failed to remove favorite.'); }
+        } catch (error) { return { success: false, message: error.message || 'Server error removing favorite.' }; }
+    }, [isAuthenticated, isAuthenticatedAdmin, token, user, fetchFavorites, navigate]); // Adicionado isAuthenticatedAdmin
 
-            if (result.success) {
-                await fetchFavorites(); // Re-busca para garantir a atualização
-                return { success: true, message: result.message };
-            }
-            return { success: false, message: result.message || 'Falha ao remover favorito.' };
-        } catch (error) {
-            console.error("Error removing favorite:", error);
-            setErrorFavorites('Failed to remove favorite: ' + error.message);
-            return { success: false, message: error.message || 'Failed to remove favorite.' };
-        }
-    }, [isAuthenticated, token, user, favorites, fetchFavorites, navigate, removeFavoriteProduct]);
-
-
+    // Função para verificar se um produto está nos favoritos (localmente)
     const isFavorite = useCallback((productId) => {
-        // Verifica se o ID do produto está na lista de favoritos (que são objetos de produto completos)
-        return favorites.some(fav => String(fav.id) === String(productId));
+        return favorites.some(fav => String(fav.id) === String(productId)); // Corrigido fav.id
     }, [favorites]);
 
+
     return {
-        favorites,
-        addFavorite: handleAddFavorite,
-        removeFavorite: handleRemoveFavorite,
-        isFavorite,
-        loadingFavorites,
-        errorFavorites
+        favorites, addFavorite, removeFavorite, isFavorite, loadingFavorites, errorFavorites
     };
 }

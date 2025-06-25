@@ -78,26 +78,31 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
     const { name, email, password, phone, addresses, payment_methods } = req.body;
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
-        const user = await User.findById(req.user._id); 
+        const user = await User.findById(req.user._id);
         if (user) {
             user.name = name !== undefined ? name : user.name;
             user.email = email !== undefined ? email : user.email;
             user.phone = phone !== undefined ? phone : user.phone;
             if (addresses !== undefined) { user.addresses = addresses; } else { user.addresses = user.addresses || []; }
             if (payment_methods !== undefined) { user.payment_methods = payment_methods; } else { user.payment_methods = user.payment_methods || []; }
+            
+            //apenas atribui a nova senha, DEIXA O HOOK pre('save') FAZER O HASH ---
             if (password && password.length > 0) {
-                const salt = await bcrypt.genSalt(10);
-                user.password = await bcrypt.hash(password, salt);
+                user.password = password; // Atribui a senha em texto puro (o hook pre-save irá fazer o hash)
+                console.log("[Backend:updateUserProfile] New password provided. Will be hashed by pre-save hook.");
+            } else {
+                console.log("[Backend:updateUserProfile] No new password provided or empty. Not changing password.");
             }
-            const updatedUser = await user.save();
+
+            const updatedUser = await user.save(); // Este save vai disparar o pre('save') hook se a senha foi modificada
+
             res.json({
                 _id: updatedUser._id, name: updatedUser.name, email: updatedUser.email,
                 phone: updatedUser.phone, addresses: updatedUser.addresses, payment_methods: updatedUser.payment_methods,
                 favorite_products: updatedUser.favorite_products, role: updatedUser.role, token: generateToken(updatedUser._id),
             });
         } else { res.status(404).json({ message: 'User not found' }); }
-    } catch (error) { console.error("Error in updateUserProfile controller:", error); if (error.name === 'ValidationError') { res.status(400).json({ message: error.message }); } else { res.status(500).json({ message: 'Server Error: Failed to update user profile' }); } }
+    } catch (error) { console.error("Error in updateUserProfile controller:", error); if (error.name === 'ValidationError') { res.status(400).json({ message: error.message }); } else { res.status(500).json({ message: 'Server Error: Failed to update user profile', details: error.message }); } }
 };
 
 // @desc    Adicionar um novo método de pagamento ao usuário logado

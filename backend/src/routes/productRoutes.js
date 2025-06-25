@@ -10,11 +10,10 @@ const {
 router.get('/', getProducts);
 router.get('/:id', getProductById);
 
-// Rotas protegidas por Admin (escrita de produtos, mas UPDATE para compra é diferente)
 router.post('/', protect, admin, createProduct); // Criar produto: APENAS ADMIN
 
 // Isso permite que usuários autenticados (clientes) atualizem o estoque ao fazer uma compra.
-router.put('/:id', protect, updateProduct); // Atualizar produto: Requer apenas login (não admin)
+router.put('/:id', protect, updateProduct); 
 
 router.delete('/:id', protect, admin, deleteProduct); // Deletar produto: APENAS ADMIN
 

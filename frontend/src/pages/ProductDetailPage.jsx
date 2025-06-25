@@ -31,11 +31,9 @@ import '../css/productdetail.css';
 function ProductDetailPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
-    // <--- OBTEM loadingFavorites e errorFavorites também
     const { addFavorite, removeFavorite, isFavorite, loadingFavorites, errorFavorites } = useFavorites(); 
     const { addToCart } = useCart();
-    const { isAuthenticated } = useAuth();
-
+    const { isAuthenticated, isAuthenticatedAdmin } = useAuth();
     const [product, setProduct] = useState(null);
     const [recommendedProducts, setRecommendedProducts] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(1);
@@ -109,7 +107,10 @@ function ProductDetailPage() {
             navigate('/Login');
             return;
         }
-
+        if (isAuthenticatedAdmin) {
+            alert('Administrators cannot add items to the shopping cart. Please use a customer account.');
+            return;
+        }
         if (product) {
             if (selectedQuantity === 0 && currentAvailableStock > 0) {
                 setSelectedQuantity(1);
@@ -132,7 +133,6 @@ function ProductDetailPage() {
         }
     };
 
-    // <--- CORRIGIDO AQUI: handleFavoriteToggle agora é assíncrono e verifica o resultado ---
     const handleFavoriteToggle = async () => { // Marcar como async
         if (product) {
             let result;

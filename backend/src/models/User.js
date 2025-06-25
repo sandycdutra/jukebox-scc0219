@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
-    phone: { type: String }, // <--- MOVIDO: Telefone agora é campo direto do usuário
+    phone: { type: String }, 
     addresses: [addressSchema], // Array de endereços
     payment_methods: [paymentMethodSchema],
     

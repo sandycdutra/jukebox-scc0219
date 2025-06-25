@@ -25,6 +25,7 @@ function EditProfile() {
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
+    const [addressPhone, setAddressPhone] = useState('');
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -160,7 +161,7 @@ function EditProfile() {
                     city,
                     state,
                     zip_code: zipCode,
-                    phone: phone, // Assumindo que o telefone do perfil principal é usado para o endereço
+                    phone: phone, 
                     ...(addressId && { id: addressId }), // Inclui 'id' se estiver atualizando um endereço existente
                 };
 

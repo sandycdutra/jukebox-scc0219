@@ -13,7 +13,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Footer from '../components/Footer'; // Verifique o caminho real do seu Footer (pode ser ../components/Footer)
 
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
@@ -34,13 +34,13 @@ function MyAccount() {
 
     // Função para formatar o endereço: agora espera um objeto de endereço individual
     const formatAddress = (addressObj) => {
-        if (!addressObj || !addressObj.street) return 'N/A'; // Se não há endereço ou rua, retorna N/A
+        if (!addressObj || !addressObj.street) return 'N/A';
         return `${addressObj.street || 'N/A'}, ${addressObj.city || 'N/A'} - ${addressObj.state || 'N/A'}, ${addressObj.zip_code || 'N/A'}`;
     };
 
     const formatDate = (dateString) => {
         try {
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
             return new Date(dateString).toLocaleDateString('pt-BR', options);
         } catch (e) {
             return dateString;
@@ -49,12 +49,17 @@ function MyAccount() {
 
 
     useEffect(() => {
+        console.log("[MyAccount:useEffect] User or auth state changed. isAuthenticated:", isAuthenticated, "user:", user);
+        if (!isAuthenticated) {
+            navigate('/Login');
+            return;
+        }
+
         const fetchUserOrders = async () => {
-            if (!isAuthenticated || !token || !user?._id) {
-                navigate('/Login');
+            if (!token || !user?._id) {
+                setLoadingOrders(false);
                 return;
             }
-
             setLoadingOrders(true);
             setErrorOrders(null);
             try {
@@ -65,15 +70,17 @@ function MyAccount() {
                 });
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {
-                        logout();
+                        logout(); 
                         alert("Your session has expired. Please log in again.");
                         navigate('/Login');
+                        return;
                     }
                     const errorData = await response.json().catch(() => ({ message: 'Unknown error (JSON parse failed)' }));
                     throw new Error(errorData.message || `Failed to fetch orders. Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setUserOrders(data);
+                setUserOrders(data); 
+                console.log("[MyAccount:useEffect] Fetched orders:", data);
             } catch (error) {
                 console.error("Error fetching user orders:", error);
                 setErrorOrders('Failed to load your orders: ' + error.message);
@@ -86,6 +93,7 @@ function MyAccount() {
         fetchUserOrders();
     }, [isAuthenticated, token, user, navigate, logout]);
 
+
     const handleLogout = async () => {
         await logout();
         await clearCart();
@@ -96,10 +104,11 @@ function MyAccount() {
         setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
     };
 
-    // Obter o primeiro endereço do usuário para exibir na seção de informações
-    const displayAddressObject = user?.addresses && user.addresses.length > 0 ? user.addresses[0] : null;
+    // <--- CORRIGIDO AQUI: Obter o endereço a ser exibido ---
+    const displayAddressObject = user?.addresses?.find(addr => addr.isDefault) // Procura um endereço padrão
+                                 || (user?.addresses && user.addresses.length > 0 ? user.addresses[user.addresses.length - 1] : null); // Se não há padrão, pega o último (mais recente)
 
-    if (loadingOrders || !isAuthenticated) {
+    if (loadingOrders || !isAuthenticated) { 
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
@@ -107,7 +116,7 @@ function MyAccount() {
             </Box>
         );
     }
-    if (errorOrders) {
+    if (errorOrders) { 
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
                 <Typography color="error" variant="h6">{errorOrders}</Typography>
@@ -148,12 +157,11 @@ function MyAccount() {
                             </Box>
                             <Box className="info-item">
                                 <PhoneIcon sx={{ mr: 1 }} />
-                                <Typography variant="body1">{user.phone || 'N/A'}</Typography> {/* <--- TELEFONE DIRETO DO USER */}
+                                <Typography variant="body1">{user.phone || 'N/A'}</Typography> 
                             </Box>
                             <Box className="info-item">
                                 <LocationOnIcon sx={{ mr: 1 }} />
-                                {/* Endereço formatado do primeiro endereço do array addresses */}
-                                <Typography variant="body1">{formatAddress(displayAddressObject)}</Typography> {/* <--- ENDEREÇO DO OBJETO */}
+                                <Typography variant="body1">{formatAddress(displayAddressObject)}</Typography>
                             </Box>
                             <Button
                                 variant="outlined"
@@ -203,6 +211,7 @@ function MyAccount() {
                                                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mt: 2, mb: 1 }}>Items:</Typography>
                                                 {order.items.map(item => (
                                                     <Box key={item.product_id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5, alignItems: 'center' }}>
+                                                        <img src={item.image || 'https://placehold.co/30x30/cccccc/333333?text=Img'} alt={item.name} style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '2px', marginRight: '8px' }} />
                                                         <Typography variant="body2" sx={{ flexGrow: 1 }}>
                                                             {item.name} (x{item.quantity})
                                                         </Typography>
