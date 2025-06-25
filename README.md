@@ -276,6 +276,7 @@ npm run dev
 cd ..
 cd \backend\
 npm install
+node seed.js
 npm run dev
 ````
 
@@ -303,3 +304,4 @@ npm run dev
     - Check, edit and delete all the orders of the users
     - Check, edit and delete users
     - Check, edit and delete products
+- The admin can't buy products or add products to favorites (project decision)
