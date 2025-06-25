@@ -13,7 +13,7 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 ### System Architecture
 - **Frontend**: React.js (responsive UI for desktop/mobile)
 - **Backend**: Node.js (REST API)
-- **Database**: PostgreSQL (stores users, products)
+- **Database**: MongoDB (stores users, products)
 
 ### Functionalities
 
@@ -24,20 +24,23 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 - **Customers**:
   - Signup/login with email validation
   - Profile management (edit address/phone)
+  - Purchase products
+  - Save favorites
 
 #### Product Catalog
 - Product cards display:
-  - Cover art, price, stock status
-- Search & Filters:
-  - By genre, artist, release year
+  - Cover art, type, price, stock status
+- Filters:
+  - By genre, alphabetical order
 
 #### Shopping Flow
 - **Cart System**:
-  - Local storage for guest users; synced to DB after login
+  - Local storage for guest users; Synchronized to DB after login
   - Real-time stock validation at checkout
 - **Checkout**:
   - Credit card/PIX payment processing
   - Stock updates: `quantity_in_stock -= ordered_quantity`
+  - The user can see previous orders on the user page
 
 ---
 
@@ -233,9 +236,9 @@ The HTML structure is organized hierarchically, dividing the website into main s
 ## Test Plan
 *Planned approach:*
 - **Backend**: Postman tests for API routes (users, products)
-- **Frontend**: Jest unit tests for React components
+- **Frontend**: Manual testing of site functionalities
 - **Integration**: Manual testing of checkout flow
-- **User login**: frontend/src/mockdata/users.jsx
+- **User login**: Manual testing of user interactions
 
 ---
 
@@ -255,28 +258,31 @@ git clone https://github.com/sandycdutra/jukebox-scc0219.git
 cd .\jukebox-scc0219\frontend\
 ````
 
-### Then install the dependencies
+### Install the dependencies
 
 ```bash
 npm install
 ````
 
-### Finally, run the project
+### Run the project on the terminal
 
 ```bash
 npm run dev
 ````
 
-#### The project is running at http://localhost:5173/
+### On the mongoDB's '\bin' directory open 2 terminals
+
+#### First run:
+
+```bash
+.\mongod.exe --dbpath 'your/data/path'
+````
+
+#### In the other terminal run:
+
+```bash
+.\mongosh.exe
+````
+
+### The interface is running at http://localhost:5173/, and the database at the 27017 port (mongoBD's default port)
 ---
-
-## Problems
-*Current challenges:*
-- Database schema optimization
-- Responsive design for mobile devices
-
----
-
-## Comments
-*Next steps:*
-- User testing with Figma prototypes
