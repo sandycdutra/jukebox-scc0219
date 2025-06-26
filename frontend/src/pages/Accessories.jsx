@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'; 
-import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel, CircularProgress } from '@mui/material'; // Adicionado CircularProgress
+import { Box, Typography, Button, Breadcrumbs, Select, MenuItem, FormControl, InputLabel, CircularProgress } from '@mui/material';
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductGrid from '../components/ProductGrid';
-
 
 import '../css/main.css';
 import '../css/categorypage.css';
@@ -45,10 +44,10 @@ function Accessories () {
 
 
     const accessoryCategoriesForSidebar = [
-        'All', 'Classical', 'Country', 'Electronic', 'Hip Hop', 'Indie', 'POP', 'Rap', 'R&B', 'Rock'
+        'CD Support', 'Vinyl Support', 'Vinyl Player', 'CD Player'
     ];
 
-    //Filtrar os produtos BASE da página (apenas Acessórios para Accessories.jsx)
+    //Filtrar os produtos
     const baseProductsForPage = allProducts.filter(product => product.type.toLowerCase() === 'accessory');
 
     // Aplicar o filtro da sidebar sobre os Acessórios.
@@ -59,7 +58,6 @@ function Accessories () {
         const lowerCaseSelectedFilter = selectedGenreFilter.toLowerCase();
         // Acessa o gênero do acessório via metadata.genre
         return (product.metadata?.genre && product.metadata.genre.toLowerCase() === lowerCaseSelectedFilter);
-        // Se você usar subgenre também, adicione: || (product.metadata?.subgenre && product.metadata.subgenre.toLowerCase() === lowerCaseSelectedFilter);
     });
 
     // Lógica de ordenação
@@ -122,13 +120,13 @@ function Accessories () {
                     <Box className="category-content">
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
-                                <InputLabel>Order by:</InputLabel> {/* <--- Traduzido */}
+                                <InputLabel>Order by:</InputLabel>
                                 <Select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
                                     label="Order by:" // <--- Traduzido
                                 >
-                                    <MenuItem value="none">Nothing</MenuItem> {/* <--- Traduzido */}
+                                    <MenuItem value="none">Nothing</MenuItem>
                                     <MenuItem value="title-asc">A - Z</MenuItem>
                                     <MenuItem value="title-desc">Z - A</MenuItem>
                                 </Select>
@@ -138,7 +136,7 @@ function Accessories () {
                         {sortedProducts.length === 0 ? (
                             <Box sx={{ textAlign: 'center', mt: 8 }}>
                                 <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-                                    No accessories found for this category. {/* <--- Mensagem atualizada */}
+                                    No accessories found for this category.
                                 </Typography>
                                 <Button
                                     variant="contained"
