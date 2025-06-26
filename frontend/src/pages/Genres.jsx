@@ -138,14 +138,14 @@ function Genres () {
                         {sortedProducts.length === 0 ? (
                             <Box sx={{ textAlign: 'center', mt: 8 }}>
                                 <Typography variant="h6" color="text.secondary" sx={{ mb: 3 }}>
-                                    No products found for this genre. {/* <--- Mensagem mais genérica */}
+                                    No products found for this genre.
                                 </Typography>
                                 <Button
                                     variant="contained"
                                     sx={{ backgroundColor: '#2009EA', '&:hover': { backgroundColor: '#1a07bb' } }}
                                     onClick={() => navigate('/')}
                                 >
-                                    Go to home page {/* <--- Texto do botão atualizado */}
+                                    Go to home page
                                 </Button>
                             </Box>
                         ) : (

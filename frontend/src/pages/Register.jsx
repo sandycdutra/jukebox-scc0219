@@ -1,6 +1,5 @@
 // frontend/src/pages/Register.jsx
 import React, { useState } from 'react';
-// Removido Grid do import, pois não será mais usado para layout de endereço
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material'; 
 import MuiLink from '@mui/material/Link';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -11,25 +10,18 @@ import Footer from '../components/Footer';
 import { useAuth } from '../hooks/useAuth';
 
 import '../css/main.css';
-import '../css/login.css'; // Reutiliza o CSS da tela de login
+import '../css/login.css';
 
 function Register () {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    // Apenas o telefone permanece como campo de registro
     const [phone, setPhone] = useState(''); 
-    
-    // REMOVIDO: Estados para campos de endereço (street, city, state, zipCode)
-    // const [street, setStreet] = useState('');
-    // const [city, setCity] = useState('');
-    // const [state, setState] = useState('');
-    // const [zipCode, setZipCode] = '';
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [formErrors, setFormErrors] = useState({}); // Adicionado para validação
+    const [formErrors, setFormErrors] = useState({});
     const navigate = useNavigate();
     const { register } = useAuth();
 
@@ -58,17 +50,13 @@ function Register () {
             setLoading(false);
             return;
         }
-        // --- FIM DA VALIDAÇÃO ---
-
 
         // Dados do usuário para registro
         const userData = {
             name,
             email,
             password,
-            phone, // <--- Telefone agora é passado DIRETAMENTE no userData
-            // REMOVIDO: endereços não são mais enviados no registro
-            // addresses: [{ ... }]
+            phone,
         };
 
         const result = await register(userData);
@@ -119,13 +107,9 @@ function Register () {
                             helperText={formErrors.email}
                             sx={{ mb: 2 }}
                         />
-                        {/* REMOVIDO: CAMPOS DE ENDEREÇO DO JSX */}
-                        {/* <Typography variant="subtitle1" ... >Delivery Address</Typography>
-                        <Grid container spacing={2}>
-                            ... TextField ...
-                        </Grid> */}
+                        
 
-                        {/* <--- CAMPO TELEFONE (agora como campo direto) --- */}
+                        {/* <--- CAMPO TELEFONE --- */}
                         <TextField
                             label="Phone Number"
                             type="tel"
@@ -133,7 +117,7 @@ function Register () {
                             fullWidth
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            required // Agora é obrigatório
+                            required
                             error={!!formErrors.phone}
                             helperText={formErrors.phone}
                             sx={{ mb: 2 }}

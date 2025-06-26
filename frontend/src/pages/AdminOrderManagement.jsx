@@ -81,7 +81,7 @@ function AdminOrderManagement() {
         }
     };
 
-    // <--- NOVAS FUNÇÕES PARA EDIÇÃO/DELEÇÃO DE PEDIDOS ---
+    // <--- FUNÇÕES PARA EDIÇÃO/DELEÇÃO DE PEDIDOS ---
     const handleOpenEditDialog = (order) => {
         setCurrentEditingOrder(order);
         setEditPaymentStatus(order.payment_status);
@@ -152,7 +152,6 @@ function AdminOrderManagement() {
             setLoading(false);
         }
     };
-    // FIM DAS NOVAS FUNÇÕES
 
 
     if (loading && !orders.length) {

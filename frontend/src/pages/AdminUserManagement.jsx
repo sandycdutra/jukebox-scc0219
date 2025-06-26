@@ -1,8 +1,6 @@
 // frontend/src/pages/AdminUserManagement.jsx
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel,
-    // <--- CORRIGIDO AQUI: Adicionado Grid
-    Grid // <-- Grid adicionado aqui
+import { Box, Typography, Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel, Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -86,7 +84,6 @@ function AdminUserManagement() {
         if (!name) errors.name = 'Name is required.';
         if (!email) errors.email = 'Email is required.';
         else if (!/\S+@\S+\.\S+/.test(email)) errors.email = 'Email is invalid.';
-        // Validação de telefone pode ser adicionada aqui se for obrigatório
         if (!role) errors.role = 'Role is required.';
 
         setDialogErrors(errors);

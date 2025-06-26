@@ -302,6 +302,6 @@ export function useCart() {
         errorCart,
         clearCart,
         migrateGuestCartToUser,
-        setCartItems // <--- ESSENCIAL: Retornando setCartItems
+        setCartItems
     };
 }

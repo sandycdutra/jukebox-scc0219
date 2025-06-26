@@ -3,7 +3,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import jukeboxLogo from "../assets/jukebox-logo.png";
 
-// Importações do Material-UI
 import {
     AppBar,
     Toolbar,
@@ -16,14 +15,12 @@ import {
     ListItemText,
     Box,
 } from '@mui/material';
-
-// Ícones do Material-UI
 import MenuIcon from '@mui/icons-material/Menu'; // Ícone de menu (hamburguer)
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'; // Coração para Favoritos
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'; // Carrinho de compras
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'; // Ícone de usuário/conta
 
-import "../css/header.css"; // Mantenha seu CSS personalizado, se necessário
+import "../css/header.css";
 import "../css/main.css";
 
 function Header() {
@@ -119,7 +116,6 @@ function Header() {
                                 key={item.name}
                                 component={RouterLink}
                                 to={item.path}
-                                // <--- ESTILO CONDICIONAL PARA O LINK ADMIN ---
                                 sx={{
                                     my: 2, 
                                     color: item.adminLink ? '#dc3545' : 'black', // Cor vermelha para Admin

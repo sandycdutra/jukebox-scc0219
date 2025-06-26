@@ -26,7 +26,7 @@ function Vinyl () {
         const fetchProducts = async () => {
             try {
                 setLoading(true); // Inicia o estado de carregamento
-                const response = await fetch('http://localhost:5000/api/products'); // <--- BUSCA DO BACKEND
+                const response = await fetch('http://localhost:5000/api/products');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

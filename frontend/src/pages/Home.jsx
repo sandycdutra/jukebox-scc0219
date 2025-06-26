@@ -9,7 +9,7 @@ function Home() {
     const [allProducts, setAllProducts] = useState([]); // Estado para os produtos
     const [loading, setLoading] = useState(true); // Estado de carregamento
     const [error, setError] = useState(null); // Estado para erros
-    // useEffect para buscar todos os produtos do BACKEND ao montar o componente
+    
     useEffect(() => {
         const fetchProducts = async () => {
             try {

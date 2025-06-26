@@ -13,7 +13,6 @@ import Footer from '../components/Footer';
 import { useAuth } from '../hooks/useAuth';
 import { v4 as uuidv4 } from 'uuid';
 function EditProfile() {
-    // AQUI: Pegue o 'user' mais recente do useAuth
     const { user, isAuthenticated, updateUserProfile, addAddress } = useAuth();
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -139,15 +138,6 @@ function EditProfile() {
                 ...(password && { password: password }),
             };
 
-            // Combine com os dados ATUAIS do usuário para garantir que nada seja perdido
-            // Ex: favorite_products, role, etc.
-            // É CRUCIAL que user seja o MAIS RECENTE possível aqui.
-            // Para garantir isso, a gente vai pegar o user que já está no estado do useAuth
-            // OU, se você tiver certeza que o backend retorna TUDO na primeira chamada
-            // de `updateUserProfile`, você poderia fazer uma única chamada.
-
-            // VAMOS ASSUMIR que `user` (do useAuth) já está atualizado ou que o backend vai lidar com o merge
-            // Corrigindo a lógica do endereço
             let finalAddresses = user.addresses ? [...user.addresses] : []; // Começa com uma cópia dos endereços atuais
 
             // Se algum campo de endereço foi preenchido, prepare o objeto do endereço
@@ -157,8 +147,6 @@ function EditProfile() {
                     city,
                     state,
                     zip_code: zipCode,
-                    // É comum ter um telefone específico para o endereço de entrega,
-                    // mas se for sempre o mesmo do usuário, pode simplificar ou remover.
                     phone: phone, // Usando o telefone do perfil principal para o endereço
                 };
 

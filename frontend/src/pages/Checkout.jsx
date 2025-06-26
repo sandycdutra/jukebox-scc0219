@@ -33,8 +33,6 @@ function Checkout() {
     const [formErrors, setFormErrors] = useState({});
     const [purchaseCompleted, setPurchaseCompleted] = useState(false); 
     const [error, setError] = useState(''); // Estado para mensagens de erro
-
-    // --- NOVOS ESTADOS PARA O MODAL DE EDIÇÃO DE ENDEREÇO ---
     const [editAddressModalOpen, setEditAddressModalOpen] = useState(false);
     const [addressToEdit, setAddressToEdit] = useState(null); // Armazena o endereço a ser editado
     // Campos do formulário dentro do modal (poderiam ser os mesmos de newAddress, ou específicos)
@@ -43,7 +41,6 @@ function Checkout() {
     const [modalState, setModalState] = useState('');
     const [modalZipCode, setModalZipCode] = useState('');
     const [modalPhone, setModalPhone] = useState('');
-    // --- FIM DOS NOVOS ESTADOS ---
 
 
     // Estados para Endereços
@@ -164,7 +161,7 @@ function Checkout() {
         setError('');
         try {
             const updatedAddrData = {
-                id: addressToEdit.id, // O ID é crucial para atualizar!
+                id: addressToEdit.id,
                 street: modalStreet,
                 city: modalCity,
                 state: modalState,
@@ -185,8 +182,6 @@ function Checkout() {
             setLoading(false);
         }
     };
-    // --- FIM DAS FUNÇÕES DO MODAL ---
-
 
     // <--- FUNÇÃO PARA ADICIONAR NOVO ENDEREÇO ---
     const handleAddAddress = async () => {
@@ -551,7 +546,6 @@ function Checkout() {
                                                 <IconButton
                                                     size="small"
                                                     aria-label="edit address"
-                                                    // **AQUI ESTÁ A MUDANÇA (CHAMANDO O MODAL):**
                                                     onClick={() => handleOpenEditAddressModal(addr)}
                                                 >
                                                     <EditIcon fontSize="small" />

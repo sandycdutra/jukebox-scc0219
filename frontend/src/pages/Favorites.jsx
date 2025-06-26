@@ -66,7 +66,7 @@ function Favorites() {
                 <Box className="favorites-main-content">
                     <Box className="favorites-sidebar">
                         <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold' }}>Categories</Typography> {/* Título para a sidebar */}
-                        {categoriesForSidebar.map(category => ( // <--- Usa categoriesForSidebar
+                        {categoriesForSidebar.map(category => (
                             <MuiLink
                                 key={category}
                                 href="#"
@@ -114,8 +114,8 @@ function Favorites() {
                         ) : (
                             <ProductGrid
                                 products={sortedFavorites}
-                                showRemoveButton={true} // Diz ao ProductGrid para mostrar o botão de remover
-                                onRemoveItem={removeFavorite} // Passa a função para remover
+                                showRemoveButton={true}
+                                onRemoveItem={removeFavorite}
                             />
                         )}
                     </Box>

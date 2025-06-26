@@ -12,7 +12,6 @@ const cartItemSchema = new mongoose.Schema({
         genre: { type: String },
         subgenre: { type: String }
     },
-    // <--- NOVOS CAMPOS ESSENCIAIS PARA O CARRINHO E VALIDAÇÃO DE ESTOQUE
     stock_quantity: { type: Number, required: true }, // Estoque atual do produto (no momento da adição)
     sold_quantity: { type: Number, default: 0 },    // Quantidade vendida (no momento da adição)
     

@@ -33,7 +33,7 @@ function Login () {
             alert('Login successful!'); // Alerta de sucesso
             navigate('/'); // Redireciona para a página inicial
 
-        } catch (err) { // <--- ESTE CATCH VAI PEGAR O ERRO LANÇADO POR useAuth.login
+        } catch (err) { 
             console.error("Login failed:", err); // Loga o erro completo
             setError(err.message || 'Login failed. Please try again.'); // Exibe a mensagem de erro lançada
         } finally {

@@ -60,7 +60,6 @@ const loginUser = async (req, res) => {
 // @access  Private
 const getUserProfile = async (req, res) => {
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id).select('-password'); 
         if (user) {
             res.json({
@@ -110,7 +109,6 @@ const updateUserProfile = async (req, res) => {
 const addPaymentMethod = async (req, res) => {
     const { cardType, cardNumberLast4, cardName, cardExpiry, isDefault = false } = req.body;
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const newMethod = { id: uuidv4(), cardType, cardNumberLast4, cardName, cardExpiry, isDefault };
@@ -143,7 +141,6 @@ const deletePaymentMethod = async (req, res) => {
 // @access  Private
 const getUserFavorites = async (req, res) => {
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id).select('favorite_products'); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const favoriteProductIds = user.favorite_products;
@@ -187,7 +184,6 @@ const addFavoriteProduct = async (req, res) => {
 const removeFavoriteProduct = async (req, res) => {
     const { productId } = req.params;
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const initialLength = user.favorite_products.length;

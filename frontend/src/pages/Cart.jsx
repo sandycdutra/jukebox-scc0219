@@ -69,7 +69,6 @@ function Cart() {
         navigate('/Checkout');
     };
 
-    // <--- ADICIONAR CONDICIONAIS DE CARREGAMENTO E ERRO AQUI
     if (loadingCart) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -132,7 +131,6 @@ function Cart() {
                         {cartItems.map((item) => (
                             <Box key={item.id} className="cart-item-row">
                                 <Box className="cart-item-product-info">
-                                    {/* <--- AQUI: Usa item.image para a imagem */}
                                     <img
                                         src={item.image || 'https://placehold.co/100x100/cccccc/333333?text=No+Image'}
                                         alt={item.name}
@@ -181,7 +179,7 @@ function Cart() {
                                             onChange={(e) => handleQuantityInputChange(e, item.id)}
                                             inputProps={{
                                                 min: 1,
-                                                max: Math.min(item.stock_quantity || 10, 10), // <--- Usa item.stock_quantity
+                                                max: Math.min(item.stock_quantity || 10, 10),
                                                 style: { textAlign: 'center' }
                                             }}
                                             sx={{ width: '60px', mx: 1 }}
@@ -189,7 +187,7 @@ function Cart() {
                                             disabled={item.stock_quantity === 0} // <--- Desabilita se estoque for 0
                                         />
                                         <IconButton
-                                            onClick={() => handleIncreaseQuantity(item.id, item.quantity, item.stock_quantity)} // <--- Usa item.stock_quantity
+                                            onClick={() => handleIncreaseQuantity(item.id, item.quantity, item.stock_quantity)} 
                                             disabled={item.quantity >= (item.stock_quantity || 10) || item.quantity >= 10 || item.stock_quantity === 0} // <--- Desabilita se estoque ou limite de 10
                                             size="small"
                                             sx={{

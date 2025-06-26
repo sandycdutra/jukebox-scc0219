@@ -4,8 +4,8 @@ import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid'; // Para gerar IDs temporários no frontend, se necessário
 
-const USER_STORAGE_KEY = 'jukebox_logged_in_user'; // Mantido para useAuth
-const TOKEN_STORAGE_KEY = 'jukebox_auth_token';   // Mantido para useAuth
+const USER_STORAGE_KEY = 'jukebox_logged_in_user';
+const TOKEN_STORAGE_KEY = 'jukebox_auth_token';
 
 // Chave para carrinho de convidado (se o useCart ainda usar)
 const GUEST_CART_STORAGE_KEY = 'jukebox_guest_cart';
@@ -71,7 +71,7 @@ export function useFavorites() {
             navigate('/Login');
             return { success: false, message: 'Not authenticated' };
         }
-        if (favorites.some(fav => String(fav.id) === String(product.id))) { // Corrigido fav.id
+        if (favorites.some(fav => String(fav.id) === String(product.id))) {
              return { success: true, message: 'Product already in favorites' };
         }
 
@@ -113,11 +113,11 @@ export function useFavorites() {
                 return { success: true, message: data.message, favorites: data.favorites };
             } else { throw new Error(data.message || 'Failed to remove favorite.'); }
         } catch (error) { return { success: false, message: error.message || 'Server error removing favorite.' }; }
-    }, [isAuthenticated, isAuthenticatedAdmin, token, user, fetchFavorites, navigate]); // Adicionado isAuthenticatedAdmin
+    }, [isAuthenticated, isAuthenticatedAdmin, token, user, fetchFavorites, navigate]);
 
     // Função para verificar se um produto está nos favoritos (localmente)
     const isFavorite = useCallback((productId) => {
-        return favorites.some(fav => String(fav.id) === String(productId)); // Corrigido fav.id
+        return favorites.some(fav => String(fav.id) === String(productId));
     }, [favorites]);
 
 

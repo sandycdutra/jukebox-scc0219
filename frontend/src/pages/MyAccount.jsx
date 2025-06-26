@@ -11,13 +11,11 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-
 import Header from '../components/Header';
-import Footer from '../components/Footer'; // Verifique o caminho real do seu Footer (pode ser ../components/Footer)
+import Footer from '../components/Footer';
 
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
-
 
 import '../css/main.css';
 import '../css/myaccount.css';
@@ -104,7 +102,6 @@ function MyAccount() {
         setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
     };
 
-    // <--- CORRIGIDO AQUI: Obter o endereço a ser exibido ---
     const displayAddressObject = user?.addresses?.find(addr => addr.isDefault) // Procura um endereço padrão
                                  || (user?.addresses && user.addresses.length > 0 ? user.addresses[user.addresses.length - 1] : null); // Se não há padrão, pega o último (mais recente)
 
