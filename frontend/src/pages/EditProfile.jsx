@@ -10,36 +10,32 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { useAuth } from '../hooks/useAuth'; // Importa useAuth para usar updateUserProfile e addAddress
-
+import { useAuth } from '../hooks/useAuth';
+import { v4 as uuidv4 } from 'uuid';
 function EditProfile() {
+    // AQUI: Pegue o 'user' mais recente do useAuth
     const { user, isAuthenticated, updateUserProfile, addAddress } = useAuth();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
 
-    // Estados para o endereço do formulário
     const [addressId, setAddressId] = useState(null);
     const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zipCode, setZipCode] = useState('');
-    const [addressPhone, setAddressPhone] = useState('');
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Estados para feedback do usuário
     const [loading, setLoading] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // success, error, info, warning
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-    // Estados para validação de campos
     const [errors, setErrors] = useState({});
 
-    // Preenche os campos do formulário com os dados atuais do usuário
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/Login');
@@ -68,7 +64,6 @@ function EditProfile() {
         }
     }, [user, isAuthenticated, navigate]);
 
-    // Função de validação
     const validate = () => {
         let tempErrors = {};
         let isValid = true;
@@ -101,8 +96,7 @@ function EditProfile() {
             isValid = false;
         }
 
-        // Validação de endereço (opcional, só se houver dados preenchidos)
-        if (zipCode && !/^\d{5}(-\d{4})?$/.test(zipCode) && !/^\d{8}$/.test(zipCode)) { // Exemplo: valida CEP americano ou brasileiro (apenas dígitos)
+        if (zipCode && !/^\d{5}(-\d{4})?$/.test(zipCode) && !/^\d{8}$/.test(zipCode)) {
             tempErrors.zipCode = 'ZIP/Postal Code is not valid.';
             isValid = false;
         }
@@ -125,7 +119,7 @@ function EditProfile() {
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
-        setSnackbarOpen(false); // Fechar qualquer snackbar anterior
+        setSnackbarOpen(false);
 
         if (!validate()) {
             setSnackbarMessage('Please correct the errors in the form.');
@@ -137,39 +131,64 @@ function EditProfile() {
         setLoading(true);
 
         try {
-            const profileUpdateData = {
-                name,
-                email,
-                phone,
+            // Crie um objeto com os dados básicos do perfil (que estão nos TextFields)
+            const updatedProfileData = {
+                name: name,
+                email: email,
+                phone: phone,
+                ...(password && { password: password }),
             };
-            if (password) {
-                profileUpdateData.password = password;
-            }
 
-            // 1. Chamar updateUserProfile do useAuth para atualizar dados gerais
-            const resultGeneral = await updateUserProfile(profileUpdateData);
+            // Combine com os dados ATUAIS do usuário para garantir que nada seja perdido
+            // Ex: favorite_products, role, etc.
+            // É CRUCIAL que user seja o MAIS RECENTE possível aqui.
+            // Para garantir isso, a gente vai pegar o user que já está no estado do useAuth
+            // OU, se você tiver certeza que o backend retorna TUDO na primeira chamada
+            // de `updateUserProfile`, você poderia fazer uma única chamada.
 
-            if (!resultGeneral.success) {
-                throw new Error(resultGeneral.message || 'Failed to update general profile information.');
-            }
+            // VAMOS ASSUMIR que `user` (do useAuth) já está atualizado ou que o backend vai lidar com o merge
+            // Corrigindo a lógica do endereço
+            let finalAddresses = user.addresses ? [...user.addresses] : []; // Começa com uma cópia dos endereços atuais
 
-            // 2. Chamar addAddress do useAuth para atualizar/adicionar o endereço
-            // Só tenta atualizar se os campos de endereço não estiverem vazios
+            // Se algum campo de endereço foi preenchido, prepare o objeto do endereço
             if (street || city || state || zipCode) {
-                const addressUpdateData = {
+                const addressToSave = {
                     street,
                     city,
                     state,
                     zip_code: zipCode,
-                    phone: phone, 
-                    ...(addressId && { id: addressId }), // Inclui 'id' se estiver atualizando um endereço existente
+                    // É comum ter um telefone específico para o endereço de entrega,
+                    // mas se for sempre o mesmo do usuário, pode simplificar ou remover.
+                    phone: phone, // Usando o telefone do perfil principal para o endereço
                 };
 
-                const resultAddress = await addAddress(addressUpdateData);
-
-                if (!resultAddress.success) {
-                    throw new Error(resultAddress.message || 'Failed to update address information.');
+                if (addressId) {
+                    // ATUALIZAR endereço existente e garantir que seja o padrão
+                    finalAddresses = finalAddresses.map(addr => ({
+                        ...addr,
+                        ...(addr.id === addressId ? { ...addressToSave, isDefault: true } : { isDefault: false }) // Este se torna padrão, outros não
+                    }));
+                } else {
+                    // ADICIONAR novo endereço e torná-lo o único padrão
+                    finalAddresses = finalAddresses.map(addr => ({ ...addr, isDefault: false })); // Desmarca todos
+                    const newAddressWithId = { ...addressToSave, id: uuidv4(), isDefault: true }; // Adiciona o novo como padrão
+                    finalAddresses.push(newAddressWithId);
                 }
+
+            }
+
+            // Combine todos os dados para o objeto FINAL que será enviado ao backend
+            const fullUpdatedUserData = {
+                ...user, // Começa com o user atual do useAuth (que já tem _id, role, favs, etc.)
+                ...updatedProfileData, // Sobrescreve name, email, phone, password
+                addresses: finalAddresses, // Adiciona/atualiza o array de endereços
+            };
+
+            // CHAME updateUserProfile APENAS UMA VEZ COM TODOS OS DADOS CONSOLIDADOS
+            const result = await updateUserProfile(fullUpdatedUserData);
+
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to update profile information.');
             }
 
             setSnackbarMessage('Profile updated successfully!');
@@ -178,8 +197,8 @@ function EditProfile() {
 
             setTimeout(() => {
                 navigate('/my-account');
-            }, 1500); 
-            
+            }, 1500);
+
         } catch (err) {
             console.error("Error updating profile:", err);
             const errorMessage = err.message || 'An unexpected error occurred.';
@@ -191,15 +210,6 @@ function EditProfile() {
         }
     };
 
-    if (!isAuthenticated) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>Redirecting to login...</Typography>
-            </Box>
-        );
-    }
-
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -210,7 +220,6 @@ function EditProfile() {
     return (
         <>
             <Header />
-
             <Box className="login-page-container">
                 <Box className="login-box">
                     <Typography variant="h5" component="h1" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
@@ -218,6 +227,7 @@ function EditProfile() {
                     </Typography>
 
                     <form onSubmit={handleUpdateProfile}>
+                        {/* ... (Your TextFields for name, email, phone, password) ... */}
                         <TextField
                             label="Name"
                             type="text"
@@ -360,7 +370,6 @@ function EditProfile() {
                             error={!!errors.confirmPassword}
                             helperText={errors.confirmPassword}
                         />
-
                         <Button
                             variant="contained"
                             type="submit"
@@ -376,7 +385,7 @@ function EditProfile() {
                                 fontWeight: 'bold',
                                 mb: 2
                             }}
-                            disabled={loading} // Desabilita o botão durante o carregamento
+                            disabled={loading}
                         >
                             {loading ? <CircularProgress size={24} color="inherit" /> : 'Update Profile'}
                         </Button>
@@ -389,9 +398,7 @@ function EditProfile() {
                     </Box>
                 </Box>
             </Box>
-
             <Footer />
-
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}

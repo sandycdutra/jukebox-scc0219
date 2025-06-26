@@ -86,7 +86,6 @@ const updateUserProfile = async (req, res) => {
             if (addresses !== undefined) { user.addresses = addresses; } else { user.addresses = user.addresses || []; }
             if (payment_methods !== undefined) { user.payment_methods = payment_methods; } else { user.payment_methods = user.payment_methods || []; }
             
-            //apenas atribui a nova senha, DEIXA O HOOK pre('save') FAZER O HASH ---
             if (password && password.length > 0) {
                 user.password = password; // Atribui a senha em texto puro (o hook pre-save irá fazer o hash)
                 console.log("[Backend:updateUserProfile] New password provided. Will be hashed by pre-save hook.");
@@ -127,7 +126,6 @@ const addPaymentMethod = async (req, res) => {
 const deletePaymentMethod = async (req, res) => {
     const { methodId } = req.params;
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id); 
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
         const initialLength = user.payment_methods.length;
@@ -166,7 +164,6 @@ const getUserFavorites = async (req, res) => {
 const addFavoriteProduct = async (req, res) => {
     const { productId } = req.body;
     try {
-        // <--- CORRIGIDO AQUI: Usar req.user._id consistentemente ---
         const user = await User.findById(req.user._id); 
         const productExists = await Product.findOne({ id: productId });
         if (!user) { return res.status(404).json({ message: 'User not found' }); }
