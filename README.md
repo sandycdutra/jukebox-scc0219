@@ -157,9 +157,23 @@ Note: the admin pages are not reachable by the prototype, here's the pages:
   
 ---
 
-## Functionalities explained
+## Comments About the Code
+The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display all products. The products are organized in a grid. For the Vinyl, CD and Accessories page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
 
-### How to Login to your Client Account
+---
+
+## Test Plan
+*Planned approach:*
+- **Backend**: Postman tests for API routes (users, products)
+- **Frontend**: Manual testing of site functionalities
+- **Integration**: Manual testing of checkout flow
+- **User login**: Manual testing of user interactions
+
+---
+
+## Test Results
+### Sign in and Login to your Client Account
+#### Frontend
 
 Starting from the Home Page, click on the profile icon.
 
@@ -169,7 +183,7 @@ If you are not logged in, it will take you to the login page.
 
 ![image](https://github.com/user-attachments/assets/0c0b8d0d-48c7-4f2b-a416-9c2268acad3f)
 
-Then, you need to type your email and password.
+Then, if you already have a log in, you need to type your email and password. If not, you need to click on "Sign Up" that will take you to the Register page.
 
 ![image](https://github.com/user-attachments/assets/fcce75c6-a220-4d41-a1b0-23f80c82c89b)
 
@@ -184,6 +198,10 @@ If you don't fill all the spaces, it will warn you:
 If everything goes well, an alert will appear:
 
 ![image](https://github.com/user-attachments/assets/adfdfc96-e41f-4397-917a-9437b5d001d1)
+
+In the case you don't have a Log In and need to go to the Register Page, all you have to do is fill in the information asked in the boxes and click on "Register":
+
+#### Backend
 
 ### How to Purchase an item
 
@@ -224,28 +242,6 @@ In the item page, click on the heart button.
 This will add the item to your favorite page. You may add as many items as you wish.
 
 ![image](https://github.com/user-attachments/assets/9834f283-5d03-436d-b4e3-e29569f269dc)
-
-
----
-
-## Comments About the Code
-The HTML structure is organized hierarchically, dividing the website into main sections (header, content, footer). The header and footer are shared between all the pages. For the home page, we added two sections, a "what's new" section that is comprised of a carrousel to show new realeses, and a "products" section, where we display all products. The products are organized in a grid. For the Vinyl, CD and Accessories page, we created a similar grid to the home page, and we created a sidebar where we can choose which genre we want to browse. For the register page, we created a form where the user introduces their information.
-
----
-
-## Test Plan
-*Planned approach:*
-- **Backend**: Postman tests for API routes (users, products)
-- **Frontend**: Manual testing of site functionalities
-- **Integration**: Manual testing of checkout flow
-- **User login**: Manual testing of user interactions
-
----
-
-## Test Results
-*Will include:*
-- Pass/fail rates for critical user journeys
-- Screenshots of test executions
 
 ---
 
