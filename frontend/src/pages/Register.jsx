@@ -107,14 +107,12 @@ function Register () {
                             helperText={formErrors.email}
                             sx={{ mb: 2 }}
                         />
-                        
-
-                        {/* <--- CAMPO TELEFONE --- */}
                         <TextField
                             label="Phone Number"
                             type="tel"
                             variant="outlined"
                             fullWidth
+                            margin="normal"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             required
@@ -122,7 +120,6 @@ function Register () {
                             helperText={formErrors.phone}
                             sx={{ mb: 2 }}
                         />
-
                         <TextField
                             label="Password"
                             type="password"
