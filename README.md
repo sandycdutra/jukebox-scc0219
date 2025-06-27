@@ -17,8 +17,8 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 
 ### Directory Structure
 .
-├── backend                                # Backend repository (server-side code)
-│   ├── src                                # Main source code for the backend
+├── backend                                 # Backend repository (server-side code)
+│   ├── src                                 # Main source code for the backend
 │   │   ├── controllers                     # Contains the business logic for handling HTTP requests (e.g., authController.js, productController.js)
 │   │   ├── models                          # Mongoose schemas and models for MongoDB collections (e.g., User.js, Product.js, Cart.js, Order.js)
 │   │   ├── routes                          # Defines API endpoints and maps them to controller functions (e.g., authRoutes.js, productRoutes.js, userRoutes.js, orderRoutes.js, cartRoutes.js)
@@ -27,7 +27,7 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 │   ├── seed.js                             # Script to populate the database with initial/sample data
 │   ├── .env                                # Environment variables file (e.g., MONGO_URI, JWT_SECRET, PORT)
 │   └── package.json                        # Metadata and dependencies for the backend project
-├── frontend                               # Frontend repository (React client-side application)
+├── frontend                                # Frontend repository (React client-side application)
 │   ├── public                              # Static assets served directly by the web server (e.g., index.html, favicon, unbundled images)
 │   │   └── images                          # Publicly accessible images
 │   ├── src                                 # Main source code for the React application
