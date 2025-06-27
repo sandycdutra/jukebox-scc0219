@@ -15,6 +15,35 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 - **Backend**: Node.js (REST API)
 - **Database**: MongoDB (stores users, products)
 
+### Directory Structure
+.
+├── backend                                # Backend repository (server-side code)
+│   ├── src                                # Main source code for the backend
+│   │   ├── controllers                     # Contains the business logic for handling HTTP requests (e.g., authController.js, productController.js)
+│   │   ├── models                          # Mongoose schemas and models for MongoDB collections (e.g., User.js, Product.js, Cart.js, Order.js)
+│   │   ├── routes                          # Defines API endpoints and maps them to controller functions (e.g., authRoutes.js, productRoutes.js, userRoutes.js, orderRoutes.js, cartRoutes.js)
+│   │   └── middlewares                     # Middleware functions for request processing (e.g., authMiddleware.js for authentication and admin authorization)
+│   ├── server.js                           # Entry point of the backend application (configures Express, MongoDB connection, mounts routes)
+│   ├── seed.js                             # Script to populate the database with initial/sample data
+│   ├── .env                                # Environment variables file (e.g., MONGO_URI, JWT_SECRET, PORT)
+│   └── package.json                        # Metadata and dependencies for the backend project
+├── frontend                               # Frontend repository (React client-side application)
+│   ├── public                              # Static assets served directly by the web server (e.g., index.html, favicon, unbundled images)
+│   │   └── images                          # Publicly accessible images
+│   ├── src                                 # Main source code for the React application
+│   │   ├── components                      # Reusable React components (e.g., Header, Footer, ProductCard, UI elements)
+│   │   ├── assets                          # Static assets like icons or local images that are bundled by Vite
+│   │   ├── pages                           # Main React components representing different views or pages of the application (e.g., Home.jsx, Login.jsx, MyAccount.jsx, AdminDashboard.jsx)
+│   │   ├── css                             # CSS files for styling the React application
+│   │   ├── mockdata                        # Mock data used for development or testing (e.g., temporary product lists)
+│   │   ├── utils                           # Utility functions and helper modules (e.g., data formatting, constant definitions)
+│   │   ├── hooks                           # Custom React Hooks for reusable stateful logic (e.g., useAuth.js, useCart.js, useFavorites.js)
+│   │   ├── main.jsx                        # The entry point for the React application (mounts the App component to the DOM)
+│   │   └── App.jsx                         # Main application component, typically defining routing (React Router configuration)
+│   ├── index.html                          # The main HTML file that serves as the entry point for the web browser
+│   └── package.json                        # Metadata and dependencies for the frontend project
+└── milestone-1                             # Folder for initial static prototypes or project planning documents from early stages
+
 ### Functionalities
 
 #### User Management
