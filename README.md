@@ -202,7 +202,7 @@ The HTML structure is organized hierarchically, dividing the website into main s
 ---
 
 ## Test Results
-### Sign in and Login to your Client Account
+### Sign in and Register to your Account
 #### Frontend
 
 Starting from the Home Page, click on the profile icon.
@@ -231,11 +231,47 @@ If everything goes well, an alert will appear:
 
 In the case you don't have a Log In and need to go to the Register Page, all you have to do is fill in the information asked in the boxes and click on "Register":
 
+![image](https://github.com/user-attachments/assets/98f5e22d-23c0-4332-a3ed-08a6b47412ec)
+
 #### Backend
 
-### How to Purchase an item
+Registering a new user:
 
-Starting from the Home Page, choose an item to purchase.
+![image](https://github.com/user-attachments/assets/70dfe411-fb2c-40f1-ba12-23c74cbb436d)
+
+Here, we are registering as an admin. The only difference between an admin and an user is the "@jukebox.com" in the email address. Now that we are registered as an admin and have recieved a token, we can access the admin functions such as requesting the users:
+
+![image](https://github.com/user-attachments/assets/24c2f8b4-d303-4d4a-96c8-7ef8007acf50)
+
+We need to add an Authorization key in the Header in order to have access to this information, as you may see in the image above.
+
+---
+
+### Editting Account information
+
+#### Frontend
+
+Starting from the "My Account" page, click on "Edit Profile":
+
+![image](https://github.com/user-attachments/assets/82d06289-97f2-4033-b925-589f0ddf1cc3)
+
+You may change and add any information you wish, then, click on "Update Profile":
+
+![image](https://github.com/user-attachments/assets/5dbae245-1b89-4e07-b6b9-cfc357a52ce0)
+![image](https://github.com/user-attachments/assets/ed495b0e-a212-4570-b7c1-457a6f96a307)
+
+#### Backend
+
+Updating user infromation (also requires the user token), here is also how you add and update address:
+
+![image](https://github.com/user-attachments/assets/c21f1b9b-1092-464c-bdca-7399702f508e)
+
+---
+
+### Purchasing an item
+#### Frontend
+
+Starting from the Home Page and logged in to your user account, choose an item to purchase.
 
 ![image](https://github.com/user-attachments/assets/c925eaba-f6bf-481f-97ee-57b21cb2c97b)
 
@@ -249,7 +285,15 @@ This will lead you to the cart page. Here, you can choose the quantity and revie
 
 If you are happy with how your cart is looking, clicking on the "Buy Shopping Cart" button will lead you to the checkout page, where you can review your purchase, select an address and how you wish to pay:
 
-![image](https://github.com/user-attachments/assets/3b768f5f-76e4-41e6-85a7-5a6b39da7899)
+![image](https://github.com/user-attachments/assets/c2d0f273-912d-44b3-9697-cc2c1390605a)
+
+If you already have an adress saved, you may select it. If not, you may click on "Add new address". Doing so will open this tab, where you can enter the information and click on "Add Address"
+
+![image](https://github.com/user-attachments/assets/bf02ac4e-c932-4f13-96b4-7cfc816a9d14)
+
+The same process follows for your payment options:
+
+![image](https://github.com/user-attachments/assets/93a0673c-3a03-44f0-b482-e866701799ba)
 
 Clicking "Finish Purchase" will complete the purchase and this pop up will appear:
 
@@ -259,7 +303,48 @@ After you purchase an item, the amount left in stock will change.
 
 ![image](https://github.com/user-attachments/assets/73ba2903-96f2-4263-8822-fda4527653ac)
 
-### How to Favorite an item (Special Functionality)
+You can also check your orders on the "My Account" page:
+
+![image](https://github.com/user-attachments/assets/b1294948-6a15-4021-b669-704ccc5eb96a)
+
+#### Backend
+
+Adding a product to the cart (keep in mind you must be logged in to an user account):
+
+![image](https://github.com/user-attachments/assets/92b0cda1-3193-4c40-90b3-0b565bba1a5c)
+
+Changing quantity of an item in the cart:
+
+![image](https://github.com/user-attachments/assets/d770000b-009d-48f1-9a3d-e5d141581da7)
+
+Removing an item from the cart:
+
+![image](https://github.com/user-attachments/assets/44701e7f-897d-498b-8584-c802cb37fe81)
+
+Clearing the cart:
+
+![image](https://github.com/user-attachments/assets/1f0ce91d-773e-45ae-9dca-f42648560b03)
+
+Adding payment method:
+
+![image](https://github.com/user-attachments/assets/6f68c989-25e9-4f08-93e7-faefbd9fc490)
+
+Removing payment method:
+
+![image](https://github.com/user-attachments/assets/fdb1f8a4-beea-4c27-90ae-4757a90f0afc)
+
+Completing your order:
+
+![image](https://github.com/user-attachments/assets/566c91c3-4b98-4e60-972d-061152eedc44)
+
+Checking your orders:
+
+![image](https://github.com/user-attachments/assets/424024df-a71a-422d-903a-f54311ea9de3)
+
+---
+
+### Favoriting an item (Special Functionality)
+#### Frontend
 
 Starting from the Home Page, choose an item to favorite.
 
@@ -272,6 +357,115 @@ In the item page, click on the heart button.
 This will add the item to your favorite page. You may add as many items as you wish.
 
 ![image](https://github.com/user-attachments/assets/9834f283-5d03-436d-b4e3-e29569f269dc)
+
+#### Backend
+
+Favoriting an item:
+
+![image](https://github.com/user-attachments/assets/25e0c297-72fb-431b-b514-573677e1c1f1)
+
+Fetching an user's favorite items:
+
+![image](https://github.com/user-attachments/assets/c2aae49e-cc72-4cad-beec-1fe2e8362f56)
+
+Removing a favorite item:
+
+![image](https://github.com/user-attachments/assets/4384a1ab-ce40-47ce-9cc6-88f464638e33)
+
+---
+
+### Viewing, updating and deleting orders (Admin function)
+#### Frontend
+
+If you are logged in as an admin, you will have special functionalities that can be accessed through this button:
+
+![image](https://github.com/user-attachments/assets/b5bd666d-492a-447f-8e7c-33e74060edbf)
+
+This will take you to the Admin page, where you can click on "View All Orders":
+
+![image](https://github.com/user-attachments/assets/f87b42b0-58c2-4d08-97f1-eb1fd477b468)
+
+Here, a list with all orders that have been made will be available, if you click on an order, the details will apper. You can also click on the trash button to remove an order or on the pencil button to update one:
+
+![image](https://github.com/user-attachments/assets/382a48dd-3884-4ec4-b8d0-bd36c952fbc3)
+
+If you click on the pencil button, you may update payment status and delivery status. This is what you will be shown:
+
+![image](https://github.com/user-attachments/assets/a24886dc-3c52-47c3-a522-e7df8ac52a98)
+
+#### Backend
+
+Updating an order:
+
+![image](https://github.com/user-attachments/assets/19fd98a7-1203-4b23-a33e-14e85d0f42b8)
+
+Removing an order:
+
+![image](https://github.com/user-attachments/assets/851c9d66-a17a-4249-94d7-bf27b6d5a158)
+
+---
+
+### Managing Users (Admin function)
+#### Frontend
+
+From the Admin Page, click on "Manage Users":
+
+![image](https://github.com/user-attachments/assets/f87b42b0-58c2-4d08-97f1-eb1fd477b468)
+
+A list with all users will apper, on the "Actions" column, you may remove or update user information:
+
+![image](https://github.com/user-attachments/assets/33bb33bc-335f-47f3-ad7c-95e9c20cb8ce)
+
+If you click on the pencil button, these are the options you will be shown. The only one you are not able to alter is the email, since that is how we identify and login the user:
+
+![image](https://github.com/user-attachments/assets/5eb49d2e-8dd4-407c-b9c7-7a814f40516f)
+
+#### Backend
+
+Through the backend, you may alter whatever user information you will, this was implemented as so in order to ease future applications:
+
+![image](https://github.com/user-attachments/assets/2b0e238e-6d44-4468-9099-c49bd9205ccf)
+
+Removing an user:
+
+![image](https://github.com/user-attachments/assets/93481d83-3ba3-4d53-b8b5-d4a5e215522f)
+
+---
+
+### Managing Products (Admin function)
+#### Frontend
+
+As an admin, you may also add, remove and update products, this is done from the Admin page, by clicking on the "Manage Products" button:
+
+![image](https://github.com/user-attachments/assets/f87b42b0-58c2-4d08-97f1-eb1fd477b468)
+
+This is the page you will be shown, with a list of all products and an "Add New Product" button:
+
+![image](https://github.com/user-attachments/assets/4742087c-f4b2-4872-93ec-a18c0b3b39d3)
+
+If you wish to add a new product, all you have to do is fill in the following information and click on "Add Product":
+
+![image](https://github.com/user-attachments/assets/566aa48a-4ce1-4ead-90f2-42e429b9f596)
+
+To update or remove a product, you have to locate it on the list and use either the trash or the pencil button. This is what clicking on the pencil button looks like:
+
+![image](https://github.com/user-attachments/assets/27977f31-ed35-4c2d-b3f1-ae1598ea69b6)
+
+You may alter whatever information you wish from this menu.
+
+#### Backend
+
+Creating a new product:
+
+![image](https://github.com/user-attachments/assets/aa8eaeca-a187-4f9a-bc59-297dbd2c50b3)
+
+Updating a product:
+
+![image](https://github.com/user-attachments/assets/a97500e7-1a25-410a-a156-fb7e1cbd25ae)
+
+Removing a product:
+
+![image](https://github.com/user-attachments/assets/ebe4ae2b-3d93-4c47-9fe5-d1efea62d844)
 
 ---
 
