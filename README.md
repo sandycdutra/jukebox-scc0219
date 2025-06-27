@@ -16,6 +16,7 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 - **Database**: MongoDB (stores users, products)
 
 ### Directory Structure
+```
 .
 ├── backend                                 # Backend repository (server-side code)
 │   ├── src                                 # Main source code for the backend
@@ -43,7 +44,7 @@ JUKEBOX is a vinyl/CD e-commerce platform with customer and admin interfaces, de
 │   ├── index.html                          # The main HTML file that serves as the entry point for the web browser
 │   └── package.json                        # Metadata and dependencies for the frontend project
 └── milestone-1                             # Folder for initial static prototypes or project planning documents from early stages
-
+```
 ### Functionalities
 
 #### User Management
